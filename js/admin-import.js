@@ -1,4 +1,3 @@
-```javascript
 const dictionaryFile =
     document.getElementById("dictionaryFile");
 
@@ -187,161 +186,6 @@ function formatFileSize(bytes) {
 
 
 /* =========================================
-   READ DOCX
-========================================= */
-
-async function readDocxFile(file) {
-
-    const arrayBuffer =
-        await file.arrayBuffer();
-
-
-    const zip =
-        await JSZip.loadAsync(arrayBuffer);
-
-
-    const documentFile =
-        zip.file(
-            "word/document.xml"
-        );
-
-
-    if (!documentFile) {
-
-        throw new Error(
-            "Unable to find the Word document content."
-        );
-    }
-
-
-    const xml =
-        await documentFile.async("string");
-
-
-    return extractParagraphs(xml);
-}
-
-
-/* =========================================
-   EXTRACT WORD PARAGRAPHS
-========================================= */
-
-function extractParagraphs(xml) {
-
-    const parser =
-        new DOMParser();
-
-
-    const document =
-        parser.parseFromString(
-            xml,
-            "application/xml"
-        );
-
-
-    const paragraphs =
-        Array.from(
-            document.getElementsByTagName("w:p")
-        );
-
-
-    return paragraphs
-
-        .map(function (paragraph) {
-
-            const textNodes =
-                Array.from(
-                    paragraph.getElementsByTagName("w:t")
-                );
-
-
-            return textNodes
-
-                .map(node => node.textContent)
-
-                .join("")
-
-                .trim();
-
-        })
-
-        .filter(text => text.length > 0);
-}
-
-
-/* =========================================
-   PARSE DICTIONARY
-========================================= */
-
-function parseDictionary(paragraphs) {
-
-    const entries = [];
-
-    let index = 0;
-
-
-    while (index < paragraphs.length) {
-
-        const word =
-            paragraphs[index]?.trim();
-
-
-        const meaning =
-            paragraphs[index + 1]?.trim();
-
-
-        const example =
-            paragraphs[index + 2]?.trim();
-
-
-        if (!word) {
-
-            index++;
-
-            continue;
-        }
-
-
-        if (!meaning || !example) {
-
-            entries.push({
-
-                word: word,
-
-                meaning: meaning || "",
-
-                example: example || "",
-
-                valid: false
-
-            });
-
-            break;
-        }
-
-
-        entries.push({
-
-            word: word,
-
-            meaning: meaning,
-
-            example: example,
-
-            valid: true
-
-        });
-
-
-        index += 3;
-    }
-
-
-    return entries;
-}
-
-
-/* =========================================
    PREVIEW
 ========================================= */
 
@@ -355,42 +199,33 @@ previewButton.addEventListener(
         }
 
 
-        previewButton.disabled = true;
-
         importMessage.textContent =
             "Reading dictionary document...";
 
 
+        previewButton.disabled = true;
+
+
         try {
 
-            const paragraphs =
-                await readDocxFile(
-                    selectedFile
-                );
+            /*
+             * DOCX parsing will be connected here.
+             *
+             * For now we verify that the file has
+             * been selected correctly.
+             */
+
+            importedEntries = [];
 
 
-            importedEntries =
-                parseDictionary(
-                    paragraphs
-                );
-
+            previewSection.hidden = false;
 
             renderPreview();
 
 
-            if (importedEntries.length === 0) {
+            importMessage.textContent =
+                "Document selected successfully. The import parser will be connected next.";
 
-                importMessage.textContent =
-                    "No dictionary entries were found.";
-
-            } else {
-
-                importMessage.textContent =
-                    `${importedEntries.length} dictionary entries found.`;
-            }
-
-
-            previewSection.hidden = false;
 
         } catch (error) {
 
@@ -409,7 +244,7 @@ previewButton.addEventListener(
 
 
 /* =========================================
-   RENDER PREVIEW
+   PREVIEW RENDERING
 ========================================= */
 
 function renderPreview() {
@@ -433,15 +268,7 @@ function renderPreview() {
 
     previewEmpty.hidden = true;
 
-
-    const hasInvalidEntries =
-        importedEntries.some(
-            entry => !entry.valid
-        );
-
-
-    importButton.disabled =
-        hasInvalidEntries;
+    importButton.disabled = false;
 
 
     importedEntries.forEach(
@@ -455,57 +282,29 @@ function renderPreview() {
                 "import-preview-card";
 
 
-            if (!entry.valid) {
-
-                card.classList.add(
-                    "import-invalid"
-                );
-            }
-
-
             card.innerHTML = `
 
-                <div class="import-preview-content">
+                <div>
 
-                    <div class="import-preview-number">
-                        ${index + 1}
-                    </div>
+                    <strong>
+                        ${escapeHtml(entry.word)}
+                    </strong>
 
-                    <div>
-
-                        <strong>
-                            ${escapeHtml(entry.word)}
-                        </strong>
-
-                        <p>
-                            <b>Meaning:</b>
-                            ${escapeHtml(
-                                entry.meaning ||
-                                "Missing"
-                            )}
-                        </p>
-
-                        <p>
-                            <b>Example:</b>
-                            ${escapeHtml(
-                                entry.example ||
-                                "Missing"
-                            )}
-                        </p>
-
-                    </div>
+                    ${
+                        entry.meaning
+                            ? `<p>
+                                ${escapeHtml(entry.meaning)}
+                               </p>`
+                            : `<p class="missing">
+                                Meaning missing
+                               </p>`
+                    }
 
                 </div>
 
 
-                <span class="${entry.valid
-                    ? ""
-                    : "invalid-label"}">
-
-                    ${entry.valid
-                        ? "Ready"
-                        : "Incomplete"}
-
+                <span>
+                    Draft
                 </span>
 
             `;
@@ -514,19 +313,11 @@ function renderPreview() {
             previewList.appendChild(card);
         }
     );
-
-
-    if (hasInvalidEntries) {
-
-        importMessage.textContent =
-            "Some entries are incomplete. Correct the document and upload it again before importing.";
-
-    }
 }
 
 
 /* =========================================
-   IMPORT INTO SUPABASE
+   IMPORT
 ========================================= */
 
 importButton.addEventListener(
@@ -534,22 +325,6 @@ importButton.addEventListener(
     async function () {
 
         if (importedEntries.length === 0) {
-
-            return;
-        }
-
-
-        const invalid =
-            importedEntries.some(
-                entry => !entry.valid
-            );
-
-
-        if (invalid) {
-
-            alert(
-                "Please correct the incomplete entries before importing."
-            );
 
             return;
         }
@@ -575,95 +350,85 @@ importButton.addEventListener(
 
         try {
 
-            let importedCount = 0;
+            /*
+             * Database import will be connected
+             * after the document parser is completed.
+             */
+
+            importMessage.textContent =
+                "Import system ready for database connection.";
+
+        } catch (error) {
+
+            console.error(error);
+
+            importMessage.textContent =
+                error.message ||
+                "Unable to import dictionary entries.";
+
+            importButton.disabled = false;
+        }
+    }
+);
 
 
-            for (
-                const entry
-                of importedEntries
-            ) {
+/* =========================================
+   CANCEL
+========================================= */
 
-                const {
-                    data: existingWord,
-                    error: existingError
-                } = await supabaseClient
+cancelImportButton.addEventListener(
+    "click",
+    function () {
 
-                    .from("words")
+        importedEntries = [];
 
-                    .select("id")
+        previewList.innerHTML = "";
 
-                    .ilike(
-                        "word",
-                        entry.word
-                    )
+        previewSection.hidden = true;
 
-                    .limit(1);
+        importButton.disabled = true;
 
+        importMessage.textContent = "";
 
-                if (existingError) {
-
-                    throw existingError;
-                }
+    }
+);
 
 
-                if (
-                    existingWord &&
-                    existingWord.length > 0
-                ) {
+/* =========================================
+   HTML ESCAPE
+========================================= */
 
-                    continue;
-                }
+function escapeHtml(value) {
 
+    return String(value)
 
-                const {
-                    data: newWord,
-                    error: wordError
-                } = await supabaseClient
+        .replaceAll("&", "&amp;")
 
-                    .from("words")
+        .replaceAll("<", "&lt;")
 
-                    .insert({
+        .replaceAll(">", "&gt;")
 
-                        word: entry.word,
+        .replaceAll('"', "&quot;")
 
-                        short_meaning:
-                            entry.meaning,
-
-                        is_premium: false,
-
-                        is_published: false
-
-                    })
-
-                    .select("id")
-
-                    .single();
+        .replaceAll("'", "&#039;");
+}
 
 
-                if (wordError) {
+/* =========================================
+   INITIALIZE
+========================================= */
 
-                    throw wordError;
-                }
+async function initialize() {
 
-
-                const {
-                    error: meaningError
-                } = await supabaseClient
-
-                    .from("meanings")
-
-                    .insert({
-
-                        word_id:
-                            newWord.id,
-
-                        meaning:
-                            entry.meaning,
-
-                        display_order: 1
-
-                    });
+    const authorized =
+        await checkAdminAccess();
 
 
-                if (meaningError) {
-```
+    if (!authorized) {
+
+        return;
+    }
+}
+
+
+initialize();
