@@ -1126,4 +1126,4 @@ document.addEventListener(
    INITIALIZE APPLICATION
 ========================================= */
 
-initializeUser();
+renderPage();
