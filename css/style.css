@@ -730,3 +730,166 @@ body {
     }
 
 }
+
+
+/* =========================================
+   ADMIN MEDIA
+========================================= */
+
+.media-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 15px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 20px;
+    align-items: center;
+}
+
+.media-word h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.media-word p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.media-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.media-status span {
+    background: #f1f1f1;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.media-status .uploaded {
+    background: #e8f5e9;
+}
+
+.media-status .missing {
+    background: #f1f1f1;
+}
+
+.media-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.media-file-input {
+    display: none;
+}
+
+.media-upload-label {
+    display: inline-block;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    background: var(--red);
+    color: var(--white);
+
+    font-weight: 700;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.media-upload-label:hover {
+    transform: translateY(-2px);
+}
+
+.media-play-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 10px;
+
+    background: var(--green);
+    color: var(--white);
+
+    font-weight: 700;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.media-play-btn:hover {
+    transform: translateY(-2px);
+}
+
+.media-delete-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--red);
+    border-radius: 10px;
+
+    background: white;
+    color: var(--red);
+
+    font-weight: 700;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.media-delete-btn:hover {
+    transform: translateY(-2px);
+}
+
+.media-audio {
+    display: none;
+}
+
+.media-uploading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@media (max-width: 900px) {
+
+    .media-card {
+        grid-template-columns: 1fr;
+    }
+
+    .media-actions {
+        justify-content: flex-start;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .media-card {
+        padding: 20px;
+    }
+
+    .media-actions {
+        width: 100%;
+    }
+
+    .media-actions .btn,
+    .media-actions button,
+    .media-actions label {
+        flex: 1;
+        text-align: center;
+    }
+
+}
