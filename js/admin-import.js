@@ -1,4 +1,4 @@
-```javascript
+
 const dictionaryFile =
     document.getElementById("dictionaryFile");
 
@@ -914,4 +914,4 @@ async function initialize() {
 
 
 initialize();
-```
+
