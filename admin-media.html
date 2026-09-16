@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Media — Word Audio</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin-media.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+
+            <div class="admin-brand">
+                <h2>Angolan Slang</h2>
+                <span>Admin</span>
+            </div>
+
+            <nav class="admin-nav">
+
+                <a href="admin.html">
+                    Dashboard
+                </a>
+
+                <a href="admin-words.html">
+                    Words
+                </a>
+
+                <a href="admin-import.html">
+                    Import
+                </a>
+
+                <a href="admin-categories.html">
+                    Categories
+                </a>
+
+                <a href="admin-media.html" class="active">
+                    Media
+                </a>
+
+            </nav>
+
+            <button id="logoutButton" class="logout-button">
+                Log Out
+            </button>
+
+        </aside>
+
+
+        <!-- MAIN -->
+        <main class="admin-main">
+
+            <header class="admin-header">
+
+                <div>
+                    <h1>Word Audio</h1>
+                    <p>
+                        Upload and manage pronunciation audio for dictionary words.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <!-- SEARCH -->
+            <section class="media-toolbar">
+
+                <div class="search-box">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search words..."
+                    >
+                </div>
+
+                <select id="statusFilter">
+
+                    <option value="all">
+                        All words
+                    </option>
+
+                    <option value="with-audio">
+                        With audio
+                    </option>
+
+                    <option value="without-audio">
+                        Without audio
+                    </option>
+
+                </select>
+
+            </section>
+
+
+            <!-- MESSAGE -->
+            <div id="mediaMessage" class="media-message"></div>
+
+
+            <!-- WORD LIST -->
+            <section class="media-card">
+
+                <div class="media-card-header">
+
+                    <div>
+                        <h2>Pronunciation Audio</h2>
+                        <p>
+                            Select a word to upload, replace or remove its audio.
+                        </p>
+                    </div>
+
+                    <span id="wordCount" class="word-count">
+                        0 words
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="media-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Word
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Audio
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="wordsTableBody">
+
+                            <tr>
+                                <td colspan="5" class="loading-cell">
+                                    Loading words...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- AUDIO MODAL -->
+            <div id="audioModal" class="modal-overlay hidden">
+
+                <div class="audio-modal">
+
+                    <button
+                        type="button"
+                        id="closeModal"
+                        class="close-modal"
+                    >
+                        ×
+                    </button>
+
+                    <h2 id="modalWord">
+                        Word
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Pronunciation audio
+                    </p>
+
+
+                    <!-- EXISTING AUDIO -->
+                    <div
+                        id="existingAudioSection"
+                        class="existing-audio hidden"
+                    >
+
+                        <h3>
+                            Current audio
+                        </h3>
+
+                        <audio
+                            id="audioPlayer"
+                            controls
+                        ></audio>
+
+                    </div>
+
+
+                    <!-- FILE -->
+                    <div class="upload-section">
+
+                        <label for="audioFile">
+                            Select audio file
+                        </label>
+
+                        <input
+                            type="file"
+                            id="audioFile"
+                            accept="audio/*"
+                        >
+
+                        <p class="file-help">
+                            Recommended format: MP3. Maximum recommended size: 10 MB.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="selectedFile"
+                        class="selected-file"
+                    ></div>
+
+
+                    <!-- ACTIONS -->
+                    <div class="modal-actions">
+
+                        <button
+                            type="button"
+                            id="uploadAudioButton"
+                            class="primary-button"
+                        >
+                            Upload Audio
+                        </button>
+
+                        <button
+                            type="button"
+                            id="deleteAudioButton"
+                            class="danger-button hidden"
+                        >
+                            Delete Audio
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelButton"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="modalMessage"
+                        class="modal-message"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/supabase.js"></script>
+    <script src="js/admin-media.js"></script>
+
+</body>
+</html>
