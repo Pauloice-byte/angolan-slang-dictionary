@@ -23,12 +23,14 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir www
-          cp -r assets www/
-          cp -r js www/
-          cp index.html www/
-          cp app.html www/
-          cp script.js www/
-          cp style.css www/
+          cp -r . www/
+          rm -rf www/.git
+          rm -rf www/.github
+          rm -rf www/android
+          rm -rf www/www
+          rm -f www/package.json
+          rm -f www/package-lock.json
+          rm -f www/capacitor.config.json
 
       - name: Add Android platform
         run: npx cap add android
