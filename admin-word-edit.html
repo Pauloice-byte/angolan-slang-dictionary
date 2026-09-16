@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Word — Angolan Slang Dictionary</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="admin-header">
+
+        <div class="admin-header-inner">
+
+            <div>
+
+                <h1>Angolan Slang Dictionary</h1>
+
+                <p>Admin Panel</p>
+
+            </div>
+
+
+            <nav>
+
+                <a href="admin.html">
+                    Dashboard
+                </a>
+
+                <a href="admin-words.html">
+                    Words
+                </a>
+
+                <a href="admin-import.html">
+                    Import
+                </a>
+
+                <button
+                    id="logoutButton"
+                    class="btn"
+                    type="button"
+                >
+                    Log Out
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="admin-main">
+
+        <div class="admin-page-header">
+
+            <div>
+
+                <a
+                    href="admin-words.html"
+                    class="back-link"
+                >
+                    ← Back to Words
+                </a>
+
+                <h2>Edit Word</h2>
+
+                <p>
+                    Review and complete the dictionary entry before publishing it.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="editMessage"
+            class="admin-message"
+        ></div>
+
+
+        <form id="wordForm">
+
+
+            <!-- =========================================
+                 BASIC INFORMATION
+            ========================================== -->
+
+            <section class="import-card">
+
+                <h2>Basic Information</h2>
+
+                <p class="import-description">
+                    Main information about the word or expression.
+                </p>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label for="word">
+                            Word / Expression
+                        </label>
+
+                        <input
+                            type="text"
+                            id="word"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="pronunciation">
+                            Pronunciation
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pronunciation"
+                            placeholder="e.g. KOH-tah"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="wordType">
+                            Word Type
+                        </label>
+
+                        <select id="wordType">
+
+                            <option value="">
+                                Select type
+                            </option>
+
+                            <option value="noun">
+                                Noun
+                            </option>
+
+                            <option value="verb">
+                                Verb
+                            </option>
+
+                            <option value="adjective">
+                                Adjective
+                            </option>
+
+                            <option value="adverb">
+                                Adverb
+                            </option>
+
+                            <option value="expression">
+                                Expression
+                            </option>
+
+                            <option value="phrase">
+                                Phrase
+                            </option>
+
+                            <option value="slang">
+                                Slang
+                            </option>
+
+                            <option value="other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <select id="category">
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="pack">
+                            Pack
+                        </label>
+
+                        <select id="pack">
+
+                            <option value="">
+                                No pack
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="shortMeaning">
+                        Short Meaning
+                    </label>
+
+                    <input
+                        type="text"
+                        id="shortMeaning"
+                        placeholder="Short definition"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="contextNotes">
+                        Context / Usage Notes
+                    </label>
+
+                    <textarea
+                        id="contextNotes"
+                        rows="4"
+                        placeholder="Explain when, where, or how this word is normally used."
+                    ></textarea>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 MEANING
+            ========================================== -->
+
+            <section class="import-card">
+
+                <h2>Meaning</h2>
+
+                <p class="import-description">
+                    Main dictionary definition.
+                </p>
+
+
+                <div class="form-group">
+
+                    <label for="meaning">
+                        Meaning
+                    </label>
+
+                    <textarea
+                        id="meaning"
+                        rows="5"
+                        required
+                    ></textarea>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 EXAMPLE
+            ========================================== -->
+
+            <section class="import-card">
+
+                <h2>Example</h2>
+
+                <p class="import-description">
+                    A natural example showing how the word is used.
+                </p>
+
+
+                <div class="form-group">
+
+                    <label for="example">
+                        Example Sentence
+                    </label>
+
+                    <textarea
+                        id="example"
+                        rows="4"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="translation">
+                        Translation
+                    </label>
+
+                    <textarea
+                        id="translation"
+                        rows="3"
+                        placeholder="English translation, if available."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="usageLabel">
+                        Usage Label
+                    </label>
+
+                    <input
+                        type="text"
+                        id="usageLabel"
+                        placeholder="e.g. Informal, Street, Everyday"
+                    >
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 STATUS
+            ========================================== -->
+
+            <section class="import-card">
+
+                <h2>Publication</h2>
+
+                <p class="import-description">
+                    Control whether this entry is free or premium and whether users can see it.
+                </p>
+
+
+                <div class="status-options">
+
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="isPremium"
+                        >
+
+                        <span>
+                            Premium word
+                        </span>
+
+                    </label>
+
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="isPublished"
+                        >
+
+                        <span>
+                            Published
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 ACTIONS
+            ========================================== -->
+
+            <div class="form-actions">
+
+                <a
+                    href="admin-words.html"
+                    class="btn"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn primary"
+                    id="saveButton"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/admin-word-edit.js"></script>
+
+</body>
+
+</html>
