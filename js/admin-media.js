@@ -111,6 +111,7 @@ async function loadWords() {
         });
 
     if (error) {
+
         console.error(error);
 
         wordsTableBody.innerHTML = `
@@ -129,7 +130,39 @@ async function loadWords() {
 
     allWords = data || [];
 
-    renderWords();
+    await renderWords();
+}
+
+
+/* =========================================
+   CREATE SIGNED AUDIO URL
+========================================= */
+
+async function getAudioURL(path) {
+
+    if (!path) {
+        return null;
+    }
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .storage
+        .from("audio")
+        .createSignedUrl(path, 3600);
+
+    if (error) {
+
+        console.error(
+            "Unable to create audio URL:",
+            error
+        );
+
+        return null;
+    }
+
+    return data?.signedUrl || null;
 }
 
 
@@ -137,7 +170,7 @@ async function loadWords() {
    RENDER WORDS
 ========================================= */
 
-function renderWords() {
+async function renderWords() {
 
     const searchTerm =
         searchInput.value.trim().toLowerCase();
@@ -145,27 +178,33 @@ function renderWords() {
     const filter =
         statusFilter.value;
 
-    let filteredWords = allWords.filter(word => {
 
-        const matchesSearch =
-            !searchTerm ||
-            word.word.toLowerCase().includes(searchTerm);
+    const filteredWords =
+        allWords.filter(word => {
 
-        const hasAudio =
-            Boolean(word.word_audio_path);
+            const matchesSearch =
+                !searchTerm ||
+                word.word
+                    .toLowerCase()
+                    .includes(searchTerm);
 
-        const matchesStatus =
-            filter === "all" ||
-            (filter === "with-audio" && hasAudio) ||
-            (filter === "without-audio" && !hasAudio);
+            const hasAudio =
+                Boolean(word.word_audio_path);
 
-        return matchesSearch && matchesStatus;
-    });
+            const matchesStatus =
+                filter === "all" ||
+                (filter === "with-audio" && hasAudio) ||
+                (filter === "without-audio" && !hasAudio);
+
+            return matchesSearch && matchesStatus;
+        });
 
 
     wordCount.textContent =
         `${filteredWords.length} ${
-            filteredWords.length === 1 ? "word" : "words"
+            filteredWords.length === 1
+                ? "word"
+                : "words"
         }`;
 
 
@@ -183,31 +222,15 @@ function renderWords() {
     }
 
 
+    /*
+     * Build rows first.
+     */
+
     wordsTableBody.innerHTML =
         filteredWords.map(word => {
 
             const hasAudio =
                 Boolean(word.word_audio_path);
-
-            let audioHTML = "—";
-
-            if (hasAudio) {
-
-                const audioURL =
-                    getAudioURL(word.word_audio_path);
-
-                if (audioURL) {
-
-                    audioHTML = `
-                        <audio
-                            class="audio-preview"
-                            controls
-                            src="${audioURL}"
-                        ></audio>
-                    `;
-                }
-            }
-
 
             return `
                 <tr>
@@ -222,8 +245,10 @@ function renderWords() {
                         <span class="category-name">
                             ${
                                 word.categories?.name
-                                ? escapeHTML(word.categories.name)
-                                : "—"
+                                    ? escapeHTML(
+                                        word.categories.name
+                                    )
+                                    : "—"
                             }
                         </span>
                     </td>
@@ -232,22 +257,32 @@ function renderWords() {
 
                         ${
                             hasAudio
-                            ? `
-                                <span class="status-badge has-audio">
-                                    Audio uploaded
-                                </span>
-                            `
-                            : `
-                                <span class="status-badge no-audio">
-                                    No audio
-                                </span>
-                            `
+                                ? `
+                                    <span class="status-badge has-audio">
+                                        Audio uploaded
+                                    </span>
+                                `
+                                : `
+                                    <span class="status-badge no-audio">
+                                        No audio
+                                    </span>
+                                `
                         }
 
                     </td>
 
-                    <td>
-                        ${audioHTML}
+                    <td
+                        data-audio-cell="${word.id}"
+                    >
+                        ${
+                            hasAudio
+                                ? `
+                                    <span>
+                                        Loading...
+                                    </span>
+                                `
+                                : "—"
+                        }
                     </td>
 
                     <td>
@@ -257,7 +292,11 @@ function renderWords() {
                             class="action-button"
                             data-word-id="${word.id}"
                         >
-                            ${hasAudio ? "Manage" : "Upload"}
+                            ${
+                                hasAudio
+                                    ? "Manage"
+                                    : "Upload"
+                            }
                         </button>
 
                     </td>
@@ -266,27 +305,55 @@ function renderWords() {
             `;
 
         }).join("");
-}
 
 
-/* =========================================
-   AUDIO URL
-========================================= */
+    /*
+     * Generate signed URLs only for
+     * words that actually have audio.
+     */
 
-function getAudioURL(path) {
+    await Promise.all(
+        filteredWords.map(async word => {
 
-    if (!path) {
-        return null;
-    }
+            if (!word.word_audio_path) {
+                return;
+            }
 
-    const {
-        data
-    } = supabaseClient
-        .storage
-        .from("audio")
-        .getPublicUrl(path);
+            const audioURL =
+                await getAudioURL(
+                    word.word_audio_path
+                );
 
-    return data?.publicUrl || null;
+            const cell =
+                document.querySelector(
+                    `[data-audio-cell="${word.id}"]`
+                );
+
+            if (!cell) {
+                return;
+            }
+
+            if (!audioURL) {
+
+                cell.innerHTML = `
+                    <span>
+                        Unable to load audio
+                    </span>
+                `;
+
+                return;
+            }
+
+            cell.innerHTML = `
+                <audio
+                    class="audio-preview"
+                    controls
+                    src="${audioURL}"
+                ></audio>
+            `;
+
+        })
+    );
 }
 
 
@@ -294,7 +361,7 @@ function getAudioURL(path) {
    OPEN MODAL
 ========================================= */
 
-function openAudioModal(word) {
+async function openAudioModal(word) {
 
     selectedWord = word;
 
@@ -308,38 +375,51 @@ function openAudioModal(word) {
     selectedFile.textContent = "";
 
 
+    /*
+     * Existing audio
+     */
+
     if (word.word_audio_path) {
 
+        existingAudioSection.classList.remove(
+            "hidden"
+        );
+
+        deleteAudioButton.classList.remove(
+            "hidden"
+        );
+
+        audioPlayer.removeAttribute("src");
+
+        audioPlayer.load();
+
+        modalMessage.textContent =
+            "Loading current audio...";
+
+
         const audioURL =
-            getAudioURL(word.word_audio_path);
+            await getAudioURL(
+                word.word_audio_path
+            );
+
 
         if (audioURL) {
 
             audioPlayer.src =
                 audioURL;
 
-            existingAudioSection.classList.remove(
-                "hidden"
-            );
+            audioPlayer.load();
 
-            deleteAudioButton.classList.remove(
-                "hidden"
-            );
+            modalMessage.textContent = "";
 
         } else {
 
-            existingAudioSection.classList.add(
-                "hidden"
-            );
+            modalMessage.textContent =
+                "The audio file could not be loaded.";
 
-            deleteAudioButton.classList.add(
-                "hidden"
-            );
         }
 
     } else {
-
-        audioPlayer.removeAttribute("src");
 
         existingAudioSection.classList.add(
             "hidden"
@@ -348,6 +428,10 @@ function openAudioModal(word) {
         deleteAudioButton.classList.add(
             "hidden"
         );
+
+        audioPlayer.removeAttribute("src");
+
+        audioPlayer.load();
     }
 
 
@@ -369,6 +453,8 @@ function closeAudioModal() {
 
     audioPlayer.removeAttribute("src");
 
+    audioPlayer.load();
+
     audioModal.classList.add(
         "hidden"
     );
@@ -388,8 +474,8 @@ audioFile.addEventListener(
 
         selectedFile.textContent =
             file
-            ? `Selected: ${file.name}`
-            : "";
+                ? `Selected: ${file.name}`
+                : "";
 
     }
 );
@@ -405,8 +491,10 @@ async function uploadAudio() {
         return;
     }
 
+
     const file =
         audioFile.files[0];
+
 
     if (!file) {
 
@@ -446,23 +534,32 @@ async function uploadAudio() {
     try {
 
         /*
-         * If the word already has audio,
-         * remove the old file first.
+         * Remove old audio if it exists.
          */
 
         if (selectedWord.word_audio_path) {
 
-            await supabaseClient
+            const {
+                error: removeError
+            } = await supabaseClient
                 .storage
                 .from("audio")
                 .remove([
                     selectedWord.word_audio_path
                 ]);
+
+            if (removeError) {
+                console.warn(
+                    "Old audio could not be removed:",
+                    removeError
+                );
+            }
         }
 
 
         /*
-         * Use a stable path based on the word ID.
+         * Keep the storage path based on
+         * the word UUID.
          */
 
         const extension =
@@ -493,8 +590,7 @@ async function uploadAudio() {
 
 
         /*
-         * Save the storage path
-         * in the words table.
+         * Save the path in the database.
          */
 
         const {
@@ -504,20 +600,20 @@ async function uploadAudio() {
             .update({
                 word_audio_path: filePath
             })
-            .eq("id", selectedWord.id);
+            .eq(
+                "id",
+                selectedWord.id
+            );
 
 
         if (updateError) {
 
-            /*
-             * If database update fails,
-             * remove the uploaded file.
-             */
-
             await supabaseClient
                 .storage
                 .from("audio")
-                .remove([filePath]);
+                .remove([
+                    filePath
+                ]);
 
             throw updateError;
         }
@@ -530,16 +626,30 @@ async function uploadAudio() {
             "Word audio updated successfully.";
 
 
+        /*
+         * Reload list.
+         */
+
         await loadWords();
 
 
+        /*
+         * Get the refreshed word.
+         */
+
         const updatedWord =
             allWords.find(
-                word => word.id === selectedWord.id
+                word =>
+                    word.id === selectedWord.id
             );
 
+
         if (updatedWord) {
-            openAudioModal(updatedWord);
+
+            await openAudioModal(
+                updatedWord
+            );
+
         }
 
     } catch (error) {
@@ -578,6 +688,7 @@ async function deleteAudio() {
             `Delete pronunciation audio for "${selectedWord.word}"?`
         );
 
+
     if (!confirmed) {
         return;
     }
@@ -602,7 +713,9 @@ async function deleteAudio() {
         } = await supabaseClient
             .storage
             .from("audio")
-            .remove([path]);
+            .remove([
+                path
+            ]);
 
 
         if (storageError) {
@@ -617,7 +730,10 @@ async function deleteAudio() {
             .update({
                 word_audio_path: null
             })
-            .eq("id", selectedWord.id);
+            .eq(
+                "id",
+                selectedWord.id
+            );
 
 
         if (updateError) {
@@ -625,11 +741,12 @@ async function deleteAudio() {
         }
 
 
-        modalMessage.textContent =
-            "Audio deleted successfully.";
-
         mediaMessage.textContent =
             "Word audio removed successfully.";
+
+
+        modalMessage.textContent =
+            "Audio deleted successfully.";
 
 
         await loadWords();
@@ -637,13 +754,21 @@ async function deleteAudio() {
 
         const updatedWord =
             allWords.find(
-                word => word.id === selectedWord.id
+                word =>
+                    word.id === selectedWord.id
             );
 
+
         if (updatedWord) {
-            openAudioModal(updatedWord);
+
+            await openAudioModal(
+                updatedWord
+            );
+
         } else {
+
             closeAudioModal();
+
         }
 
     } catch (error) {
@@ -680,7 +805,7 @@ statusFilter.addEventListener(
 
 wordsTableBody.addEventListener(
     "click",
-    function (event) {
+    async function (event) {
 
         const button =
             event.target.closest(
@@ -691,14 +816,20 @@ wordsTableBody.addEventListener(
             return;
         }
 
+
         const word =
             allWords.find(
                 item =>
                     item.id === button.dataset.wordId
             );
 
+
         if (word) {
-            openAudioModal(word);
+
+            await openAudioModal(
+                word
+            );
+
         }
 
     }
@@ -710,6 +841,7 @@ closeModal.addEventListener(
     closeAudioModal
 );
 
+
 cancelButton.addEventListener(
     "click",
     closeAudioModal
@@ -720,7 +852,9 @@ audioModal.addEventListener(
     "click",
     function (event) {
 
-        if (event.target === audioModal) {
+        if (
+            event.target === audioModal
+        ) {
             closeAudioModal();
         }
 
@@ -752,6 +886,7 @@ logoutButton.addEventListener(
 
         window.location.href =
             "login.html";
+
     }
 );
 
@@ -762,16 +897,34 @@ logoutButton.addEventListener(
 
 function escapeHTML(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return "";
     }
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
@@ -780,14 +933,19 @@ function getFileExtension(filename) {
     const parts =
         filename.split(".");
 
+
     if (parts.length < 2) {
         return "mp3";
     }
 
+
     return parts
         .pop()
         .toLowerCase()
-        .replace(/[^a-z0-9]/g, "") || "mp3";
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        ) || "mp3";
 }
 
 
@@ -800,9 +958,11 @@ async function init() {
     const isAdmin =
         await checkAdmin();
 
+
     if (!isAdmin) {
         return;
     }
+
 
     await loadWords();
 }
