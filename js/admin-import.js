@@ -1,3 +1,4 @@
+```javascript
 const dictionaryFile =
     document.getElementById("dictionaryFile");
 
@@ -36,7 +37,6 @@ const cancelImportButton =
 
 
 let selectedFile = null;
-
 let importedEntries = [];
 
 
@@ -64,17 +64,15 @@ async function checkAdminAccess() {
         data: profile,
         error: profileError
     } = await supabaseClient
-
         .from("profiles")
-
         .select("role")
-
         .eq("id", user.id)
-
         .single();
 
 
     if (profileError || !profile) {
+
+        console.error(profileError);
 
         window.location.href = "login.html";
 
@@ -186,7 +184,237 @@ function formatFileSize(bytes) {
 
 
 /* =========================================
-   PREVIEW
+   READ DOCX
+========================================= */
+
+async function readDocxFile(file) {
+
+    const arrayBuffer =
+        await file.arrayBuffer();
+
+
+    if (typeof JSZip === "undefined") {
+
+        throw new Error(
+            "JSZip could not be loaded."
+        );
+    }
+
+
+    const zip =
+        await JSZip.loadAsync(arrayBuffer);
+
+
+    const documentFile =
+        zip.file("word/document.xml");
+
+
+    if (!documentFile) {
+
+        throw new Error(
+            "The selected file does not contain a valid Word document."
+        );
+    }
+
+
+    const xml =
+        await documentFile.async("string");
+
+
+    if (!xml || !xml.trim()) {
+
+        throw new Error(
+            "The Word document contains no readable content."
+        );
+    }
+
+
+    return extractParagraphs(xml);
+}
+
+
+/* =========================================
+   EXTRACT DOCX PARAGRAPHS
+========================================= */
+
+function extractParagraphs(xml) {
+
+    const parser =
+        new DOMParser();
+
+
+    const xmlDocument =
+        parser.parseFromString(
+            xml,
+            "application/xml"
+        );
+
+
+    const parserError =
+        xmlDocument.querySelector("parsererror");
+
+
+    if (parserError) {
+
+        throw new Error(
+            "Unable to read the internal Word document structure."
+        );
+    }
+
+
+    const paragraphs =
+        Array.from(
+            xmlDocument.getElementsByTagName("w:p")
+        );
+
+
+    const results = [];
+
+
+    paragraphs.forEach(function (paragraph) {
+
+        /*
+         * A Word paragraph can contain many runs.
+         *
+         * Example:
+         *
+         * <w:p>
+         *   <w:r>
+         *     <w:t>Kota</w:t>
+         *   </w:r>
+         * </w:p>
+         *
+         * We collect every w:t inside the paragraph.
+         */
+
+        const textNodes =
+            Array.from(
+                paragraph.getElementsByTagName("w:t")
+            );
+
+
+        let text = "";
+
+
+        textNodes.forEach(function (node) {
+
+            text += node.textContent || "";
+
+        });
+
+
+        text =
+            text
+                .replace(/\u00A0/g, " ")
+                .replace(/\r/g, "")
+                .replace(/\n/g, " ")
+                .trim();
+
+
+        /*
+         * Ignore completely empty Word paragraphs.
+         */
+
+        if (text.length > 0) {
+
+            results.push(text);
+        }
+
+    });
+
+
+    console.log(
+        "DOCX paragraphs found:",
+        results
+    );
+
+
+    return results;
+}
+
+
+/* =========================================
+   PARSE DICTIONARY
+========================================= */
+
+function parseDictionary(paragraphs) {
+
+    const entries = [];
+
+
+    /*
+     * Your document format is:
+     *
+     * WORD
+     * MEANING
+     * EXAMPLE
+     *
+     * WORD
+     * MEANING
+     * EXAMPLE
+     *
+     * etc.
+     */
+
+    for (
+        let index = 0;
+        index < paragraphs.length;
+        index += 3
+    ) {
+
+        const word =
+            paragraphs[index] || "";
+
+        const meaning =
+            paragraphs[index + 1] || "";
+
+        const example =
+            paragraphs[index + 2] || "";
+
+
+        /*
+         * Ignore completely empty groups.
+         */
+
+        if (
+            !word &&
+            !meaning &&
+            !example
+        ) {
+
+            continue;
+        }
+
+
+        const valid =
+            Boolean(
+                word &&
+                meaning &&
+                example
+            );
+
+
+        entries.push({
+
+            word: word,
+
+            meaning: meaning,
+
+            example: example,
+
+            valid: valid
+
+        });
+
+    }
+
+
+    return entries;
+}
+
+
+/* =========================================
+   PREVIEW BUTTON
 ========================================= */
 
 previewButton.addEventListener(
@@ -199,37 +427,88 @@ previewButton.addEventListener(
         }
 
 
+        previewButton.disabled = true;
+
         importMessage.textContent =
             "Reading dictionary document...";
 
 
-        previewButton.disabled = true;
+        previewSection.hidden = false;
 
 
         try {
 
-            /*
-             * DOCX parsing will be connected here.
-             *
-             * For now we verify that the file has
-             * been selected correctly.
-             */
-
-            importedEntries = [];
+            const paragraphs =
+                await readDocxFile(
+                    selectedFile
+                );
 
 
-            previewSection.hidden = false;
+            console.log(
+                "Extracted paragraphs:",
+                paragraphs
+            );
+
+
+            if (paragraphs.length === 0) {
+
+                importedEntries = [];
+
+                renderPreview();
+
+
+                importMessage.textContent =
+                    "No text was found in the Word document.";
+
+                return;
+            }
+
+
+            importedEntries =
+                parseDictionary(
+                    paragraphs
+                );
+
+
+            console.log(
+                "Parsed dictionary entries:",
+                importedEntries
+            );
+
 
             renderPreview();
 
 
-            importMessage.textContent =
-                "Document selected successfully. The import parser will be connected next.";
+            if (importedEntries.length === 0) {
+
+                importMessage.textContent =
+                    "No dictionary entries were found.";
+
+            } else {
+
+                const validCount =
+                    importedEntries.filter(
+                        entry => entry.valid
+                    ).length;
+
+
+                importMessage.textContent =
+                    `${validCount} valid dictionary entries found.`;
+            }
 
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "DOCX IMPORT ERROR:",
+                error
+            );
+
+
+            importedEntries = [];
+
+            renderPreview();
+
 
             importMessage.textContent =
                 error.message ||
@@ -239,12 +518,13 @@ previewButton.addEventListener(
 
             previewButton.disabled = false;
         }
+
     }
 );
 
 
 /* =========================================
-   PREVIEW RENDERING
+   RENDER PREVIEW
 ========================================= */
 
 function renderPreview() {
@@ -256,7 +536,9 @@ function renderPreview() {
         importedEntries.length;
 
 
-    if (importedEntries.length === 0) {
+    if (
+        importedEntries.length === 0
+    ) {
 
         previewEmpty.hidden = false;
 
@@ -268,7 +550,15 @@ function renderPreview() {
 
     previewEmpty.hidden = true;
 
-    importButton.disabled = false;
+
+    const hasInvalidEntries =
+        importedEntries.some(
+            entry => !entry.valid
+        );
+
+
+    importButton.disabled =
+        hasInvalidEntries;
 
 
     importedEntries.forEach(
@@ -282,49 +572,102 @@ function renderPreview() {
                 "import-preview-card";
 
 
+            if (!entry.valid) {
+
+                card.classList.add(
+                    "import-invalid"
+                );
+            }
+
+
             card.innerHTML = `
 
-                <div>
+                <div class="import-preview-content">
 
-                    <strong>
-                        ${escapeHtml(entry.word)}
-                    </strong>
+                    <div class="import-preview-number">
+                        ${index + 1}
+                    </div>
 
-                    ${
-                        entry.meaning
-                            ? `<p>
-                                ${escapeHtml(entry.meaning)}
-                               </p>`
-                            : `<p class="missing">
-                                Meaning missing
-                               </p>`
-                    }
+                    <div>
+
+                        <strong>
+                            ${escapeHtml(entry.word)}
+                        </strong>
+
+                        <p>
+                            <b>Meaning:</b>
+                            ${escapeHtml(
+                                entry.meaning ||
+                                "Missing"
+                            )}
+                        </p>
+
+                        <p>
+                            <b>Example:</b>
+                            ${escapeHtml(
+                                entry.example ||
+                                "Missing"
+                            )}
+                        </p>
+
+                    </div>
 
                 </div>
 
+                <span class="${entry.valid
+                    ? ""
+                    : "invalid-label"}">
 
-                <span>
-                    Draft
+                    ${entry.valid
+                        ? "Ready"
+                        : "Incomplete"}
+
                 </span>
 
             `;
 
 
             previewList.appendChild(card);
+
         }
     );
+
+
+    if (hasInvalidEntries) {
+
+        importMessage.textContent =
+            "Some entries are incomplete. Check the document structure before importing.";
+    }
 }
 
 
 /* =========================================
-   IMPORT
+   IMPORT INTO SUPABASE
 ========================================= */
 
 importButton.addEventListener(
     "click",
     async function () {
 
-        if (importedEntries.length === 0) {
+        if (
+            importedEntries.length === 0
+        ) {
+
+            return;
+        }
+
+
+        const invalid =
+            importedEntries.some(
+                entry => !entry.valid
+            );
+
+
+        if (invalid) {
+
+            alert(
+                "Please correct the incomplete entries before importing."
+            );
 
             return;
         }
@@ -350,24 +693,187 @@ importButton.addEventListener(
 
         try {
 
-            /*
-             * Database import will be connected
-             * after the document parser is completed.
-             */
+            let importedCount = 0;
+            let skippedCount = 0;
+
+
+            for (
+                const entry
+                of importedEntries
+            ) {
+
+                /*
+                 * Check whether this word already exists.
+                 */
+
+                const {
+                    data: existingWords,
+                    error: existingError
+                } = await supabaseClient
+                    .from("words")
+                    .select("id")
+                    .ilike(
+                        "word",
+                        entry.word
+                    )
+                    .limit(1);
+
+
+                if (existingError) {
+
+                    throw existingError;
+                }
+
+
+                if (
+                    existingWords &&
+                    existingWords.length > 0
+                ) {
+
+                    skippedCount++;
+
+                    continue;
+                }
+
+
+                /*
+                 * Create the word.
+                 */
+
+                const {
+                    data: newWord,
+                    error: wordError
+                } = await supabaseClient
+                    .from("words")
+                    .insert({
+
+                        word:
+                            entry.word,
+
+                        short_meaning:
+                            entry.meaning,
+
+                        is_premium:
+                            false,
+
+                        is_published:
+                            false
+
+                    })
+                    .select("id")
+                    .single();
+
+
+                if (wordError) {
+
+                    throw wordError;
+                }
+
+
+                /*
+                 * Create the meaning.
+                 */
+
+                const {
+                    data: newMeaning,
+                    error: meaningError
+                } = await supabaseClient
+                    .from("meanings")
+                    .insert({
+
+                        word_id:
+                            newWord.id,
+
+                        meaning:
+                            entry.meaning,
+
+                        display_order:
+                            1
+
+                    })
+                    .select("id")
+                    .single();
+
+
+                if (meaningError) {
+
+                    throw meaningError;
+                }
+
+
+                /*
+                 * Create the example.
+                 */
+
+                const {
+                    error: exampleError
+                } = await supabaseClient
+                    .from("examples")
+                    .insert({
+
+                        meaning_id:
+                            newMeaning.id,
+
+                        example_text:
+                            entry.example,
+
+                        display_order:
+                            1
+
+                    });
+
+
+                if (exampleError) {
+
+                    throw exampleError;
+                }
+
+
+                importedCount++;
+
+            }
+
 
             importMessage.textContent =
-                "Import system ready for database connection.";
+                `${importedCount} entries imported successfully as drafts.` +
+                (
+                    skippedCount > 0
+                        ? ` ${skippedCount} existing entries were skipped.`
+                        : ""
+                );
+
+
+            importedEntries = [];
+
+
+            renderPreview();
+
+
+            dictionaryFile.value = "";
+
+            selectedFile = null;
+
+            fileInfo.hidden = true;
+
+            previewButton.disabled = true;
+
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "IMPORT ERROR:",
+                error
+            );
+
 
             importMessage.textContent =
                 error.message ||
                 "Unable to import dictionary entries.";
 
+
             importButton.disabled = false;
         }
+
     }
 );
 
@@ -402,15 +908,30 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replaceAll("&", "&amp;")
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
 
-        .replaceAll("<", "&lt;")
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
 
-        .replaceAll(">", "&gt;")
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
 
-        .replaceAll('"', "&quot;")
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
 
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 }
 
 
@@ -428,7 +949,9 @@ async function initialize() {
 
         return;
     }
+
 }
 
 
 initialize();
+```
