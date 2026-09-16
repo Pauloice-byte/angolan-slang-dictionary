@@ -1556,39 +1556,18 @@ function renderDictionaryCards(
 
                             : `
 
-                                <p>
+                                <p
+                                    style="
+                                        margin-top: 15px;
+                                        color: var(--green);
+                                        font-size: 13px;
+                                        font-weight: 600;
+                                    "
+                                >
 
-                                    ${escapeHtml(
-                                        word.firstMeaning ||
-                                        word.shortMeaning ||
-                                        "Meaning not available."
-                                    )}
+                                    Free word
 
                                 </p>
-
-
-                                ${
-                                    word.firstExample
-                                        ? `
-                                            <div
-                                                style="
-                                                    margin-top: 15px;
-                                                    padding: 16px;
-                                                    background: var(--surface-soft);
-                                                    border-radius: var(--radius-md);
-                                                    color: var(--text-secondary);
-                                                    line-height: 1.7;
-                                                "
-                                            >
-
-                                                “${escapeHtml(
-                                                    word.firstExample
-                                                )}”
-
-                                            </div>
-                                        `
-                                        : ""
-                                }
 
                             `
                     }
@@ -1615,25 +1594,24 @@ function renderDictionaryCards(
                         </button>
 
 
-                        ${
-                            word.isPremium
-                                ? ""
-                                : `
-                                    <button
-                                        class="text-button"
-                                        type="button"
-                                        onclick="toggleSavedWord(${word.id})"
-                                    >
+                        <button
+                            class="text-button"
+                            type="button"
+                            onclick="toggleSavedWord(${word.id})"
+                            aria-label="${
+                                saved
+                                    ? "Remove saved word"
+                                    : "Save word"
+                            }"
+                        >
 
-                                        ${
-                                            saved
-                                                ? "♥ Saved"
-                                                : "♡ Save"
-                                        }
+                            ${
+                                saved
+                                    ? "♥ Saved"
+                                    : "♡ Save"
+                            }
 
-                                    </button>
-                                `
-                        }
+                        </button>
 
                     </div>
 
@@ -1645,8 +1623,6 @@ function renderDictionaryCards(
     ).join("");
 
 }
-
-
 /* =========================================
    DICTIONARY SEARCH + FILTER
 ========================================= */
