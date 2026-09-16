@@ -649,3 +649,84 @@ body {
     }
 
 }
+
+/* =========================================
+   ADMIN CATEGORIES
+========================================= */
+
+.category-admin-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.category-admin-main {
+    flex: 1;
+}
+
+.category-admin-main h3 {
+    margin: 0 0 6px;
+}
+
+.category-admin-main p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.category-admin-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+.category-status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.category-status.active {
+    background: #e8f5e9;
+}
+
+.category-status.inactive {
+    background: #f1f1f1;
+}
+
+.category-admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn.small {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+
+    .category-admin-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .category-admin-actions {
+        width: 100%;
+    }
+
+    .category-admin-actions .btn {
+        flex: 1;
+    }
+
+}
