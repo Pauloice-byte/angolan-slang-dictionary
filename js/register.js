@@ -31,11 +31,7 @@ registerForm.addEventListener("submit", async function (event) {
                 },
 
                 emailRedirectTo:
-                    window.location.origin +
-                    window.location.pathname.replace(
-                        "register.html",
-                        "onboarding.html"
-                    )
+                    "https://angolan-slang-dictionary.vercel.app/login.html"
             }
         });
 
@@ -45,15 +41,12 @@ registerForm.addEventListener("submit", async function (event) {
 
         if (data.user) {
 
-            if (!data.session) {
+            registerMessage.textContent =
+                "Account created successfully. Please check your email to confirm your account.";
 
-                registerMessage.textContent =
-                    "Account created. Please check your email to confirm your account.";
+            registerForm.reset();
 
-                return;
-            }
-
-            window.location.href = "onboarding.html";
+            return;
         }
 
     } catch (error) {
