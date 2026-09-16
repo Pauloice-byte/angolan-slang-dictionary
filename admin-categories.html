@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Categories — Angolan Slang Dictionary</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="admin-header">
+
+        <div class="admin-header-inner">
+
+            <div>
+
+                <h1>Angolan Slang Dictionary</h1>
+
+                <p>Admin Panel</p>
+
+            </div>
+
+
+            <nav>
+
+                <a href="admin.html">
+                    Dashboard
+                </a>
+
+                <a href="admin-words.html">
+                    Words
+                </a>
+
+                <a href="admin-import.html">
+                    Import
+                </a>
+
+                <a href="admin-categories.html">
+                    Categories
+                </a>
+
+                <button
+                    id="logoutButton"
+                    class="btn"
+                    type="button"
+                >
+                    Log Out
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="admin-main">
+
+
+        <!-- =========================================
+             PAGE HEADER
+        ========================================== -->
+
+        <div class="admin-page-header">
+
+            <div>
+
+                <h2>Categories</h2>
+
+                <p>
+                    Organize dictionary words into categories.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addCategoryButton"
+                class="btn primary"
+                type="button"
+            >
+                + Add Category
+            </button>
+
+        </div>
+
+
+        <div
+            id="categoryMessage"
+            class="admin-message"
+        ></div>
+
+
+        <!-- =========================================
+             CATEGORY FORM
+        ========================================== -->
+
+        <section
+            id="categoryFormCard"
+            class="import-card"
+            hidden
+        >
+
+            <h2 id="categoryFormTitle">
+                Add Category
+            </h2>
+
+
+            <form id="categoryForm">
+
+
+                <div class="form-group">
+
+                    <label for="categoryName">
+                        Category Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoryName"
+                        placeholder="e.g. Everyday"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="categoryDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="categoryDescription"
+                        rows="3"
+                        placeholder="Brief description of this category."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="categoryOrder">
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="categoryOrder"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="status-options">
+
+                    <label class="checkbox-option">
+
+                        <input
+                            type="checkbox"
+                            id="categoryActive"
+                            checked
+                        >
+
+                        <span>
+                            Active
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="cancelCategoryButton"
+                        class="btn"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="saveCategoryButton"
+                        class="btn primary"
+                    >
+                        Save Category
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================================
+             CATEGORY LIST
+        ========================================== -->
+
+        <section class="import-card">
+
+            <div class="preview-header">
+
+                <div>
+
+                    <h2>All Categories</h2>
+
+                    <p>
+                        Manage the categories used throughout the dictionary.
+                    </p>
+
+                </div>
+
+
+                <div class="preview-count">
+
+                    <strong id="categoryCount">
+                        0
+                    </strong>
+
+                    <span>
+                        Categories
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div id="categoryList"></div>
+
+
+            <div
+                id="categoryEmpty"
+                class="empty-state"
+                hidden
+            >
+                No categories found.
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/admin-categories.js"></script>
+
+</body>
+
+</html>
