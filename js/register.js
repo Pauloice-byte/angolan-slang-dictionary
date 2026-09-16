@@ -24,10 +24,18 @@ registerForm.addEventListener("submit", async function (event) {
         const { data, error } = await supabaseClient.auth.signUp({
             email: email,
             password: password,
+
             options: {
                 data: {
                     full_name: fullName
-                }
+                },
+
+                emailRedirectTo:
+                    window.location.origin +
+                    window.location.pathname.replace(
+                        "register.html",
+                        "onboarding.html"
+                    )
             }
         });
 
@@ -35,20 +43,7 @@ registerForm.addEventListener("submit", async function (event) {
             throw error;
         }
 
-        /*
-         * Supabase's database trigger automatically creates
-         * the user's profile when the Auth account is created.
-         */
-
         if (data.user) {
-
-            registerMessage.textContent =
-                "Account created successfully.";
-
-            /*
-             * If email confirmation is enabled,
-             * there may not be an active session yet.
-             */
 
             if (!data.session) {
 
