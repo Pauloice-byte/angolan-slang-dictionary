@@ -96,12 +96,17 @@ async function checkAdminAccess() {
    FILE SELECTION
 ========================================= */
 
+```javascript
 dictionaryFile.addEventListener(
     "change",
     function () {
 
+        console.log("FILE CHANGE EVENT FIRED");
+
         const file =
             dictionaryFile.files[0];
+
+        console.log("SELECTED FILE:", file);
 
 
         if (!file) {
@@ -112,6 +117,9 @@ dictionaryFile.addEventListener(
 
             previewButton.disabled = true;
 
+            importMessage.textContent =
+                "No file selected.";
+
             return;
         }
 
@@ -121,6 +129,12 @@ dictionaryFile.addEventListener(
                 .split(".")
                 .pop()
                 .toLowerCase();
+
+
+        console.log(
+            "FILE EXTENSION:",
+            fileExtension
+        );
 
 
         if (fileExtension !== "docx") {
@@ -156,10 +170,17 @@ dictionaryFile.addEventListener(
 
         previewButton.disabled = false;
 
-        importMessage.textContent = "";
+
+        importMessage.textContent =
+            "Document selected successfully.";
+
+        
+        console.log(
+            "PREVIEW BUTTON ENABLED"
+        );
     }
 );
-
+```
 
 /* =========================================
    FILE SIZE
