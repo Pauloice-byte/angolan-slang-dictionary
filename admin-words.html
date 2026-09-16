@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Words — Admin</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="admin-page">
+
+        <header class="admin-header">
+
+            <div>
+                <h1>Dictionary Words</h1>
+                <p>Manage your dictionary entries.</p>
+            </div>
+
+            <div>
+                <a href="admin.html" class="btn secondary">
+                    Dashboard
+                </a>
+
+                <a href="admin-import.html" class="btn primary">
+                    Import Words
+                </a>
+            </div>
+
+        </header>
+
+
+        <section class="word-toolbar">
+
+            <input
+                type="search"
+                id="wordSearch"
+                placeholder="Search words..."
+            >
+
+            <select id="statusFilter">
+
+                <option value="all">
+                    All Statuses
+                </option>
+
+                <option value="published">
+                    Published
+                </option>
+
+                <option value="draft">
+                    Draft
+                </option>
+
+            </select>
+
+            <select id="premiumFilter">
+
+                <option value="all">
+                    Free & Premium
+                </option>
+
+                <option value="free">
+                    Free
+                </option>
+
+                <option value="premium">
+                    Premium
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <section>
+
+            <div id="wordsLoading">
+                Loading words...
+            </div>
+
+            <div id="wordsList"></div>
+
+            <div id="wordsEmpty" class="empty-state" hidden>
+                No dictionary words found.
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/admin-words.js"></script>
+
+</body>
+
+</html>
