@@ -14,6 +14,10 @@ const appState = {
 
     previousPage: "home",
 
+    user: null,
+
+    profile: null,
+
     savedWords: JSON.parse(
         localStorage.getItem(
             "angolanSlangSavedWords"
@@ -26,19 +30,8 @@ const appState = {
 /* =========================================
    TEMPORARY DEMO DATA
 
-   IMPORTANT:
-   This is NOT the permanent dictionary.
-
-   These entries exist only so that we can
-   build and test the application interface.
-
-   Later:
-
-   Supabase
-       ↓
-   loadWords()
-       ↓
-   App
+   This will later be replaced by
+   Supabase dictionary data.
 ========================================= */
 
 const demoWords = [
@@ -71,9 +64,9 @@ const demoWords = [
 
 
 /* =========================================
-   DAILY WORDS
+   TEMPORARY DAILY WORDS
 
-   Temporary only.
+   Later this will come from Supabase.
 ========================================= */
 
 const dailyWords = [
@@ -88,6 +81,175 @@ const dailyWords = [
 
 
 /* =========================================
+   AUTHENTICATION
+========================================= */
+
+async function initializeUser() {
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabaseClient.auth.getUser();
+
+
+        if (error) {
+
+            console.error(
+                "Authentication error:",
+                error
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        appState.user = user;
+
+
+        /* =====================================
+           LOAD USER PROFILE
+        ===================================== */
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(
+                "id, email, full_name, role, onboarding_completed"
+            )
+            .eq(
+                "id",
+                user.id
+            )
+            .single();
+
+
+        if (profileError) {
+
+            console.error(
+                "Profile loading error:",
+                profileError
+            );
+
+            return;
+
+        }
+
+
+        appState.profile = profile;
+
+
+        /* =====================================
+           CHECK ROLE
+        ===================================== */
+
+        if (
+            profile.role === "admin"
+        ) {
+
+            window.location.href =
+                "admin.html";
+
+            return;
+
+        }
+
+
+        /* =====================================
+           CHECK ONBOARDING
+        ===================================== */
+
+        if (
+            !profile.onboarding_completed
+        ) {
+
+            window.location.href =
+                "onboarding.html";
+
+            return;
+
+        }
+
+
+        /* =====================================
+           START APPLICATION
+        ===================================== */
+
+        renderPage();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Application initialization error:",
+            error
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}
+
+
+/* =========================================
+   GET USER NAME
+========================================= */
+
+function getUserName() {
+
+    if (
+        appState.profile &&
+        appState.profile.full_name
+    ) {
+
+        return appState.profile.full_name
+            .trim()
+            .split(" ")[0];
+
+    }
+
+
+    if (
+        appState.user &&
+        appState.user.user_metadata &&
+        appState.user.user_metadata.full_name
+    ) {
+
+        return appState.user.user_metadata.full_name
+            .trim()
+            .split(" ")[0];
+
+    }
+
+
+    return "there";
+
+}
+
+
+/* =========================================
    NAVIGATION
 ========================================= */
 
@@ -96,7 +258,8 @@ function navigateTo(page) {
     appState.previousPage =
         appState.currentPage;
 
-    appState.currentPage = page;
+    appState.currentPage =
+        page;
 
     closeMenu();
 
@@ -254,6 +417,10 @@ function renderPage() {
 
 function renderHome() {
 
+    const userName =
+        getUserName();
+
+
     return `
 
         <section class="home-page">
@@ -267,16 +434,16 @@ function renderHome() {
 
                 <h2>
 
-                    The words.
+                    Welcome,
 
                     <br>
 
-                    The culture.
+                    ${userName}.
 
                     <br>
 
                     <span>
-                        The meaning.
+                        Let's discover.
                     </span>
 
                 </h2>
@@ -364,69 +531,69 @@ function renderHome() {
 
                 <div class="daily-slider">
 
-    <div class="daily-slider-track">
+                    <div class="daily-slider-track">
 
-        ${dailyWords.map(
-            (item, index) => `
+                        ${dailyWords.map(
+                            (item, index) => `
 
-            <article class="daily-slide">
+                            <article class="daily-slide">
 
-                <div class="daily-card">
+                                <div class="daily-card">
 
-                    <span class="daily-number">
+                                    <span class="daily-number">
 
-                        ${String(index + 1).padStart(2, "0")} / 03
+                                        ${String(index + 1).padStart(2, "0")} / 03
 
-                    </span>
+                                    </span>
 
-                    <h3>
+                                    <h3>
 
-                        ${item.word}
+                                        ${item.word}
 
-                    </h3>
+                                    </h3>
 
-                    <p>
+                                    <p>
 
-                        Discover today's word.
+                                        Discover today's word.
 
-                    </p>
+                                    </p>
 
-                    <button
-                        type="button"
-                        onclick="openDemoWord(${item.id})"
-                    >
+                                    <button
+                                        type="button"
+                                        onclick="openDemoWord(${item.id})"
+                                    >
 
-                        Discover →
+                                        Discover →
 
-                    </button>
+                                    </button>
+
+                                </div>
+
+                            </article>
+
+                        `
+                        ).join("")}
+
+                    </div>
 
                 </div>
 
-            </article>
 
-        `
-        ).join("")}
+                <div class="slider-dots">
 
-    </div>
+                    ${dailyWords.map(
+                        (_, index) => `
 
-</div>
+                        <button
+                            class="slider-dot ${index === 0 ? "active" : ""}"
+                            type="button"
+                            aria-label="Go to word ${index + 1}"
+                        ></button>
 
+                    `
+                    ).join("")}
 
-<div class="slider-dots">
-
-    ${dailyWords.map(
-        (_, index) => `
-
-        <button
-            class="slider-dot ${index === 0 ? "active" : ""}"
-            type="button"
-            aria-label="Go to word ${index + 1}"
-        ></button>
-
-    `
-    ).join("")}
-
-</div>
+                </div>
 
             </section>
 
@@ -902,8 +1069,9 @@ document
 
 
 /* =========================================
-   INITIALIZE APPLICATION
+   SLIDER DOTS
 ========================================= */
+
 document.addEventListener(
     "scroll",
     () => {
@@ -952,4 +1120,10 @@ document.addEventListener(
     },
     true
 );
-renderPage();
+
+
+/* =========================================
+   INITIALIZE APPLICATION
+========================================= */
+
+initializeUser();
