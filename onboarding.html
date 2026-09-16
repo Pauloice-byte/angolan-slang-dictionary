@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Welcome — Angolan Slang Dictionary</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <h1>Welcome!</h1>
+
+            <p>
+                Tell us a little about why you're using the Angolan Slang Dictionary.
+            </p>
+
+            <form id="onboardingForm">
+
+                <label for="reason">
+                    Why are you using the app?
+                </label>
+
+                <select id="reason" required>
+
+                    <option value="" disabled selected>
+                        Select an option
+                    </option>
+
+                    <option value="angolan">
+                        I'm Angolan
+                    </option>
+
+                    <option value="learning_angola">
+                        I'm learning about Angola
+                    </option>
+
+                    <option value="learning_portuguese">
+                        I'm learning Portuguese
+                    </option>
+
+                    <option value="understand_slang">
+                        I want to understand Angolan slang
+                    </option>
+
+                    <option value="curious">
+                        I'm curious
+                    </option>
+
+                </select>
+
+                <button type="submit" class="btn primary">
+                    Continue
+                </button>
+
+            </form>
+
+            <p id="onboardingMessage"></p>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/onboarding.js"></script>
+
+</body>
+
+</html>
