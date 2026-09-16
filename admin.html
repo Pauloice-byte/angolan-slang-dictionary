@@ -12,23 +12,126 @@
 
 <body>
 
-    <main class="hero">
+    <main class="admin-page">
 
-        <div class="hero-content">
+        <header class="admin-header">
 
-            <h1>Admin Dashboard</h1>
-
-            <p id="adminWelcome">
-                Checking administrator access...
-            </p>
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p id="adminWelcome">Loading...</p>
+            </div>
 
             <button id="logoutButton" class="btn secondary">
                 Log Out
             </button>
 
-        </div>
+        </header>
+
+
+        <section class="admin-stats">
+
+            <div class="stat-card">
+                <span>Total Words</span>
+                <strong id="totalWords">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Published Words</span>
+                <strong id="publishedWords">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Draft Words</span>
+                <strong id="draftWords">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Free Words</span>
+                <strong id="freeWords">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Premium Words</span>
+                <strong id="premiumWords">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Packs</span>
+                <strong id="totalPacks">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Users</span>
+                <strong id="totalUsers">—</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Games Played</span>
+                <strong id="gamesPlayed">—</strong>
+            </div>
+
+        </section>
+
+
+        <section class="admin-actions">
+
+            <h2>Quick Actions</h2>
+
+            <div class="action-grid">
+
+                <a href="admin-words.html" class="action-card">
+                    <strong>Words</strong>
+                    <span>Manage dictionary entries</span>
+                </a>
+
+                <a href="admin-import.html" class="action-card">
+                    <strong>Import Words</strong>
+                    <span>Upload your dictionary document</span>
+                </a>
+
+                <a href="admin-packs.html" class="action-card">
+                    <strong>Packs</strong>
+                    <span>Manage themed collections</span>
+                </a>
+
+                <a href="admin-daily.html" class="action-card">
+                    <strong>Daily 3</strong>
+                    <span>Choose the three daily words</span>
+                </a>
+
+                <a href="admin-media.html" class="action-card">
+                    <strong>Media</strong>
+                    <span>Manage audio and images</span>
+                </a>
+
+                <a href="admin-users.html" class="action-card">
+                    <strong>Users & Premium</strong>
+                    <span>Manage users and subscriptions</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="admin-status">
+
+            <h2>System Status</h2>
+
+            <div class="status-row">
+                <span>Database</span>
+                <strong id="databaseStatus">Checking...</strong>
+            </div>
+
+            <div class="status-row">
+                <span>Authentication</span>
+                <strong id="authStatus">Checking...</strong>
+            </div>
+
+        </section>
 
     </main>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
