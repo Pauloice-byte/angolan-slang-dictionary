@@ -1,2157 +1,1129 @@
-/* =========================================================
+/* =========================================
    ANGOLAN SLANG DICTIONARY
-   USER APP
-========================================================= */
+   MAIN APPLICATION
+========================================= */
 
 
-/* =========================================================
+/* =========================================
    APP STATE
-========================================================= */
+========================================= */
 
 const appState = {
+
     currentPage: "home",
-    previousPage: null,
 
-    words: [],
-    categories: [],
+    previousPage: "home",
 
-    savedWords: new Set(),
+    user: null,
 
-    loadingWords: true,
-    wordsError: null
+    profile: null,
+
+    savedWords: JSON.parse(
+        localStorage.getItem(
+            "angolanSlangSavedWords"
+        )
+    ) || [],
+
 };
 
 
-/* =========================================================
-   SUPABASE DATA
-========================================================= */
+/* =========================================
+   TEMPORARY DEMO DATA
 
-async function loadDictionaryData() {
+   This will later be replaced by
+   Supabase dictionary data.
+========================================= */
 
-    appState.loadingWords = true;
-    appState.wordsError = null;
+const demoWords = [
+
+    {
+        id: 1,
+        word: "Kota",
+        meaning: "Temporary demonstration meaning.",
+        example: "Temporary example.",
+        alternatives: []
+    },
+
+    {
+        id: 2,
+        word: "Bazar",
+        meaning: "Temporary demonstration meaning.",
+        example: "Temporary example.",
+        alternatives: []
+    },
+
+    {
+        id: 3,
+        word: "Mambo",
+        meaning: "Temporary demonstration meaning.",
+        example: "Temporary example.",
+        alternatives: []
+    }
+
+];
+
+
+/* =========================================
+   TEMPORARY DAILY WORDS
+
+   Later this will come from Supabase.
+========================================= */
+
+const dailyWords = [
+
+    demoWords[0],
+
+    demoWords[1],
+
+    demoWords[2]
+
+];
+
+
+/* =========================================
+   AUTHENTICATION
+========================================= */
+
+async function initializeUser() {
 
     try {
 
-        /* ---------------------------------------------
-           1. LOAD ACTIVE CATEGORIES
-        --------------------------------------------- */
-
         const {
-            data: categories,
-            error: categoriesError
-        } = await supabaseClient
-            .from("categories")
-            .select(`
-                id,
-                name,
-                description,
-                display_order
-            `)
-            .eq("is_active", true)
-            .order("display_order", {
-                ascending: true
-            });
-
-        if (categoriesError) {
-            throw categoriesError;
-        }
-
-        appState.categories = categories || [];
+            data: {
+                user
+            },
+            error
+        } = await supabaseClient.auth.getUser();
 
 
-        /* ---------------------------------------------
-           2. LOAD PUBLISHED WORDS
-        --------------------------------------------- */
+        if (error) {
 
-        const {
-            data: words,
-            error: wordsError
-        } = await supabaseClient
-            .from("words")
-            .select(`
-                id,
-                word,
-                pronunciation,
-                word_type,
-                category_id,
-                pack_id,
-                is_premium,
-                is_published,
-                word_audio_path,
-                short_meaning,
-                context_notes,
-                created_at
-            `)
-            .eq("is_published", true)
-            .order("word", {
-                ascending: true
-            });
-
-        if (wordsError) {
-            throw wordsError;
-        }
-
-        const loadedWords = words || [];
-
-
-        /* ---------------------------------------------
-           3. LOAD MEANINGS
-        --------------------------------------------- */
-
-        const wordIds = loadedWords.map(word => word.id);
-
-        let meanings = [];
-
-        if (wordIds.length > 0) {
-
-            const {
-                data,
+            console.error(
+                "Authentication error:",
                 error
-            } = await supabaseClient
-                .from("meanings")
-                .select(`
-                    id,
-                    word_id,
-                    meaning,
-                    display_order
-                `)
-                .in("word_id", wordIds)
-                .order("display_order", {
-                    ascending: true
-                });
-
-            if (error) {
-                throw error;
-            }
-
-            meanings = data || [];
-        }
-
-
-        /* ---------------------------------------------
-           4. LOAD EXAMPLES
-        --------------------------------------------- */
-
-        const meaningIds = meanings.map(
-            meaning => meaning.id
-        );
-
-        let examples = [];
-
-        if (meaningIds.length > 0) {
-
-            const {
-                data,
-                error
-            } = await supabaseClient
-                .from("examples")
-                .select(`
-                    id,
-                    meaning_id,
-                    example_text,
-                    audio_path,
-                    display_order
-                `)
-                .in("meaning_id", meaningIds)
-                .order("display_order", {
-                    ascending: true
-                });
-
-            if (error) {
-                throw error;
-            }
-
-            examples = data || [];
-        }
-
-
-        /* ---------------------------------------------
-           5. ORGANISE MEANINGS
-        --------------------------------------------- */
-
-        const meaningsByWord = {};
-
-        meanings.forEach(meaning => {
-
-            if (!meaningsByWord[meaning.word_id]) {
-                meaningsByWord[meaning.word_id] = [];
-            }
-
-            meaningsByWord[meaning.word_id].push({
-                id: meaning.id,
-                meaning: meaning.meaning,
-                displayOrder: meaning.display_order,
-                examples: []
-            });
-
-        });
-
-
-        /* ---------------------------------------------
-           6. ATTACH EXAMPLES
-        --------------------------------------------- */
-
-        examples.forEach(example => {
-
-            const meaning = meanings.find(
-                item => item.id === example.meaning_id
             );
 
-            if (!meaning) {
-                return;
-            }
+            window.location.href =
+                "login.html";
 
-            const wordMeanings =
-                meaningsByWord[meaning.word_id];
+            return;
 
-            if (!wordMeanings) {
-                return;
-            }
-
-            const targetMeaning =
-                wordMeanings.find(
-                    item => item.id === meaning.id
-                );
-
-            if (!targetMeaning) {
-                return;
-            }
-
-            targetMeaning.examples.push({
-                id: example.id,
-                exampleText: example.example_text,
-                audioPath: example.audio_path,
-                displayOrder: example.display_order
-            });
-
-        });
+        }
 
 
-        /* ---------------------------------------------
-           7. BUILD FINAL WORD OBJECTS
-        --------------------------------------------- */
+        if (!user) {
 
-        appState.words = loadedWords.map(word => {
+            window.location.href =
+                "login.html";
 
-            const category =
-                appState.categories.find(
-                    item => item.id === word.category_id
-                );
+            return;
 
-            const wordMeanings =
-                meaningsByWord[word.id] || [];
+        }
 
-            const firstMeaning =
-                wordMeanings[0] || null;
 
-            const firstExample =
-                firstMeaning &&
-                firstMeaning.examples.length > 0
-                    ? firstMeaning.examples[0]
-                    : null;
+        appState.user = user;
 
-            return {
 
-                id: word.id,
+        /* =====================================
+           LOAD USER PROFILE
+        ===================================== */
 
-                word: word.word,
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(
+                "id, email, full_name, role, onboarding_completed"
+            )
+            .eq(
+                "id",
+                user.id
+            )
+            .single();
 
-                pronunciation:
-                    word.pronunciation || "",
 
-                wordType:
-                    word.word_type || "",
+        if (profileError) {
 
-                categoryId:
-                    word.category_id || null,
+            console.error(
+                "Profile loading error:",
+                profileError
+            );
 
-                categoryName:
-                    category
-                        ? category.name
-                        : "",
+            return;
 
-                packId:
-                    word.pack_id || null,
+        }
 
-                isPremium:
-                    Boolean(word.is_premium),
 
-                isPublished:
-                    Boolean(word.is_published),
+        appState.profile = profile;
 
-                wordAudioPath:
-                    word.word_audio_path || "",
 
-                shortMeaning:
-                    word.short_meaning || "",
+        /* =====================================
+           CHECK ROLE
+        ===================================== */
 
-                contextNotes:
-                    word.context_notes || "",
+        if (
+            profile.role === "admin"
+        ) {
 
-                createdAt:
-                    word.created_at,
+            window.location.href =
+                "admin.html";
 
-                meanings:
-                    wordMeanings,
+            return;
 
-                firstMeaning:
-                    firstMeaning
-                        ? firstMeaning.meaning
-                        : word.short_meaning || "",
+        }
 
-                firstExample:
-                    firstExample
-                        ? firstExample.exampleText
-                        : ""
 
-            };
+        /* =====================================
+           CHECK ONBOARDING
+        ===================================== */
 
-        });
+        if (
+            !profile.onboarding_completed
+        ) {
 
-        console.log(
-            "Dictionary loaded:",
-            appState.words.length,
-            "words"
-        );
+            window.location.href =
+                "onboarding.html";
 
-    } catch (error) {
+            return;
+
+        }
+
+
+        /* =====================================
+           START APPLICATION
+        ===================================== */
+
+        renderPage();
+
+    }
+
+    catch (error) {
 
         console.error(
-            "Error loading dictionary:",
+            "Application initialization error:",
             error
         );
 
-        appState.words = [];
+        window.location.href =
+            "login.html";
 
-        appState.wordsError =
-            "We couldn't load the dictionary right now.";
-
-    } finally {
-
-        appState.loadingWords = false;
     }
+
 }
 
 
-/* =========================================================
-   INITIALIZATION
-========================================================= */
+/* =========================================
+   GET USER NAME
+========================================= */
 
-async function initializeApp() {
+function getUserName() {
 
-    await loadDictionaryData();
+    if (
+        appState.profile &&
+        appState.profile.full_name
+    ) {
 
-    renderPage();
+        return appState.profile.full_name
+            .trim()
+            .split(" ")[0];
+
+    }
+
+
+    if (
+        appState.user &&
+        appState.user.user_metadata &&
+        appState.user.user_metadata.full_name
+    ) {
+
+        return appState.user.user_metadata.full_name
+            .trim()
+            .split(" ")[0];
+
+    }
+
+
+    return "there";
+
 }
 
 
-/* =========================================================
+/* =========================================
    NAVIGATION
-========================================================= */
+========================================= */
 
 function navigateTo(page) {
 
-    if (appState.currentPage !== page) {
+    appState.previousPage =
+        appState.currentPage;
 
-        appState.previousPage =
-            appState.currentPage;
-
-    }
-
-    appState.currentPage = page;
+    appState.currentPage =
+        page;
 
     closeMenu();
+
+    updateNavigation();
 
     renderPage();
 
     window.scrollTo({
+
         top: 0,
+
         behavior: "smooth"
+
     });
+
 }
 
 
-/* =========================================================
-   PAGE RENDERER
-========================================================= */
-
-function renderPage() {
-
-    const main =
-        document.getElementById("main-content");
-
-    if (!main) {
-        return;
-    }
-
-    updateNavigation();
-
-    switch (appState.currentPage) {
-
-        case "home":
-            renderHome(main);
-            break;
-
-        case "dictionary":
-            renderDictionary(main);
-            break;
-
-        case "search":
-            renderDictionary(main, true);
-            break;
-
-        case "saved":
-            renderSaved(main);
-            break;
-
-        case "daily":
-            renderDaily(main);
-            break;
-
-        case "updates":
-            renderUpdates(main);
-            break;
-
-        case "about":
-            renderAbout(main);
-            break;
-
-        case "settings":
-            renderSettings(main);
-            break;
-
-        default:
-            renderHome(main);
-    }
-}
-
-
-/* =========================================================
-   NAVIGATION STATE
-========================================================= */
+/* =========================================
+   UPDATE NAVIGATION
+========================================= */
 
 function updateNavigation() {
 
-    document
-        .querySelectorAll(".nav-item")
-        .forEach(item => {
+    const navItems =
+        document.querySelectorAll(
+            ".nav-item"
+        );
 
-            const page =
-                item.dataset.page;
 
-            item.classList.toggle(
-                "active",
-                page === appState.currentPage
-            );
+    navItems.forEach((item) => {
 
-        });
+        item.classList.remove("active");
+
+
+        if (
+            item.dataset.page ===
+            appState.currentPage
+        ) {
+
+            item.classList.add("active");
+
+        }
+
+    });
+
 }
 
 
-/* =========================================================
-   HOME
-========================================================= */
+/* =========================================
+   PAGE ROUTER
+========================================= */
 
-function renderHome(main) {
+function renderPage() {
 
-    const totalWords =
-        appState.words.length;
-
-    const freeWords =
-        appState.words.filter(
-            word => !word.isPremium
-        ).length;
-
-    const premiumWords =
-        appState.words.filter(
-            word => word.isPremium
-        ).length;
+    const mainContent =
+        document.getElementById(
+            "main-content"
+        );
 
 
-    if (appState.loadingWords) {
+    switch (
+        appState.currentPage
+    ) {
 
-        main.innerHTML = `
-            <section class="page-section">
+        case "home":
 
-                <div class="section-heading">
-                    <p class="eyebrow">
-                        ANGOLAN SLANG
-                    </p>
+            mainContent.innerHTML =
+                renderHome();
 
-                    <h1>
-                        Your dictionary
-                    </h1>
-                </div>
+            break;
 
-                <div class="app-card">
-                    <p>
-                        Loading your dictionary...
-                    </p>
-                </div>
 
-            </section>
-        `;
+        case "dictionary":
 
-        return;
+            mainContent.innerHTML =
+                renderComingSoon(
+                    "Dictionary",
+                    "The complete dictionary experience is being built."
+                );
+
+            break;
+
+
+        case "search":
+
+            mainContent.innerHTML =
+                renderComingSoon(
+                    "Search",
+                    "Search will allow users to find words, meanings and expressions."
+                );
+
+            break;
+
+
+        case "saved":
+
+            mainContent.innerHTML =
+                renderComingSoon(
+                    "Saved Words",
+                    "Your favourite words will appear here."
+                );
+
+            break;
+
+
+        case "daily":
+
+            mainContent.innerHTML =
+                renderDailyPage();
+
+            break;
+
+
+        case "updates":
+
+            mainContent.innerHTML =
+                renderUpdates();
+
+            break;
+
+
+        case "about":
+
+            mainContent.innerHTML =
+                renderAbout();
+
+            break;
+
+
+        case "settings":
+
+            mainContent.innerHTML =
+                renderComingSoon(
+                    "Settings",
+                    "Personalisation and application settings will appear here."
+                );
+
+            break;
+
+
+        default:
+
+            mainContent.innerHTML =
+                renderHome();
+
     }
 
-
-    const firstWord =
-        appState.words.length > 0
-            ? appState.words[0]
-            : null;
+}
 
 
-    main.innerHTML = `
+/* =========================================
+   HOME PAGE
+========================================= */
 
-        <section class="hero-section">
+function renderHome() {
 
-            <div class="hero-content">
+    const userName =
+        getUserName();
+
+
+    return `
+
+        <section class="home-page">
+
+            <section class="hero">
 
                 <p class="eyebrow">
-                    ANGOLAN SLANG DICTIONARY
+                    ANGOLA IN WORDS
                 </p>
 
-                <h1>
-                    Discover Angola,
-                    one word at a time.
-                </h1>
+
+                <h2>
+
+                    Welcome,
+
+                    <br>
+
+                    ${userName}.
+
+                    <br>
+
+                    <span>
+                        Let's discover.
+                    </span>
+
+                </h2>
+
 
                 <p class="hero-description">
-                    Explore Angolan words,
-                    expressions and meanings
-                    in one place.
+
+                    Discover the expressions,
+                    slang and everyday language
+                    that bring Angolan culture
+                    to life.
+
                 </p>
+
 
                 <button
                     class="primary-button"
                     type="button"
                     onclick="navigateTo('dictionary')"
                 >
+
                     Explore Dictionary
+
+                    <span>
+                        →
+                    </span>
+
                 </button>
 
-            </div>
-
-        </section>
+            </section>
 
 
-        <section class="page-section">
+            <section class="home-search">
 
-            <div class="section-heading">
+                <div
+                    class="search-box"
+                    onclick="navigateTo('search')"
+                >
 
-                <p class="eyebrow">
-                    DICTIONARY
-                </p>
-
-                <h2>
-                    ${totalWords} words available
-                </h2>
-
-            </div>
+                    <span>
+                        ⌕
+                    </span>
 
 
-            ${
-                firstWord
-                    ? `
-                        <article class="app-card word-card">
+                    <input
+                        type="text"
+                        placeholder="Search for a word..."
+                        readonly
+                        aria-label="Search dictionary"
+                    >
 
-                            <div class="word-card-top">
-
-                                <div>
-
-                                    <span class="word-category">
-                                        ${
-                                            escapeHtml(
-                                                firstWord.categoryName
-                                            )
-                                        }
-                                    </span>
-
-                                    <h3>
-                                        ${
-                                            escapeHtml(
-                                                firstWord.word
-                                            )
-                                        }
-                                    </h3>
-
-                                </div>
-
-                                ${
-                                    firstWord.isPremium
-                                        ? `
-                                            <span class="premium-badge">
-                                                Coming Soon
-                                            </span>
-                                        `
-                                        : ""
-                                }
-
-                            </div>
-
-                            <p>
-                                ${
-                                    escapeHtml(
-                                        firstWord.firstMeaning
-                                    )
-                                }
-                            </p>
-
-                            ${
-                                firstWord.firstExample
-                                    ? `
-                                        <p class="word-example">
-                                            “${
-                                                escapeHtml(
-                                                    firstWord.firstExample
-                                                )
-                                            }”
-                                        </p>
-                                    `
-                                    : ""
-                            }
-
-                            <button
-                                class="secondary-button"
-                                type="button"
-                                onclick="openWord(${firstWord.id})"
-                            >
-                                Open Word
-                            </button>
-
-                        </article>
-                    `
-                    : `
-                        <div class="app-card">
-
-                            <h3>
-                                Your dictionary is ready
-                            </h3>
-
-                            <p>
-                                Published words will appear here.
-                            </p>
-
-                        </div>
-                    `
-            }
-
-        </section>
-
-
-        <section class="page-section">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">
-                    YOUR DICTIONARY
-                </p>
-
-                <h2>
-                    Explore by category
-                </h2>
-
-            </div>
-
-            <div class="category-grid">
-
-                ${
-                    appState.categories
-                        .map(category => `
-
-                            <button
-                                class="category-card"
-                                type="button"
-                                onclick="filterByCategory(${category.id})"
-                            >
-
-                                <strong>
-                                    ${escapeHtml(category.name)}
-                                </strong>
-
-                            </button>
-
-                        `)
-                        .join("")
-                }
-
-            </div>
-
-        </section>
-
-
-        <section class="page-section">
-
-            <div class="app-card premium-card">
-
-                <p class="eyebrow">
-                    PREMIUM
-                </p>
-
-                <h2>
-                    More of Angola is coming.
-                </h2>
-
-                <p>
-                    ${freeWords} free words are
-                    currently available.
-                    ${
-                        premiumWords
-                            ? `${premiumWords} premium words are marked as Coming Soon.`
-                            : ""
-                    }
-                </p>
-
-                <span class="premium-badge">
-                    Coming Soon
-                </span>
-
-            </div>
-
-        </section>
-
-    `;
-}
-
-
-/* =========================================================
-   DICTIONARY
-========================================================= */
-
-function renderDictionary(main, focusSearch = false) {
-
-    if (appState.loadingWords) {
-
-        main.innerHTML = `
-            <section class="page-section">
-
-                <div class="section-heading">
-
-                    <p class="eyebrow">
-                        DICTIONARY
-                    </p>
-
-                    <h1>
-                        Explore Angolan slang
-                    </h1>
-
-                </div>
-
-                <div class="app-card">
-                    Loading dictionary...
                 </div>
 
             </section>
-        `;
-
-        return;
-    }
 
 
-    if (appState.wordsError) {
+            <section class="daily-section">
 
-        main.innerHTML = `
-            <section class="page-section">
+                <div class="section-heading">
 
-                <div class="app-card">
+                    <div>
 
-                    <h2>
-                        Dictionary unavailable
-                    </h2>
+                        <p class="eyebrow">
+                            DISCOVER TODAY
+                        </p>
 
-                    <p>
-                        ${escapeHtml(appState.wordsError)}
-                    </p>
+
+                        <h2>
+                            3 Words of the Day
+                        </h2>
+
+                    </div>
+
 
                     <button
-                        class="primary-button"
+                        class="text-button"
                         type="button"
-                        onclick="reloadDictionary()"
+                        onclick="navigateTo('daily')"
                     >
-                        Try Again
+                        View all →
                     </button>
 
                 </div>
 
+
+                <div class="daily-slider">
+
+                    <div class="daily-slider-track">
+
+                        ${dailyWords.map(
+                            (item, index) => `
+
+                            <article class="daily-slide">
+
+                                <div class="daily-card">
+
+                                    <span class="daily-number">
+
+                                        ${String(index + 1).padStart(2, "0")} / 03
+
+                                    </span>
+
+                                    <h3>
+
+                                        ${item.word}
+
+                                    </h3>
+
+                                    <p>
+
+                                        Discover today's word.
+
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        onclick="openDemoWord(${item.id})"
+                                    >
+
+                                        Discover →
+
+                                    </button>
+
+                                </div>
+
+                            </article>
+
+                        `
+                        ).join("")}
+
+                    </div>
+
+                </div>
+
+
+                <div class="slider-dots">
+
+                    ${dailyWords.map(
+                        (_, index) => `
+
+                        <button
+                            class="slider-dot ${index === 0 ? "active" : ""}"
+                            type="button"
+                            aria-label="Go to word ${index + 1}"
+                        ></button>
+
+                    `
+                    ).join("")}
+
+                </div>
+
             </section>
-        `;
-
-        return;
-    }
-
-
-    main.innerHTML = `
-
-        <section class="page-section dictionary-page">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">
-                    ANGOLAN SLANG
-                </p>
-
-                <h1>
-                    Dictionary
-                </h1>
-
-                <p>
-                    Search words and expressions
-                    from the Angolan dictionary.
-                </p>
-
-            </div>
-
-
-            <div class="dictionary-search">
-
-                <input
-                    id="dictionary-search-input"
-                    type="search"
-                    placeholder="Search a word or expression..."
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <div
-                class="category-filter"
-                id="category-filter"
-            >
-
-                <button
-                    class="category-filter-button active"
-                    type="button"
-                    data-category="all"
-                >
-                    All
-                </button>
-
-                ${
-                    appState.categories
-                        .map(category => `
-
-                            <button
-                                class="category-filter-button"
-                                type="button"
-                                data-category="${category.id}"
-                            >
-                                ${escapeHtml(category.name)}
-                            </button>
-
-                        `)
-                        .join("")
-                }
-
-            </div>
-
-
-            <div class="dictionary-toolbar">
-
-                <span id="dictionary-count">
-                    ${appState.words.length} words
-                </span>
-
-                <select id="dictionary-sort">
-
-                    <option value="alphabetical">
-                        A–Z
-                    </option>
-
-                    <option value="recent">
-                        Recently Added
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div
-                class="card-grid"
-                id="dictionary-results"
-            ></div>
 
         </section>
 
     `;
 
-
-    const searchInput =
-        document.getElementById(
-            "dictionary-search-input"
-        );
-
-    const categoryFilter =
-        document.getElementById(
-            "category-filter"
-        );
-
-    const sortSelect =
-        document.getElementById(
-            "dictionary-sort"
-        );
-
-
-    let selectedCategory = "all";
-    let searchTerm = "";
-    let sortMode = "alphabetical";
-
-
-    function updateResults() {
-
-        let results =
-            [...appState.words];
-
-
-        /* SEARCH */
-
-        if (searchTerm) {
-
-            results =
-                results.filter(word => {
-
-                    const searchableText = [
-
-                        word.word,
-
-                        word.shortMeaning,
-
-                        word.firstMeaning,
-
-                        word.categoryName
-
-                    ]
-                        .join(" ")
-                        .toLowerCase();
-
-                    return searchableText.includes(
-                        searchTerm
-                    );
-
-                });
-
-        }
-
-
-        /* CATEGORY */
-
-        if (selectedCategory !== "all") {
-
-            results =
-                results.filter(
-                    word =>
-                        String(word.categoryId) ===
-                        String(selectedCategory)
-                );
-
-        }
-
-
-        /* SORT */
-
-        if (sortMode === "recent") {
-
-            results.sort(
-                (a, b) =>
-                    new Date(b.createdAt) -
-                    new Date(a.createdAt)
-            );
-
-        } else {
-
-            results.sort(
-                (a, b) =>
-                    a.word.localeCompare(
-                        b.word
-                    )
-            );
-
-        }
-
-
-        renderDictionaryResults(results);
-
-    }
-
-
-    searchInput.addEventListener(
-        "input",
-        event => {
-
-            searchTerm =
-                event.target.value
-                    .trim()
-                    .toLowerCase();
-
-            updateResults();
-
-        }
-    );
-
-
-    sortSelect.addEventListener(
-        "change",
-        event => {
-
-            sortMode =
-                event.target.value;
-
-            updateResults();
-
-        }
-    );
-
-
-    categoryFilter
-        .querySelectorAll(
-            ".category-filter-button"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    categoryFilter
-                        .querySelectorAll(
-                            ".category-filter-button"
-                        )
-                        .forEach(item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                        );
-
-                    button.classList.add(
-                        "active"
-                    );
-
-                    selectedCategory =
-                        button.dataset.category;
-
-                    updateResults();
-
-                }
-            );
-
-        });
-
-
-    updateResults();
-
-
-    if (focusSearch) {
-
-        setTimeout(() => {
-
-            searchInput.focus();
-
-        }, 100);
-
-    }
 }
 
 
-/* =========================================================
-   DICTIONARY RESULTS
-========================================================= */
+/* =========================================
+   DAILY PAGE
+========================================= */
 
-function renderDictionaryResults(words) {
+function renderDailyPage() {
 
-    const container =
-        document.getElementById(
-            "dictionary-results"
-        );
+    return `
 
-    const count =
-        document.getElementById(
-            "dictionary-count"
-        );
+        <section class="home-page">
+
+            <p class="eyebrow">
+                TODAY'S DISCOVERY
+            </p>
 
 
-    if (!container) {
-        return;
-    }
+            <h2
+                style="
+                    font-size: clamp(42px, 7vw, 64px);
+                    letter-spacing: -2px;
+                "
+            >
+                3 Words of the Day
+            </h2>
 
 
-    if (count) {
+            <div
+                class="daily-grid"
+                style="
+                    margin-top: 30px;
+                "
+            >
 
-        count.textContent =
-            `${words.length} ${
-                words.length === 1
-                    ? "word"
-                    : "words"
-            }`;
+                ${dailyWords.map(
+                    (item, index) => `
 
-    }
+                    <article class="daily-card">
 
+                        <span class="daily-number">
 
-    if (words.length === 0) {
+                            0${index + 1}
 
-        container.innerHTML = `
-
-            <div class="app-card empty-state">
-
-                <h3>
-                    No words found
-                </h3>
-
-                <p>
-                    Try another search or category.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-    }
+                        </span>
 
 
-    container.innerHTML =
-        words
-            .map(word => {
+                        <h3>
 
-                const isSaved =
-                    appState.savedWords.has(
-                        word.id
-                    );
+                            ${item.word}
+
+                        </h3>
 
 
-                return `
+                        <p>
 
-                    <article
-                        class="app-card word-card"
-                    >
-
-                        <div class="word-card-top">
-
-                            <div>
-
-                                ${
-                                    word.categoryName
-                                        ? `
-                                            <span class="word-category">
-                                                ${escapeHtml(
-                                                    word.categoryName
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
-
-                                <h3>
-                                    ${escapeHtml(
-                                        word.word
-                                    )}
-                                </h3>
-
-                                ${
-                                    word.pronunciation
-                                        ? `
-                                            <span class="word-pronunciation">
-                                                ${escapeHtml(
-                                                    word.pronunciation
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
-
-                            </div>
-
-
-                            ${
-                                word.isPremium
-                                    ? `
-                                        <span class="premium-badge">
-                                            Coming Soon
-                                        </span>
-                                    `
-                                    : `
-                                        <button
-                                            class="save-button ${
-                                                isSaved
-                                                    ? "saved"
-                                                    : ""
-                                            }"
-                                            type="button"
-                                            onclick="toggleSavedWord(${word.id})"
-                                            aria-label="Save word"
-                                        >
-                                            ${
-                                                isSaved
-                                                    ? "♥"
-                                                    : "♡"
-                                            }
-                                        </button>
-                                    `
-                            }
-
-                        </div>
-
-
-                        <p class="word-meaning">
-
-                            ${
-                                word.isPremium
-                                    ? `
-                                        <span>
-                                            Premium content
-                                            — Coming Soon
-                                        </span>
-                                    `
-                                    : escapeHtml(
-                                        word.firstMeaning ||
-                                        word.shortMeaning ||
-                                        "Meaning coming soon."
-                                    )
-                            }
+                            Discover today's word.
 
                         </p>
 
 
-                        ${
-                            !word.isPremium &&
-                            word.firstExample
-                                ? `
-                                    <p class="word-example">
-                                        “${escapeHtml(
-                                            word.firstExample
-                                        )}”
-                                    </p>
-                                `
-                                : ""
-                        }
+                        <button
+                            type="button"
+                            onclick="openDemoWord(${item.id})"
+                        >
 
+                            Discover →
 
-                        <div class="word-card-actions">
-
-                            <button
-                                class="secondary-button"
-                                type="button"
-                                onclick="openWord(${word.id})"
-                            >
-                                ${
-                                    word.isPremium
-                                        ? "View"
-                                        : "Open Word"
-                                }
-                            </button>
-
-                        </div>
+                        </button>
 
                     </article>
 
-                `;
+                `
+                ).join("")}
 
-            })
-            .join("");
+            </div>
+
+        </section>
+
+    `;
+
 }
 
 
-/* =========================================================
-   OPEN WORD
-========================================================= */
+/* =========================================
+   TEMPORARY WORD PREVIEW
+========================================= */
 
-function openWord(wordId) {
+function openDemoWord(id) {
 
     const word =
-        appState.words.find(
-            item => item.id === wordId
+        demoWords.find(
+            (item) => item.id === id
         );
 
+
     if (!word) {
+
         return;
+
     }
 
 
     appState.previousPage =
         appState.currentPage;
 
-    appState.currentPage =
-        "word-detail";
 
-
-    const main =
+    const mainContent =
         document.getElementById(
             "main-content"
         );
 
 
-    renderWordDetail(
-        main,
-        word
-    );
+    mainContent.innerHTML = `
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
-
-
-/* =========================================================
-   WORD DETAIL
-========================================================= */
-
-function renderWordDetail(main, word) {
-
-    if (word.isPremium) {
-
-        main.innerHTML = `
-
-            <section class="page-section">
-
-                <button
-                    class="back-button"
-                    type="button"
-                    onclick="goBack()"
-                >
-                    ← Back
-                </button>
-
-
-                <article class="app-card word-detail-card">
-
-                    <span class="premium-badge">
-                        Coming Soon
-                    </span>
-
-                    <p class="eyebrow">
-                        PREMIUM WORD
-                    </p>
-
-                    <h1>
-                        ${escapeHtml(word.word)}
-                    </h1>
-
-                    ${
-                        word.pronunciation
-                            ? `
-                                <p class="word-pronunciation">
-                                    ${escapeHtml(
-                                        word.pronunciation
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    <div class="locked-content">
-
-                        <h3>
-                            Premium content
-                        </h3>
-
-                        <p>
-                            The full meaning,
-                            examples and additional
-                            content for this word
-                            will be available soon.
-                        </p>
-
-                        <span class="premium-badge">
-                            Coming Soon
-                        </span>
-
-                    </div>
-
-                </article>
-
-            </section>
-
-        `;
-
-        return;
-    }
-
-
-    const isSaved =
-        appState.savedWords.has(
-            word.id
-        );
-
-
-    main.innerHTML = `
-
-        <section class="page-section">
+        <section class="home-page">
 
             <button
-                class="back-button"
+                class="text-button"
                 type="button"
-                onclick="goBack()"
+                onclick="navigateTo(
+                    '${appState.previousPage}'
+                )"
             >
+
                 ← Back
+
             </button>
 
 
-            <article class="app-card word-detail-card">
+            <div
+                class="hero"
+                style="
+                    margin-top: 25px;
+                "
+            >
 
-                ${
-                    word.categoryName
-                        ? `
-                            <span class="word-category">
-                                ${escapeHtml(
-                                    word.categoryName
-                                )}
-                            </span>
-                        `
-                        : ""
-                }
+                <p class="eyebrow">
+                    WORD PREVIEW
+                </p>
 
 
-                <div class="word-detail-header">
+                <h2>
 
-                    <div>
+                    ${word.word}
 
-                        <h1>
-                            ${escapeHtml(
-                                word.word
-                            )}
-                        </h1>
-
-                        ${
-                            word.pronunciation
-                                ? `
-                                    <p class="word-pronunciation">
-                                        ${escapeHtml(
-                                            word.pronunciation
-                                        )}
-                                    </p>
-                                `
-                                : ""
-                        }
-
-                    </div>
+                </h2>
 
 
-                    <button
-                        class="save-button ${
-                            isSaved
-                                ? "saved"
-                                : ""
-                        }"
-                        type="button"
-                        onclick="toggleSavedWord(${word.id})"
-                    >
-                        ${
-                            isSaved
-                                ? "♥"
-                                : "♡"
-                        }
-                    </button>
+                <p
+                    class="hero-description"
+                >
+
+                    ${word.meaning}
+
+                </p>
+
+
+                <div
+                    style="
+                        margin-top: 28px;
+                        padding: 22px;
+                        background: var(--surface-soft);
+                        border-radius: var(--radius-md);
+                        color: var(--text-secondary);
+                        line-height: 1.7;
+                    "
+                >
+
+                    “${word.example}”
 
                 </div>
 
-
-                ${
-                    word.wordAudioPath
-                        ? `
-                            <button
-                                class="audio-button"
-                                type="button"
-                                onclick="playWordAudio('${escapeAttribute(
-                                    word.wordAudioPath
-                                )}')"
-                            >
-                                ▶ Listen
-                            </button>
-                        `
-                        : ""
-                }
-
-
-                <div class="word-detail-section">
-
-                    <p class="eyebrow">
-                        MEANING
-                    </p>
-
-                    ${
-                        word.meanings.length > 0
-                            ? word.meanings
-                                .map(
-                                    (meaning, index) => `
-                                        <div class="meaning-item">
-
-                                            <h3>
-                                                ${
-                                                    word.meanings.length > 1
-                                                        ? `${index + 1}. `
-                                                        : ""
-                                                }${escapeHtml(
-                                                    meaning.meaning
-                                                )}
-                                            </h3>
-
-                                            ${
-                                                meaning.examples
-                                                    .map(
-                                                        example => `
-                                                            <div class="example-block">
-
-                                                                <p>
-                                                                    “${escapeHtml(
-                                                                        example.exampleText
-                                                                    )}”
-                                                                </p>
-
-                                                                ${
-                                                                    example.audioPath
-                                                                        ? `
-                                                                            <button
-                                                                                class="audio-button"
-                                                                                type="button"
-                                                                                onclick="playExampleAudio('${escapeAttribute(
-                                                                                    example.audioPath
-                                                                                )}')"
-                                                                            >
-                                                                                ▶ Listen
-                                                                            </button>
-                                                                        `
-                                                                        : ""
-                                                                }
-
-                                                            </div>
-                                                        `
-                                                    )
-                                                    .join("")
-                                            }
-
-                                        </div>
-                                    `
-                                )
-                                .join("")
-                            : `
-                                <p>
-                                    ${
-                                        escapeHtml(
-                                            word.shortMeaning ||
-                                            "Meaning coming soon."
-                                        )
-                                    }
-                                </p>
-                            `
-                    }
-
-                </div>
-
-
-                ${
-                    word.contextNotes
-                        ? `
-                            <div class="word-detail-section">
-
-                                <p class="eyebrow">
-                                    CONTEXT
-                                </p>
-
-                                <p>
-                                    ${escapeHtml(
-                                        word.contextNotes
-                                    )}
-                                </p>
-
-                            </div>
-                        `
-                        : ""
-                }
-
-
-            </article>
-
-        </section>
-
-    `;
-}
-
-
-/* =========================================================
-   SAVED WORDS
-========================================================= */
-
-function toggleSavedWord(wordId) {
-
-    if (appState.savedWords.has(wordId)) {
-
-        appState.savedWords.delete(
-            wordId
-        );
-
-    } else {
-
-        appState.savedWords.add(
-            wordId
-        );
-
-    }
-
-
-    renderPage();
-}
-
-
-function renderSaved(main) {
-
-    const words =
-        appState.words.filter(
-            word =>
-                appState.savedWords.has(
-                    word.id
-                )
-        );
-
-
-    main.innerHTML = `
-
-        <section class="page-section">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">
-                    YOUR WORDS
-                </p>
-
-                <h1>
-                    Saved
-                </h1>
-
-            </div>
-
-
-            ${
-                words.length === 0
-                    ? `
-                        <div class="app-card">
-
-                            <h3>
-                                No saved words yet
-                            </h3>
-
-                            <p>
-                                Save words from the
-                                dictionary to find them here.
-                            </p>
-
-                        </div>
-                    `
-                    : `
-                        <div class="card-grid">
-
-                            ${
-                                words
-                                    .map(
-                                        word => `
-
-                                            <article
-                                                class="app-card word-card"
-                                            >
-
-                                                <span class="word-category">
-                                                    ${escapeHtml(
-                                                        word.categoryName
-                                                    )}
-                                                </span>
-
-                                                <h3>
-                                                    ${escapeHtml(
-                                                        word.word
-                                                    )}
-                                                </h3>
-
-                                                <p>
-                                                    ${escapeHtml(
-                                                        word.firstMeaning
-                                                    )}
-                                                </p>
-
-                                                <button
-                                                    class="secondary-button"
-                                                    type="button"
-                                                    onclick="openWord(${word.id})"
-                                                >
-                                                    Open Word
-                                                </button>
-
-                                            </article>
-
-                                        `
-                                    )
-                                    .join("")
-                            }
-
-                        </div>
-                    `
-            }
-
-        </section>
-
-    `;
-}
-
-
-/* =========================================================
-   DAILY 3
-========================================================= */
-
-/*
-   IMPORTANT:
-
-   Daily 3 is NOT generated here.
-
-   Supabase already determines the user's
-   Daily 3 through the daily_three system.
-
-   We will connect this page directly to
-   daily_three in the next step.
-*/
-
-function renderDaily(main) {
-
-    main.innerHTML = `
-
-        <section class="page-section">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">
-                    DAILY 3
-                </p>
-
-                <h1>
-                    Your 3 Words of the Day
-                </h1>
-
-                <p>
-                    Your personalised daily words
-                    are loaded from Supabase.
-                </p>
-
-            </div>
-
-
-            <div class="app-card">
-
-                <h3>
-                    Daily 3
-                </h3>
-
-                <p>
-                    Your daily selection will appear
-                    here once the Daily 3 connection
-                    is activated.
-                </p>
-
             </div>
 
         </section>
 
     `;
-}
 
-
-/* =========================================================
-   OTHER PAGES
-========================================================= */
-
-function renderUpdates(main) {
-
-    main.innerHTML = `
-
-        <section class="page-section">
-
-            <div class="app-card">
-
-                <p class="eyebrow">
-                    UPDATES
-                </p>
-
-                <h1>
-                    Updates
-                </h1>
-
-                <p>
-                    New dictionary content and
-                    features will appear here.
-                </p>
-
-            </div>
-
-        </section>
-
-    `;
-}
-
-
-function renderAbout(main) {
-
-    main.innerHTML = `
-
-        <section class="page-section">
-
-            <div class="app-card">
-
-                <p class="eyebrow">
-                    ABOUT
-                </p>
-
-                <h1>
-                    About the Dictionary
-                </h1>
-
-                <p>
-                    The Angolan Slang Dictionary is
-                    a growing collection of Angolan
-                    words, expressions and meanings.
-                </p>
-
-            </div>
-
-        </section>
-
-    `;
-}
-
-
-function renderSettings(main) {
-
-    main.innerHTML = `
-
-        <section class="page-section">
-
-            <div class="app-card">
-
-                <p class="eyebrow">
-                    SETTINGS
-                </p>
-
-                <h1>
-                    Settings
-                </h1>
-
-                <p>
-                    Account and app settings will
-                    appear here.
-                </p>
-
-            </div>
-
-        </section>
-
-    `;
-}
-
-
-/* =========================================================
-   CATEGORY FILTER
-========================================================= */
-
-function filterByCategory(categoryId) {
-
-    navigateTo("dictionary");
-
-    setTimeout(() => {
-
-        const button =
-            document.querySelector(
-                `.category-filter-button[data-category="${categoryId}"]`
-            );
-
-        if (button) {
-            button.click();
-        }
-
-    }, 0);
-}
-
-
-/* =========================================================
-   RELOAD DICTIONARY
-========================================================= */
-
-async function reloadDictionary() {
-
-    await loadDictionaryData();
-
-    renderPage();
-}
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-function goBack() {
-
-    const page =
-        appState.previousPage ||
-        "dictionary";
-
-    appState.currentPage =
-        page;
-
-    appState.previousPage =
-        null;
-
-    renderPage();
 
     window.scrollTo({
+
         top: 0,
+
         behavior: "smooth"
+
     });
+
 }
 
 
-/* =========================================================
-   AUDIO
-========================================================= */
+/* =========================================
+   UPDATES PAGE
+========================================= */
 
-async function createAudioUrl(path) {
+function renderUpdates() {
 
-    if (!path) {
-        return null;
-    }
+    return `
 
-    try {
+        <section class="home-page">
 
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .storage
-            .from("audio")
-            .createSignedUrl(
-                path,
-                3600
-            );
+            <p class="eyebrow">
+                WHAT'S NEW
+            </p>
 
-        if (error) {
-            throw error;
-        }
 
-        return data?.signedUrl || null;
+            <h2
+                style="
+                    font-size: clamp(42px, 7vw, 64px);
+                    letter-spacing: -2px;
+                "
+            >
+                Updates
+            </h2>
 
-    } catch (error) {
 
-        console.error(
-            "Could not create audio URL:",
-            error
-        );
+            <div
+                class="hero"
+                style="
+                    margin-top: 30px;
+                "
+            >
 
-        return null;
-    }
+                <p class="eyebrow">
+
+                    COMING SOON
+
+                </p>
+
+
+                <h3
+                    style="
+                        font-size: 28px;
+                    "
+                >
+
+                    New update
+
+                </h3>
+
+
+                <p class="hero-description">
+
+                    A new dictionary update
+                    will be announced here.
+
+                    In the future, updates such as
+                    “New update coming on September 1st, 2026”
+                    can be created directly from
+                    the admin dashboard.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    `;
+
 }
 
 
-async function playWordAudio(path) {
+/* =========================================
+   ABOUT PAGE
+========================================= */
 
-    const url =
-        await createAudioUrl(path);
+function renderAbout() {
 
-    if (!url) {
-        return;
-    }
+    return `
 
-    const audio =
-        new Audio(url);
+        <section class="home-page">
 
-    audio.play().catch(
-        error =>
-            console.error(
-                "Audio playback error:",
-                error
-            )
-    );
+            <p class="eyebrow">
+                THE PROJECT
+            </p>
+
+
+            <h2
+                style="
+                    font-size: clamp(42px, 7vw, 64px);
+                    letter-spacing: -2px;
+                "
+            >
+                About
+            </h2>
+
+
+            <div
+                class="hero"
+                style="
+                    margin-top: 30px;
+                "
+            >
+
+                <h3
+                    style="
+                        font-size: 30px;
+                    "
+                >
+
+                    Angolan Slang Dictionary
+
+                </h3>
+
+
+                <p class="hero-description">
+
+                    A digital dictionary designed
+                    to preserve, explore and share
+                    Angolan slang, expressions
+                    and everyday language.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    `;
+
 }
 
 
-async function playExampleAudio(path) {
+/* =========================================
+   GENERIC PLACEHOLDER PAGE
+========================================= */
 
-    const url =
-        await createAudioUrl(path);
+function renderComingSoon(
+    title,
+    description
+) {
 
-    if (!url) {
-        return;
-    }
+    return `
 
-    const audio =
-        new Audio(url);
+        <section class="home-page">
 
-    audio.play().catch(
-        error =>
-            console.error(
-                "Audio playback error:",
-                error
-            )
-    );
+            <div class="hero">
+
+                <p class="eyebrow">
+                    UNDER DEVELOPMENT
+                </p>
+
+
+                <h2>
+
+                    ${title}
+
+                </h2>
+
+
+                <p class="hero-description">
+
+                    ${description}
+
+                </p>
+
+
+                <div
+                    style="
+                        margin-top: 30px;
+                        padding: 20px;
+                        background: var(--gold-light);
+                        border-radius: var(--radius-md);
+                        color: var(--text-primary);
+                    "
+                >
+
+                    We are building this section
+                    step by step.
+
+                </div>
+
+            </div>
+
+        </section>
+
+    `;
+
 }
 
 
-/* =========================================================
+/* =========================================
    MENU
-========================================================= */
+========================================= */
+
+const menuButton =
+    document.getElementById(
+        "menu-button"
+    );
+
+
+const closeMenuButton =
+    document.getElementById(
+        "close-menu"
+    );
+
+
+const sideMenu =
+    document.getElementById(
+        "side-menu"
+    );
+
+
+const menuOverlay =
+    document.getElementById(
+        "menu-overlay"
+    );
+
 
 function openMenu() {
 
-    const menu =
-        document.getElementById(
-            "side-menu"
-        );
+    sideMenu.classList.add("open");
 
-    const overlay =
-        document.getElementById(
-            "menu-overlay"
-        );
+    menuOverlay.classList.add("open");
 
-    if (menu) {
-        menu.classList.add("open");
-    }
-
-    if (overlay) {
-        overlay.classList.add("open");
-    }
-
-    document.body.classList.add(
-        "menu-open"
-    );
 }
 
 
 function closeMenu() {
 
-    const menu =
-        document.getElementById(
-            "side-menu"
-        );
+    sideMenu.classList.remove("open");
 
-    const overlay =
-        document.getElementById(
-            "menu-overlay"
-        );
+    menuOverlay.classList.remove("open");
 
-    if (menu) {
-        menu.classList.remove("open");
-    }
-
-    if (overlay) {
-        overlay.classList.remove("open");
-    }
-
-    document.body.classList.remove(
-        "menu-open"
-    );
 }
 
 
-/* =========================================================
-   HTML SAFETY
-========================================================= */
-
-function escapeHtml(value) {
-
-    if (value === null ||
-        value === undefined) {
-
-        return "";
-    }
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+menuButton.addEventListener(
+    "click",
+    openMenu
+);
 
 
-function escapeAttribute(value) {
-
-    return escapeHtml(value);
-}
-
-
-/* =========================================================
-   EVENT LISTENERS
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        const menuButton =
-            document.getElementById(
-                "menu-button"
-            );
-
-        const closeButton =
-            document.getElementById(
-                "close-menu"
-            );
-
-        const overlay =
-            document.getElementById(
-                "menu-overlay"
-            );
+closeMenuButton.addEventListener(
+    "click",
+    closeMenu
+);
 
 
-        if (menuButton) {
-
-            menuButton.addEventListener(
-                "click",
-                openMenu
-            );
-
-        }
+menuOverlay.addEventListener(
+    "click",
+    closeMenu
+);
 
 
-        if (closeButton) {
+/* =========================================
+   BOTTOM NAVIGATION
+========================================= */
 
-            closeButton.addEventListener(
-                "click",
-                closeMenu
-            );
+document
+    .querySelectorAll(".nav-item")
+    .forEach((item) => {
 
-        }
+        item.addEventListener(
+            "click",
+            () => {
 
-
-        if (overlay) {
-
-            overlay.addEventListener(
-                "click",
-                closeMenu
-            );
-
-        }
-
-
-        document
-            .querySelectorAll(
-                ".bottom-navigation .nav-item"
-            )
-            .forEach(button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const page =
-                            button.dataset.page;
-
-                        if (page) {
-                            navigateTo(page);
-                        }
-
-                    }
+                navigateTo(
+                    item.dataset.page
                 );
 
-            });
+            }
+        );
+
+    });
 
 
-        initializeApp();
+/* =========================================
+   SLIDER DOTS
+========================================= */
 
-    }
+document.addEventListener(
+    "scroll",
+    () => {
+
+        const slider =
+            document.querySelector(
+                ".daily-slider"
+            );
+
+
+        if (!slider) {
+
+            return;
+
+        }
+
+
+        const slideWidth =
+            slider.clientWidth;
+
+
+        const currentIndex =
+            Math.round(
+                slider.scrollLeft /
+                slideWidth
+            );
+
+
+        const dots =
+            document.querySelectorAll(
+                ".slider-dot"
+            );
+
+
+        dots.forEach(
+            (dot, index) => {
+
+                dot.classList.toggle(
+                    "active",
+                    index === currentIndex
+                );
+
+            }
+        );
+
+    },
+    true
 );
+
+
+/* =========================================
+   INITIALIZE APPLICATION
+========================================= */
+
+renderPage();
