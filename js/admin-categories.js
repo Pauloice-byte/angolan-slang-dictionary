@@ -80,10 +80,7 @@ async function checkAdminAccess() {
         .single();
 
 
-    if (
-        profileError ||
-        !profile
-    ) {
+    if (profileError || !profile) {
 
         window.location.href =
             "login.html";
@@ -145,7 +142,7 @@ async function loadCategories() {
         data || [];
 
 
-    renderCategories();
+    await renderCategories();
 
 
     categoryMessage.textContent = "";
@@ -177,7 +174,7 @@ async function renderCategories() {
 
 
     /*
-     * Get word counts for each category.
+     * Get word counts.
      */
 
     const {
@@ -289,18 +286,20 @@ async function renderCategories() {
                 <div class="category-admin-actions">
 
                     <button
+                        type="button"
                         class="btn small"
-                        data-action="edit"
-                        data-id="${category.id}"
+                        data-category-action="edit"
+                        data-category-id="${category.id}"
                     >
                         Edit
                     </button>
 
 
                     <button
+                        type="button"
                         class="btn small"
-                        data-action="toggle"
-                        data-id="${category.id}"
+                        data-category-action="toggle"
+                        data-category-id="${category.id}"
                     >
                         ${
                             category.is_active
@@ -321,7 +320,7 @@ async function renderCategories() {
 
 
 /* =========================================
-   OPEN ADD FORM
+   ADD CATEGORY
 ========================================= */
 
 addCategoryButton.addEventListener(
@@ -357,15 +356,17 @@ addCategoryButton.addEventListener(
 
 
 /* =========================================
-   EDIT CATEGORY
+   CATEGORY BUTTONS
 ========================================= */
 
 categoryList.addEventListener(
     "click",
-    async function (event) {
+    function (event) {
 
         const button =
-            event.target.closest("button");
+            event.target.closest(
+                "[data-category-action]"
+            );
 
 
         if (!button) {
@@ -375,24 +376,37 @@ categoryList.addEventListener(
 
 
         const categoryId =
-            button.dataset.id;
+            button.getAttribute(
+                "data-category-id"
+            );
 
 
         const action =
-            button.dataset.action;
+            button.getAttribute(
+                "data-category-action"
+            );
 
 
         const category =
             categories.find(
                 function (item) {
 
-                    return item.id === categoryId;
+                    return String(item.id) ===
+                        String(categoryId);
 
                 }
             );
 
 
         if (!category) {
+
+            console.error(
+                "Category not found:",
+                categoryId
+            );
+
+            categoryMessage.textContent =
+                "Unable to find this category.";
 
             return;
         }
@@ -408,10 +422,10 @@ categoryList.addEventListener(
 
         if (action === "toggle") {
 
-            await toggleCategory(category);
+            toggleCategory(category);
 
+            return;
         }
-
     }
 );
 
@@ -435,7 +449,7 @@ function openEditForm(category) {
 
 
     categoryOrder.value =
-        category.display_order || 0;
+        category.display_order ?? 0;
 
 
     categoryActive.checked =
@@ -454,6 +468,12 @@ function openEditForm(category) {
 
 
     categoryName.focus();
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 
@@ -507,6 +527,10 @@ categoryForm.addEventListener(
             };
 
 
+            /*
+             * EDIT EXISTING CATEGORY
+             */
+
             if (editingCategoryId) {
 
                 const {
@@ -529,7 +553,14 @@ categoryForm.addEventListener(
                 categoryMessage.textContent =
                     "Category updated successfully.";
 
-            } else {
+            }
+
+
+            /*
+             * CREATE NEW CATEGORY
+             */
+
+            else {
 
                 const {
                     error
@@ -549,11 +580,11 @@ categoryForm.addEventListener(
             }
 
 
-            categoryFormCard.hidden = true;
-
-
             categoryForm.reset();
 
+            categoryActive.checked = true;
+
+            categoryFormCard.hidden = true;
 
             editingCategoryId = null;
 
@@ -609,11 +640,11 @@ async function toggleCategory(category) {
     }
 
 
+    categoryMessage.textContent =
+        `Updating "${category.name}"...`;
+
+
     try {
-
-        categoryMessage.textContent =
-            "Updating category...";
-
 
         const {
             error
@@ -637,13 +668,21 @@ async function toggleCategory(category) {
         }
 
 
+        categoryMessage.textContent =
+            `"${category.name}" ${
+                newStatus
+                    ? "activated"
+                    : "deactivated"
+            } successfully.`;
+
+
         await loadCategories();
 
 
     } catch (error) {
 
         console.error(
-            "CATEGORY STATUS ERROR:",
+            "CATEGORY TOGGLE ERROR:",
             error
         );
 
@@ -656,7 +695,7 @@ async function toggleCategory(category) {
 
 
 /* =========================================
-   CANCEL FORM
+   CANCEL
 ========================================= */
 
 cancelCategoryButton.addEventListener(
@@ -664,6 +703,8 @@ cancelCategoryButton.addEventListener(
     function () {
 
         categoryForm.reset();
+
+        categoryActive.checked = true;
 
         editingCategoryId = null;
 
