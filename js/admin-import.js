@@ -1,4 +1,3 @@
-
 const dictionaryFile =
     document.getElementById("dictionaryFile");
 
@@ -37,6 +36,7 @@ const cancelImportButton =
 
 
 let selectedFile = null;
+
 let importedEntries = [];
 
 
@@ -72,8 +72,6 @@ async function checkAdminAccess() {
 
     if (profileError || !profile) {
 
-        console.error(profileError);
-
         window.location.href = "login.html";
 
         return false;
@@ -96,17 +94,12 @@ async function checkAdminAccess() {
    FILE SELECTION
 ========================================= */
 
-```javascript
 dictionaryFile.addEventListener(
     "change",
     function () {
 
-        console.log("FILE CHANGE EVENT FIRED");
-
         const file =
             dictionaryFile.files[0];
-
-        console.log("SELECTED FILE:", file);
 
 
         if (!file) {
@@ -117,9 +110,6 @@ dictionaryFile.addEventListener(
 
             previewButton.disabled = true;
 
-            importMessage.textContent =
-                "No file selected.";
-
             return;
         }
 
@@ -129,12 +119,6 @@ dictionaryFile.addEventListener(
                 .split(".")
                 .pop()
                 .toLowerCase();
-
-
-        console.log(
-            "FILE EXTENSION:",
-            fileExtension
-        );
 
 
         if (fileExtension !== "docx") {
@@ -170,17 +154,11 @@ dictionaryFile.addEventListener(
 
         previewButton.disabled = false;
 
-
         importMessage.textContent =
             "Document selected successfully.";
-
-        
-        console.log(
-            "PREVIEW BUTTON ENABLED"
-        );
     }
 );
-```
+
 
 /* =========================================
    FILE SIZE
@@ -210,6 +188,14 @@ function formatFileSize(bytes) {
 
 async function readDocxFile(file) {
 
+    if (typeof JSZip === "undefined") {
+
+        throw new Error(
+            "The DOCX reader could not load. Please refresh the page and try again."
+        );
+    }
+
+
     const arrayBuffer =
         await file.arrayBuffer();
 
@@ -225,7 +211,7 @@ async function readDocxFile(file) {
     if (!documentFile) {
 
         throw new Error(
-            "Unable to find the Word document content."
+            "Unable to find the document content inside this Word file."
         );
     }
 
@@ -255,13 +241,25 @@ function extractParagraphs(xml) {
         );
 
 
+    const parserError =
+        document.querySelector("parsererror");
+
+
+    if (parserError) {
+
+        throw new Error(
+            "The Word document could not be read."
+        );
+    }
+
+
     const paragraphs =
         Array.from(
             document.getElementsByTagName("w:p")
         );
 
 
-    const text = [];
+    const result = [];
 
 
     paragraphs.forEach(
@@ -273,27 +271,26 @@ function extractParagraphs(xml) {
                 );
 
 
-            const paragraphText =
+            const text =
                 textNodes
                     .map(
                         function (node) {
-                            return node.textContent || "";
+                            return node.textContent;
                         }
                     )
                     .join("")
                     .trim();
 
 
-            if (paragraphText) {
+            if (text) {
 
-                text.push(paragraphText);
+                result.push(text);
             }
-
         }
     );
 
 
-    return text;
+    return result;
 }
 
 
@@ -306,55 +303,62 @@ function parseDictionary(paragraphs) {
     const entries = [];
 
 
-    /*
-     * DOCUMENT FORMAT:
-     *
-     * Word
-     * Meaning
-     * Example
-     *
-     * Word
-     * Meaning
-     * Example
-     *
-     * etc.
-     */
+    let index = 0;
 
 
-    for (
-        let index = 0;
-        index < paragraphs.length;
-        index += 3
-    ) {
+    while (index < paragraphs.length) {
 
         const word =
-            paragraphs[index] || "";
+            paragraphs[index]
+                ? paragraphs[index].trim()
+                : "";
 
 
         const meaning =
-            paragraphs[index + 1] || "";
+            paragraphs[index + 1]
+                ? paragraphs[index + 1].trim()
+                : "";
 
 
         const example =
-            paragraphs[index + 2] || "";
-
-
-        /*
-         * If the last entry is incomplete,
-         * mark it as invalid.
-         */
-
-        const valid =
-            Boolean(
-                word &&
-                meaning &&
-                example
-            );
+            paragraphs[index + 2]
+                ? paragraphs[index + 2].trim()
+                : "";
 
 
         if (!word) {
 
+            index++;
+
             continue;
+        }
+
+
+        /*
+         * Every dictionary entry is:
+         *
+         * Word
+         * Meaning
+         * Example
+         */
+
+
+        if (!meaning || !example) {
+
+            entries.push({
+
+                word: word,
+
+                meaning: meaning,
+
+                example: example,
+
+                valid: false
+
+            });
+
+
+            break;
         }
 
 
@@ -366,10 +370,12 @@ function parseDictionary(paragraphs) {
 
             example: example,
 
-            valid: valid
+            valid: true
 
         });
 
+
+        index += 3;
     }
 
 
@@ -393,6 +399,8 @@ previewButton.addEventListener(
 
         previewButton.disabled = true;
 
+        importButton.disabled = true;
+
 
         importMessage.textContent =
             "Reading dictionary document...";
@@ -406,10 +414,12 @@ previewButton.addEventListener(
                 );
 
 
-            console.log(
-                "Extracted paragraphs:",
-                paragraphs
-            );
+            if (paragraphs.length === 0) {
+
+                throw new Error(
+                    "No text was found in this Word document."
+                );
+            }
 
 
             importedEntries =
@@ -418,10 +428,12 @@ previewButton.addEventListener(
                 );
 
 
-            console.log(
-                "Parsed entries:",
-                importedEntries
-            );
+            if (importedEntries.length === 0) {
+
+                throw new Error(
+                    "No dictionary entries could be found."
+                );
+            }
 
 
             previewSection.hidden = false;
@@ -430,57 +442,57 @@ previewButton.addEventListener(
             renderPreview();
 
 
-            if (
-                importedEntries.length === 0
-            ) {
+            const invalidEntries =
+                importedEntries.filter(
+                    function (entry) {
+                        return !entry.valid;
+                    }
+                );
+
+
+            if (invalidEntries.length > 0) {
 
                 importMessage.textContent =
-                    "No dictionary entries were found.";
+                    `Found ${importedEntries.length} entries, but ${invalidEntries.length} need attention.`;
 
             } else {
 
-                const validEntries =
-                    importedEntries.filter(
-                        entry => entry.valid
-                    ).length;
-
-
                 importMessage.textContent =
-                    `${validEntries} dictionary entries found.`;
+                    `Successfully found ${importedEntries.length} dictionary entries.`;
             }
 
 
         } catch (error) {
 
             console.error(
-                "DOCX parsing error:",
+                "DICTIONARY IMPORT ERROR:",
                 error
             );
+
+
+            importedEntries = [];
+
+
+            previewSection.hidden = false;
+
+
+            renderPreview();
 
 
             importMessage.textContent =
                 error.message ||
                 "Unable to read the dictionary document.";
 
-
-            previewSection.hidden = false;
-
-            importedEntries = [];
-
-            renderPreview();
-
-
         } finally {
 
             previewButton.disabled = false;
         }
-
     }
 );
 
 
 /* =========================================
-   RENDER PREVIEW
+   PREVIEW RENDERING
 ========================================= */
 
 function renderPreview() {
@@ -492,9 +504,7 @@ function renderPreview() {
         importedEntries.length;
 
 
-    if (
-        importedEntries.length === 0
-    ) {
+    if (importedEntries.length === 0) {
 
         previewEmpty.hidden = false;
 
@@ -507,14 +517,16 @@ function renderPreview() {
     previewEmpty.hidden = true;
 
 
-    const hasInvalidEntries =
+    const hasInvalid =
         importedEntries.some(
-            entry => !entry.valid
+            function (entry) {
+                return !entry.valid;
+            }
         );
 
 
     importButton.disabled =
-        hasInvalidEntries;
+        hasInvalid;
 
 
     importedEntries.forEach(
@@ -528,100 +540,79 @@ function renderPreview() {
                 "import-preview-card";
 
 
-            if (!entry.valid) {
-
-                card.classList.add(
-                    "import-invalid"
-                );
-            }
-
-
             card.innerHTML = `
 
-                <div class="import-preview-content">
+                <div>
 
-                    <div class="import-preview-number">
-                        ${index + 1}
-                    </div>
+                    <strong>
+                        ${escapeHtml(entry.word)}
+                    </strong>
 
-                    <div>
+                    ${
+                        entry.meaning
+                            ? `<p>
+                                ${escapeHtml(entry.meaning)}
+                               </p>`
+                            : `<p class="missing">
+                                Meaning missing
+                               </p>`
+                    }
 
-                        <strong>
-                            ${escapeHtml(entry.word)}
-                        </strong>
-
-                        <p>
-                            <b>Meaning:</b>
-                            ${escapeHtml(
-                                entry.meaning ||
-                                "Missing"
-                            )}
-                        </p>
-
-                        <p>
-                            <b>Example:</b>
-                            ${escapeHtml(
-                                entry.example ||
-                                "Missing"
-                            )}
-                        </p>
-
-                    </div>
+                    ${
+                        entry.example
+                            ? `<p>
+                                <em>
+                                    ${escapeHtml(entry.example)}
+                                </em>
+                               </p>`
+                            : `<p class="missing">
+                                Example missing
+                               </p>`
+                    }
 
                 </div>
 
 
-                <span class="${entry.valid
-                    ? ""
-                    : "invalid-label"}">
-
-                    ${entry.valid
-                        ? "Ready"
-                        : "Incomplete"}
-
+                <span>
+                    ${
+                        entry.valid
+                            ? "Draft"
+                            : "Needs attention"
+                    }
                 </span>
 
             `;
 
 
             previewList.appendChild(card);
-
         }
     );
-
-
-    if (hasInvalidEntries) {
-
-        importMessage.textContent =
-            "Some entries are incomplete. Check the document before importing.";
-
-    }
 }
 
 
 /* =========================================
-   IMPORT
+   IMPORT INTO SUPABASE
 ========================================= */
 
 importButton.addEventListener(
     "click",
     async function () {
 
-        if (
-            importedEntries.length === 0
-        ) {
+        if (importedEntries.length === 0) {
 
             return;
         }
 
 
-        const invalid =
-            importedEntries.some(
-                entry => !entry.valid
+        const invalidEntries =
+            importedEntries.filter(
+                function (entry) {
+                    return !entry.valid;
+                }
             );
 
 
-        if (invalid) {
+        if (invalidEntries.length > 0) {
 
             alert(
                 "Please correct the incomplete entries before importing."
@@ -645,6 +636,8 @@ importButton.addEventListener(
 
         importButton.disabled = true;
 
+        previewButton.disabled = true;
+
 
         importMessage.textContent =
             "Importing dictionary entries...";
@@ -658,25 +651,21 @@ importButton.addEventListener(
 
 
             for (
-                const entry
-                of importedEntries
+                const entry of importedEntries
             ) {
 
                 /*
-                 * Check if the word already exists.
+                 * Check whether the word already exists.
                  */
 
                 const {
-                    data: existingWords,
+                    data: existingWord,
                     error: existingError
                 } = await supabaseClient
                     .from("words")
                     .select("id")
-                    .ilike(
-                        "word",
-                        entry.word
-                    )
-                    .limit(1);
+                    .ilike("word", entry.word)
+                    .maybeSingle();
 
 
                 if (existingError) {
@@ -685,10 +674,7 @@ importButton.addEventListener(
                 }
 
 
-                if (
-                    existingWords &&
-                    existingWords.length > 0
-                ) {
+                if (existingWord) {
 
                     skippedCount++;
 
@@ -697,27 +683,23 @@ importButton.addEventListener(
 
 
                 /*
-                 * Create word.
+                 * Create the word as a draft.
                  */
 
                 const {
-                    data: newWord,
+                    data: wordData,
                     error: wordError
                 } = await supabaseClient
                     .from("words")
                     .insert({
 
-                        word:
-                            entry.word,
+                        word: entry.word,
 
-                        short_meaning:
-                            entry.meaning,
+                        is_premium: false,
 
-                        is_premium:
-                            false,
+                        is_published: false,
 
-                        is_published:
-                            false
+                        short_meaning: entry.meaning
 
                     })
                     .select("id")
@@ -731,24 +713,23 @@ importButton.addEventListener(
 
 
                 /*
-                 * Create meaning.
+                 * Create the meaning.
                  */
 
                 const {
-                    data: newMeaning,
+                    data: meaningData,
                     error: meaningError
                 } = await supabaseClient
                     .from("meanings")
                     .insert({
 
                         word_id:
-                            newWord.id,
+                            wordData.id,
 
                         meaning:
                             entry.meaning,
 
-                        display_order:
-                            1
+                        display_order: 1
 
                     })
                     .select("id")
@@ -762,7 +743,7 @@ importButton.addEventListener(
 
 
                 /*
-                 * Create example.
+                 * Create the example.
                  */
 
                 const {
@@ -772,13 +753,12 @@ importButton.addEventListener(
                     .insert({
 
                         meaning_id:
-                            newMeaning.id,
+                            meaningData.id,
 
                         example_text:
                             entry.example,
 
-                        display_order:
-                            1
+                        display_order: 1
 
                     });
 
@@ -790,38 +770,20 @@ importButton.addEventListener(
 
 
                 importedCount++;
-
             }
 
 
             importMessage.textContent =
-                `${importedCount} entries imported successfully as drafts.` +
-                (
-                    skippedCount > 0
-                        ? ` ${skippedCount} existing entries were skipped.`
-                        : ""
-                );
+                `Import complete. ${importedCount} entries imported as drafts${skippedCount > 0 ? `, ${skippedCount} duplicates skipped` : ""}.`;
 
 
-            importedEntries = [];
-
-
-            renderPreview();
-
-
-            dictionaryFile.value = "";
-
-            selectedFile = null;
-
-            fileInfo.hidden = true;
-
-            previewButton.disabled = true;
+            importButton.disabled = true;
 
 
         } catch (error) {
 
             console.error(
-                "Import error:",
+                "DATABASE IMPORT ERROR:",
                 error
             );
 
@@ -832,8 +794,10 @@ importButton.addEventListener(
 
 
             importButton.disabled = false;
-        }
+        } finally {
 
+            previewButton.disabled = false;
+        }
     }
 );
 
@@ -848,14 +812,21 @@ cancelImportButton.addEventListener(
 
         importedEntries = [];
 
+        selectedFile = null;
+
+        dictionaryFile.value = "";
+
         previewList.innerHTML = "";
 
         previewSection.hidden = true;
 
+        fileInfo.hidden = true;
+
         importButton.disabled = true;
 
-        importMessage.textContent = "";
+        previewButton.disabled = true;
 
+        importMessage.textContent = "";
     }
 );
 
@@ -868,30 +839,15 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
+        .replaceAll("&", "&amp;")
 
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
+        .replaceAll("<", "&lt;")
 
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
+        .replaceAll(">", "&gt;")
 
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
+        .replaceAll('"', "&quot;")
 
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+        .replaceAll("'", "&#039;");
 }
 
 
@@ -909,9 +865,7 @@ async function initialize() {
 
         return;
     }
-
 }
 
 
 initialize();
-
