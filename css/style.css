@@ -263,3 +263,81 @@ body {
         grid-template-columns: 1fr;
     }
 }
+.word-toolbar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.word-toolbar input,
+.word-toolbar select {
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    background: white;
+}
+
+.admin-word-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+
+    display: grid;
+    grid-template-columns: 2fr 2fr auto;
+    gap: 20px;
+    align-items: center;
+}
+
+.admin-word-main h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.admin-word-main p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.admin-word-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-word-meta span {
+    background: #f1f1f1;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.admin-word-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.empty-state {
+    background: white;
+    padding: 50px;
+    text-align: center;
+    border-radius: 16px;
+}
+
+@media (max-width: 900px) {
+
+    .admin-word-card {
+        grid-template-columns: 1fr;
+    }
+
+    .word-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-word-actions {
+        flex-wrap: wrap;
+    }
+}
