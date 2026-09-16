@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account — Angolan Slang Dictionary</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <h1>Create Your Account</h1>
+
+            <p>
+                Create an account to save words and track your progress.
+            </p>
+
+            <form id="registerForm">
+
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Full name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    minlength="6"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Confirm password"
+                    minlength="6"
+                    required
+                >
+
+                <button type="submit" class="btn primary">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p id="registerMessage"></p>
+
+            <p>
+                Already have an account?
+                <a href="login.html">Log in</a>
+            </p>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/register.js"></script>
+
+</body>
+
+</html>
