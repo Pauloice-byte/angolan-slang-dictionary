@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Media | Angolan Slang Dictionary</title>
 
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
     <main class="admin-page">
 
-        <a href="admin.html" class="back-link">
-            ← Back to Dashboard
-        </a>
-
         <header class="admin-header">
 
             <div>
+                <a href="admin.html" class="back-link">
+                    ← Back to Dashboard
+                </a>
+
                 <h1>Media</h1>
+
                 <p>
                     Manage pronunciation audio for dictionary words.
                 </p>
@@ -29,56 +31,15 @@
         </header>
 
 
-        <!-- SEARCH AND FILTER -->
+        <!-- SEARCH -->
 
-        <section class="import-card">
+        <section class="word-toolbar">
 
-            <h2>Word Audio</h2>
-
-            <p class="import-description">
-                Upload, replace, listen to, or remove pronunciation
-                audio for your dictionary words.
-            </p>
-
-            <div class="word-toolbar">
-
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search words..."
-                >
-
-                <select id="statusFilter">
-
-                    <option value="all">
-                        All words
-                    </option>
-
-                    <option value="with-audio">
-                        With audio
-                    </option>
-
-                    <option value="without-audio">
-                        Without audio
-                    </option>
-
-                </select>
-
-                <div
-                    id="wordCount"
-                    style="
-                        background: white;
-                        border: 1px solid #ddd;
-                        border-radius: 10px;
-                        padding: 14px 16px;
-                        display: flex;
-                        align-items: center;
-                    "
-                >
-                    0 words
-                </div>
-
-            </div>
+            <input
+                type="search"
+                id="wordSearch"
+                placeholder="Search words..."
+            >
 
         </section>
 
@@ -88,165 +49,19 @@
         <div
             id="mediaMessage"
             class="admin-message"
+            style="display: none;"
         ></div>
 
 
-        <!-- WORD LIST -->
+        <!-- WORDS -->
 
-        <section id="wordsContainer">
+        <section id="wordList">
 
             <div class="empty-state">
                 Loading words...
             </div>
 
         </section>
-
-
-        <!-- AUDIO MODAL -->
-
-        <div
-            id="audioModal"
-            class="hidden"
-            style="
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.55);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                z-index: 9999;
-            "
-        >
-
-            <div
-                style="
-                    width: 100%;
-                    max-width: 500px;
-                    background: white;
-                    border-radius: 16px;
-                    padding: 30px;
-                    position: relative;
-                    box-shadow: 0 5px 30px rgba(0,0,0,0.2);
-                "
-            >
-
-                <button
-                    type="button"
-                    id="closeModal"
-                    style="
-                        position: absolute;
-                        top: 15px;
-                        right: 18px;
-                        border: none;
-                        background: none;
-                        font-size: 28px;
-                        cursor: pointer;
-                        color: #263D5B;
-                    "
-                >
-                    ×
-                </button>
-
-
-                <h2 id="modalWord">
-                    Word
-                </h2>
-
-                <p style="margin: 8px 0 25px;">
-                    Pronunciation audio
-                </p>
-
-
-                <!-- CURRENT AUDIO -->
-
-                <div
-                    id="existingAudioSection"
-                    class="hidden"
-                    style="margin-bottom: 25px;"
-                >
-
-                    <strong>
-                        Current audio
-                    </strong>
-
-                    <audio
-                        id="audioPlayer"
-                        controls
-                        style="
-                            width: 100%;
-                            margin-top: 10px;
-                        "
-                    ></audio>
-
-                </div>
-
-
-                <!-- FILE -->
-
-                <div class="form-group">
-
-                    <label for="audioFile">
-                        Select audio file
-                    </label>
-
-                    <input
-                        type="file"
-                        id="audioFile"
-                        accept="audio/*"
-                    >
-
-                </div>
-
-
-                <div
-                    id="selectedFile"
-                    style="
-                        font-size: 13px;
-                        margin-bottom: 20px;
-                    "
-                ></div>
-
-
-                <!-- ACTIONS -->
-
-                <div class="form-actions">
-
-                    <button
-                        type="button"
-                        id="uploadAudioButton"
-                        class="btn btn-primary"
-                    >
-                        Upload Audio
-                    </button>
-
-                    <button
-                        type="button"
-                        id="deleteAudioButton"
-                        class="btn btn-secondary hidden"
-                    >
-                        Delete Audio
-                    </button>
-
-                    <button
-                        type="button"
-                        id="cancelButton"
-                        class="btn btn-secondary"
-                    >
-                        Cancel
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="modalMessage"
-                    class="admin-message"
-                ></div>
-
-            </div>
-
-        </div>
 
     </main>
 
@@ -255,4 +70,5 @@
     <script src="js/admin-media.js"></script>
 
 </body>
+
 </html>
