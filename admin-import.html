@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Import Words — Admin</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="admin-page">
+
+        <header class="admin-header">
+
+            <div>
+                <h1>Import Dictionary</h1>
+                <p>Import words from your dictionary document.</p>
+            </div>
+
+            <div>
+
+                <a href="admin.html" class="btn secondary">
+                    Dashboard
+                </a>
+
+                <a href="admin-words.html" class="btn secondary">
+                    Words
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <section class="import-card">
+
+            <h2>Upload Dictionary</h2>
+
+            <p class="import-description">
+                Upload your Word document (.docx). The system will read
+                the entries and prepare them for review before importing
+                them into the dictionary.
+            </p>
+
+
+            <div class="file-upload-area">
+
+                <label for="dictionaryFile" class="file-label">
+
+                    <strong>
+                        Choose Dictionary File
+                    </strong>
+
+                    <span>
+                        .DOCX files only
+                    </span>
+
+                </label>
+
+                <input
+                    type="file"
+                    id="dictionaryFile"
+                    accept=".docx"
+                >
+
+            </div>
+
+
+            <div id="fileInfo" class="file-info" hidden>
+
+                <strong id="fileName"></strong>
+
+                <span id="fileSize"></span>
+
+            </div>
+
+
+            <button
+                id="previewButton"
+                class="btn primary"
+                disabled
+            >
+                Preview Import
+            </button>
+
+
+            <p id="importMessage"></p>
+
+        </section>
+
+
+        <section
+            id="previewSection"
+            class="import-card"
+            hidden
+        >
+
+            <div class="preview-header">
+
+                <div>
+                    <h2>Import Preview</h2>
+
+                    <p>
+                        Review the entries before importing them.
+                    </p>
+                </div>
+
+                <div class="preview-count">
+
+                    <strong id="previewCount">
+                        0
+                    </strong>
+
+                    <span>
+                        entries found
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div id="previewList"></div>
+
+
+            <div
+                id="previewEmpty"
+                class="empty-state"
+                hidden
+            >
+                No dictionary entries were found.
+            </div>
+
+
+            <div class="import-actions">
+
+                <button
+                    id="cancelImportButton"
+                    class="btn secondary"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="importButton"
+                    class="btn primary"
+                    disabled
+                >
+                    Import as Drafts
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="import-card">
+
+            <h2>Import Workflow</h2>
+
+            <div class="import-workflow">
+
+                <div class="workflow-step">
+
+                    <strong>1</strong>
+
+                    <span>
+                        Upload
+                    </span>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <strong>2</strong>
+
+                    <span>
+                        Preview
+                    </span>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <strong>3</strong>
+
+                    <span>
+                        Validate
+                    </span>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <strong>4</strong>
+
+                    <span>
+                        Import as Draft
+                    </span>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <strong>5</strong>
+
+                    <span>
+                        Admin Review
+                    </span>
+
+                </div>
+
+                <div class="workflow-step">
+
+                    <strong>6</strong>
+
+                    <span>
+                        Publish
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/admin-import.js"></script>
+
+</body>
+
+</html>
