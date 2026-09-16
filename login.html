@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Log In — Angolan Slang Dictionary</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <h1>Welcome Back</h1>
+
+            <p>
+                Log in to continue to the Angolan Slang Dictionary.
+            </p>
+
+            <form id="loginForm">
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                >
+
+                <button type="submit" class="btn primary">
+                    Log In
+                </button>
+
+            </form>
+
+            <p id="loginMessage"></p>
+
+            <p>
+                <a href="forgot-password.html">
+                    Forgot your password?
+                </a>
+            </p>
+
+            <p>
+                Don't have an account?
+                <a href="register.html">Create an account</a>
+            </p>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/login.js"></script>
+
+</body>
+
+</html>
