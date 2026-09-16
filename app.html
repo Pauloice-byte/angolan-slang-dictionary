@@ -3,32 +3,240 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#A63D40"
+    >
 
     <title>Angolan Slang Dictionary</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <main class="hero">
+    <!-- =========================
+         APP
+    ========================== -->
 
-        <div class="hero-content">
+    <div id="app">
 
-            <h1>Angolan Slang Dictionary</h1>
+        <!-- Decorative Samakaka-inspired pattern -->
+        <div class="pattern pattern-top"></div>
 
-            <p id="welcomeMessage">
-                Loading...
-            </p>
 
-        </div>
+        <!-- =========================
+             HEADER
+        ========================== -->
 
-    </main>
+        <header class="header">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app-home.js"></script>
+            <button
+                class="brand"
+                type="button"
+                onclick="navigateTo('home')"
+                aria-label="Go to home"
+            >
+
+                <div class="brand-symbol">
+                    A
+                </div>
+
+                <div class="brand-text">
+
+                    <strong>
+                        Angolan Slang
+                    </strong>
+
+                    <span>
+                        Dictionary
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <button
+                class="header-button"
+                id="menu-button"
+                type="button"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             MAIN APP CONTENT
+        ========================== -->
+
+        <main id="main-content">
+
+            <!-- JavaScript renders pages here -->
+
+        </main>
+
+
+        <!-- =========================
+             BOTTOM NAVIGATION
+        ========================== -->
+
+        <nav class="bottom-navigation">
+
+            <button
+                class="nav-item active"
+                data-page="home"
+                type="button"
+            >
+
+                <span class="nav-icon">⌂</span>
+
+                <span class="nav-label">
+                    Home
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="dictionary"
+                type="button"
+            >
+
+                <span class="nav-icon">▤</span>
+
+                <span class="nav-label">
+                    Dictionary
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item nav-search"
+                data-page="search"
+                type="button"
+            >
+
+                <span class="nav-icon">⌕</span>
+
+                <span class="nav-label">
+                    Search
+                </span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-page="saved"
+                type="button"
+            >
+
+                <span class="nav-icon">♡</span>
+
+                <span class="nav-label">
+                    Saved
+                </span>
+
+            </button>
+
+        </nav>
+
+
+        <!-- =========================
+             MENU PANEL
+        ========================== -->
+
+        <div
+            class="menu-overlay"
+            id="menu-overlay"
+        ></div>
+
+
+        <aside
+            class="side-menu"
+            id="side-menu"
+        >
+
+            <div class="menu-header">
+
+                <div>
+
+                    <p class="menu-small-title">
+                        ANGOLAN SLANG
+                    </p>
+
+                    <h2>
+                        Explore
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="close-menu"
+                    id="close-menu"
+                    type="button"
+                    aria-label="Close menu"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <button
+                class="menu-item"
+                onclick="navigateTo('daily')"
+            >
+                <span>☀</span>
+                3 Words of the Day
+            </button>
+
+
+            <button
+                class="menu-item"
+                onclick="navigateTo('updates')"
+            >
+                <span>✦</span>
+                Updates
+            </button>
+
+
+            <button
+                class="menu-item"
+                onclick="navigateTo('about')"
+            >
+                <span>i</span>
+                About the Dictionary
+            </button>
+
+
+            <button
+                class="menu-item"
+                onclick="navigateTo('settings')"
+            >
+                <span>⚙</span>
+                Settings
+            </button>
+
+        </aside>
+
+    </div>
+
+
+    <script src="script.js"></script>
 
 </body>
 
