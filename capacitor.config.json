@@ -1,0 +1,8 @@
+{
+  "appId": "com.angolanslang.dictionary",
+  "appName": "Angolan Slang Dictionary",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  }
+}
