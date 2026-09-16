@@ -24,15 +24,13 @@ const appState = {
 
     dailyWords: [],
 
-    savedWords: JSON.parse(
-        localStorage.getItem(
-            "angolanSlangSavedWords"
-        )
-    ) || [],
+    savedWords: [],
 
     dictionaryLoaded: false,
 
-    dailyLoaded: false
+    dailyLoaded: false,
+
+    savedLoaded: false
 
 };
 
@@ -40,14 +38,6 @@ const appState = {
 /* =========================================
    AUTHENTICATION
 ========================================= */
-
-/*
-   We keep authentication here, but we do NOT
-   redirect automatically when the user is
-   already inside the application.
-
-   Login.js remains responsible for routing.
-*/
 
 async function loadCurrentUser() {
 
@@ -84,7 +74,7 @@ async function loadCurrentUser() {
 
 
         /* =====================================
-           LOAD USER PROFILE
+           LOAD PROFILE
         ===================================== */
 
         const {
@@ -227,7 +217,7 @@ async function loadCategories() {
 
 
 /* =========================================
-   LOAD DICTIONARY WORDS
+   LOAD WORDS FROM SUPABASE
 ========================================= */
 
 async function loadDictionaryWords() {
@@ -235,7 +225,7 @@ async function loadDictionaryWords() {
     try {
 
         /* =====================================
-           LOAD PUBLISHED WORDS
+           WORDS
         ===================================== */
 
         const {
@@ -281,7 +271,7 @@ async function loadDictionaryWords() {
 
 
         /* =====================================
-           LOAD MEANINGS
+           MEANINGS
         ===================================== */
 
         const wordIds =
@@ -332,7 +322,7 @@ async function loadDictionaryWords() {
 
 
         /* =====================================
-           LOAD EXAMPLES
+           EXAMPLES
         ===================================== */
 
         const meaningIds =
@@ -410,9 +400,11 @@ async function loadDictionaryWords() {
                     meaning.word_id
                 ].push({
 
-                    id: meaning.id,
+                    id:
+                        meaning.id,
 
-                    meaning: meaning.meaning,
+                    meaning:
+                        meaning.meaning,
 
                     displayOrder:
                         meaning.display_order,
@@ -477,7 +469,8 @@ async function loadDictionaryWords() {
 
                 targetMeaning.examples.push({
 
-                    id: example.id,
+                    id:
+                        example.id,
 
                     exampleText:
                         example.example_text,
@@ -495,7 +488,7 @@ async function loadDictionaryWords() {
 
 
         /* =====================================
-           BUILD APP WORD OBJECTS
+           CREATE FINAL WORD OBJECTS
         ===================================== */
 
         appState.words =
@@ -523,16 +516,20 @@ async function loadDictionaryWords() {
                     const firstExample =
                         firstMeaning &&
                         firstMeaning.examples &&
-                        firstMeaning.examples.length
+                        firstMeaning.examples.length > 0
+
                             ? firstMeaning.examples[0]
+
                             : null;
 
 
                     return {
 
-                        id: word.id,
+                        id:
+                            word.id,
 
-                        word: word.word,
+                        word:
+                            word.word,
 
                         pronunciation:
                             word.pronunciation || "",
@@ -562,16 +559,13 @@ async function loadDictionaryWords() {
                             ),
 
                         wordAudioPath:
-                            word.word_audio_path ||
-                            "",
+                            word.word_audio_path || "",
 
                         shortMeaning:
-                            word.short_meaning ||
-                            "",
+                            word.short_meaning || "",
 
                         contextNotes:
-                            word.context_notes ||
-                            "",
+                            word.context_notes || "",
 
                         createdAt:
                             word.created_at,
@@ -582,8 +576,7 @@ async function loadDictionaryWords() {
                         firstMeaning:
                             firstMeaning
                                 ? firstMeaning.meaning
-                                : word.short_meaning ||
-                                  "",
+                                : word.short_meaning || "",
 
                         firstExample:
                             firstExample
@@ -601,9 +594,8 @@ async function loadDictionaryWords() {
 
 
         console.log(
-            "Supabase dictionary loaded:",
-            appState.words.length,
-            "published words"
+            "Words loaded from Supabase:",
+            appState.words.length
         );
 
 
@@ -627,67 +619,114 @@ async function loadDictionaryWords() {
 
 
 /* =========================================
-   LOAD DAILY 3
+   LOAD SAVED WORDS FROM SUPABASE
 ========================================= */
 
-/*
-   IMPORTANT:
+async function loadSavedWords() {
 
-   Daily 3 is NOT selected here.
+    if (!appState.user) {
 
-   Supabase already handles the selection
-   for the authenticated user.
+        appState.savedWords = [];
 
-   We simply retrieve the existing Daily 3
-   record and then retrieve the three words.
-*/
+        return;
 
-async function loadDailyWords() {
+    }
+
 
     try {
 
-        if (!appState.user) {
-
-            console.warn(
-                "Cannot load Daily 3 without user."
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("saved_words")
+            .select(
+                "word_id"
+            )
+            .eq(
+                "user_id",
+                appState.user.id
             );
 
-            appState.dailyWords = [];
 
-            return;
+        if (error) {
+
+            throw error;
 
         }
 
 
-        /* =====================================
-           GET TODAY'S USER DAILY 3
-        ===================================== */
+        appState.savedWords =
+            (data || []).map(
+                item =>
+                    item.word_id
+            );
+
+
+        appState.savedLoaded =
+            true;
+
+
+        console.log(
+            "Saved words loaded:",
+            appState.savedWords.length
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Saved words loading error:",
+            error
+        );
+
+        appState.savedWords = [];
+
+        appState.savedLoaded =
+            false;
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD DAILY 3
+========================================= */
+
+async function loadDailyWords() {
+
+    if (!appState.user) {
+
+        appState.dailyWords = [];
+
+        return;
+
+    }
+
+
+    try {
 
         const {
-            data: dailyData,
-            error: dailyError
+            data,
+            error
         } = await supabaseClient
             .rpc(
                 "get_or_create_daily_three"
             );
 
 
-        if (dailyError) {
+        if (error) {
 
-            throw dailyError;
+            throw error;
 
         }
 
 
-        let dailyRecord =
-            dailyData;
+        let dailyRecord = data;
 
-
-        /*
-           RPC responses can be returned as an
-           object or as an array depending on
-           the function definition.
-        */
 
         if (
             Array.isArray(
@@ -703,20 +742,12 @@ async function loadDailyWords() {
 
         if (!dailyRecord) {
 
-            console.warn(
-                "No Daily 3 record returned."
-            );
-
             appState.dailyWords = [];
 
             return;
 
         }
 
-
-        /* =====================================
-           GET WORD IDS
-        ===================================== */
 
         const wordIds = [
 
@@ -727,12 +758,13 @@ async function loadDailyWords() {
             dailyRecord.word_3_id
 
         ].filter(
-            id => id !== null &&
-                  id !== undefined
+            id =>
+                id !== null &&
+                id !== undefined
         );
 
 
-        if (wordIds.length === 0) {
+        if (!wordIds.length) {
 
             appState.dailyWords = [];
 
@@ -741,53 +773,16 @@ async function loadDailyWords() {
         }
 
 
-        /* =====================================
-           GET WORD DATA
-        ===================================== */
-
-        const {
-            data: words,
-            error: wordsError
-        } = await supabaseClient
-            .from("words")
-            .select(`
-                id,
-                word,
-                pronunciation,
-                word_type,
-                category_id,
-                is_premium,
-                word_audio_path,
-                short_meaning,
-                context_notes
-            `)
-            .in(
-                "id",
-                wordIds
-            );
-
-
-        if (wordsError) {
-
-            throw wordsError;
-
-        }
-
-
-        const dailyWords =
-            words || [];
-
-
         /*
-           Preserve the exact order from
-           word_1_id → word_2_id → word_3_id.
+           Use the words already loaded from
+           Supabase instead of querying them again.
         */
 
         appState.dailyWords =
             wordIds
                 .map(
                     id =>
-                        dailyWords.find(
+                        appState.words.find(
                             word =>
                                 word.id === id
                         )
@@ -797,12 +792,6 @@ async function loadDailyWords() {
 
         appState.dailyLoaded =
             true;
-
-
-        console.log(
-            "Daily 3 loaded:",
-            appState.dailyWords
-        );
 
 
     }
@@ -825,7 +814,7 @@ async function loadDailyWords() {
 
 
 /* =========================================
-   LOAD ALL APP DATA
+   LOAD APP DATA
 ========================================= */
 
 async function loadAppData() {
@@ -835,6 +824,8 @@ async function loadAppData() {
     await loadCategories();
 
     await loadDictionaryWords();
+
+    await loadSavedWords();
 
     await loadDailyWords();
 
@@ -882,21 +873,27 @@ function updateNavigation() {
         );
 
 
-    navItems.forEach((item) => {
+    navItems.forEach(
+        item => {
 
-        item.classList.remove("active");
+            item.classList.remove(
+                "active"
+            );
 
 
-        if (
-            item.dataset.page ===
-            appState.currentPage
-        ) {
+            if (
+                item.dataset.page ===
+                appState.currentPage
+            ) {
 
-            item.classList.add("active");
+                item.classList.add(
+                    "active"
+                );
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -940,6 +937,11 @@ function renderPage() {
             mainContent.innerHTML =
                 renderDictionary();
 
+            setTimeout(
+                setupDictionary,
+                0
+            );
+
             break;
 
 
@@ -947,6 +949,11 @@ function renderPage() {
 
             mainContent.innerHTML =
                 renderSearch();
+
+            setTimeout(
+                setupSearch,
+                0
+            );
 
             break;
 
@@ -995,11 +1002,6 @@ function renderPage() {
 
 
         case "word-detail":
-
-            /*
-               Word detail is rendered directly
-               by openWord().
-            */
 
             break;
 
@@ -1256,10 +1258,6 @@ function renderHome() {
 
 function renderDictionary() {
 
-    const words =
-        [...appState.words];
-
-
     return `
 
         <section class="home-page">
@@ -1302,7 +1300,7 @@ function renderDictionary() {
                 <input
                     id="dictionary-search"
                     type="search"
-                    placeholder="Search for a word..."
+                    placeholder="Search for a word or meaning..."
                     aria-label="Search dictionary"
                 >
 
@@ -1332,19 +1330,19 @@ function renderDictionary() {
                     appState.categories.map(
                         category => `
 
-                        <button
-                            class="text-button dictionary-category"
-                            type="button"
-                            data-category="${category.id}"
-                        >
+                            <button
+                                class="text-button dictionary-category"
+                                type="button"
+                                data-category="${category.id}"
+                            >
 
-                            ${escapeHtml(
-                                category.name
-                            )}
+                                ${escapeHtml(
+                                    category.name
+                                )}
 
-                        </button>
+                            </button>
 
-                    `
+                        `
                     ).join("")
                 }
 
@@ -1359,8 +1357,12 @@ function renderDictionary() {
             >
 
                 <span id="dictionary-count">
-                    ${words.length}
-                    ${words.length === 1 ? "word" : "words"}
+                    ${appState.words.length}
+                    ${
+                        appState.words.length === 1
+                            ? "word"
+                            : "words"
+                    }
                 </span>
 
             </div>
@@ -1375,7 +1377,11 @@ function renderDictionary() {
                 "
             >
 
-                ${renderDictionaryCards(words)}
+                ${
+                    renderDictionaryCards(
+                        appState.words
+                    )
+                }
 
             </div>
 
@@ -1387,7 +1393,7 @@ function renderDictionary() {
 
 
 /* =========================================
-   DICTIONARY CARDS
+   DICTIONARY CARD RENDERER
 ========================================= */
 
 function renderDictionaryCards(
@@ -1404,12 +1410,14 @@ function renderDictionaryCards(
                     DICTIONARY
                 </p>
 
+
                 <h3>
                     No words found.
                 </h3>
 
+
                 <p class="hero-description">
-                    Try another search or category.
+                    Try another word, meaning or category.
                 </p>
 
             </div>
@@ -1422,8 +1430,8 @@ function renderDictionaryCards(
     return words.map(
         word => {
 
-            const isSaved =
-                appState.savedWords.includes(
+            const saved =
+                isWordSaved(
                     word.id
                 );
 
@@ -1474,24 +1482,33 @@ function renderDictionaryCards(
                     }
 
 
-                    <span
-                        class="daily-number"
+                    ${
+                        word.wordType
+                            ? `
+                                <span
+                                    style="
+                                        display: block;
+                                        margin-top: 8px;
+                                        color: var(--text-light);
+                                        font-size: 12px;
+                                        text-transform: uppercase;
+                                        letter-spacing: .5px;
+                                    "
+                                >
+                                    ${escapeHtml(
+                                        word.wordType
+                                    )}
+                                </span>
+                            `
+                            : ""
+                    }
+
+
+                    <h3
                         style="
-                            display: block;
-                            margin-top: 10px;
+                            margin-top: 8px;
                         "
                     >
-                        ${
-                            word.wordType
-                                ? escapeHtml(
-                                    word.wordType
-                                )
-                                : "WORD"
-                        }
-                    </span>
-
-
-                    <h3>
 
                         ${escapeHtml(
                             word.word
@@ -1529,8 +1546,10 @@ function renderDictionaryCards(
                                         color: var(--text-secondary);
                                     "
                                 >
+
                                     Premium content —
                                     Coming Soon.
+
                                 </p>
 
                             `
@@ -1579,8 +1598,9 @@ function renderDictionaryCards(
                         style="
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: 15px;
                             margin-top: 20px;
+                            flex-wrap: wrap;
                         "
                     >
 
@@ -1604,11 +1624,13 @@ function renderDictionaryCards(
                                         type="button"
                                         onclick="toggleSavedWord(${word.id})"
                                     >
+
                                         ${
-                                            isSaved
+                                            saved
                                                 ? "♥ Saved"
                                                 : "♡ Save"
                                         }
+
                                     </button>
                                 `
                         }
@@ -1626,12 +1648,12 @@ function renderDictionaryCards(
 
 
 /* =========================================
-   DICTIONARY SEARCH
+   DICTIONARY SEARCH + FILTER
 ========================================= */
 
 function setupDictionary() {
 
-    const searchInput =
+    const input =
         document.getElementById(
             "dictionary-search"
         );
@@ -1649,7 +1671,7 @@ function setupDictionary() {
         );
 
 
-    if (!searchInput) {
+    if (!input || !resultsContainer) {
 
         return;
 
@@ -1662,8 +1684,8 @@ function setupDictionary() {
 
     function updateResults() {
 
-        const searchTerm =
-            searchInput.value
+        const term =
+            input.value
                 .trim()
                 .toLowerCase();
 
@@ -1672,11 +1694,24 @@ function setupDictionary() {
             [...appState.words];
 
 
-        if (searchTerm) {
+        /* =====================================
+           SEARCH WORD + MEANINGS
+        ===================================== */
+
+        if (term) {
 
             results =
                 results.filter(
                     word => {
+
+                        const meaningText =
+                            word.meanings
+                                .map(
+                                    meaning =>
+                                        meaning.meaning
+                                )
+                                .join(" ");
+
 
                         const searchableText = [
 
@@ -1684,7 +1719,7 @@ function setupDictionary() {
 
                             word.shortMeaning,
 
-                            word.firstMeaning,
+                            meaningText,
 
                             word.categoryName
 
@@ -1694,7 +1729,7 @@ function setupDictionary() {
 
 
                         return searchableText.includes(
-                            searchTerm
+                            term
                         );
 
                     }
@@ -1702,6 +1737,10 @@ function setupDictionary() {
 
         }
 
+
+        /* =====================================
+           CATEGORY
+        ===================================== */
 
         if (
             selectedCategory !==
@@ -1742,7 +1781,7 @@ function setupDictionary() {
     }
 
 
-    searchInput.addEventListener(
+    input.addEventListener(
         "input",
         updateResults
     );
@@ -1802,7 +1841,7 @@ function renderSearch() {
         <section class="home-page">
 
             <p class="eyebrow">
-                SEARCH
+                SEARCH THE DICTIONARY
             </p>
 
 
@@ -1814,6 +1853,14 @@ function renderSearch() {
             >
                 Find a word.
             </h2>
+
+
+            <p class="hero-description">
+
+                Search by the word itself
+                or by its meaning.
+
+            </p>
 
 
             <div
@@ -1831,8 +1878,9 @@ function renderSearch() {
                 <input
                     id="main-search-input"
                     type="search"
-                    placeholder="Search for a word..."
-                    aria-label="Search dictionary"
+                    placeholder="Search word or meaning..."
+                    aria-label="Search word or meaning"
+                    autocomplete="off"
                 >
 
             </div>
@@ -1855,7 +1903,7 @@ function renderSearch() {
 
 
 /* =========================================
-   SETUP SEARCH PAGE
+   SETUP SEARCH
 ========================================= */
 
 function setupSearch() {
@@ -1872,14 +1920,14 @@ function setupSearch() {
         );
 
 
-    if (!input) {
+    if (!input || !results) {
 
         return;
 
     }
 
 
-    function search() {
+    function performSearch() {
 
         const term =
             input.value
@@ -1900,13 +1948,22 @@ function setupSearch() {
             appState.words.filter(
                 word => {
 
-                    const text = [
+                    const meaningText =
+                        word.meanings
+                            .map(
+                                meaning =>
+                                    meaning.meaning
+                            )
+                            .join(" ");
+
+
+                    const searchableText = [
 
                         word.word,
 
                         word.shortMeaning,
 
-                        word.firstMeaning,
+                        meaningText,
 
                         word.categoryName
 
@@ -1915,7 +1972,7 @@ function setupSearch() {
                         .toLowerCase();
 
 
-                    return text.includes(
+                    return searchableText.includes(
                         term
                     );
 
@@ -1933,14 +1990,824 @@ function setupSearch() {
 
     input.addEventListener(
         "input",
-        search
+        performSearch
     );
 
 
     setTimeout(
-        () => input.focus(),
+        () => {
+
+            input.focus();
+
+        },
         100
     );
+
+}
+
+
+/* =========================================
+   OPEN WORD
+========================================= */
+
+function openWord(id) {
+
+    const word =
+        appState.words.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!word) {
+
+        return;
+
+    }
+
+
+    appState.previousPage =
+        appState.currentPage;
+
+
+    appState.currentPage =
+        "word-detail";
+
+
+    const mainContent =
+        document.getElementById(
+            "main-content"
+        );
+
+
+    mainContent.innerHTML =
+        renderWordDetail(
+            word
+        );
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+/* =========================================
+   WORD DETAIL
+========================================= */
+
+function renderWordDetail(
+    word
+) {
+
+    const saved =
+        isWordSaved(
+            word.id
+        );
+
+
+    /* =====================================
+       PREMIUM WORD
+    ===================================== */
+
+    if (word.isPremium) {
+
+        return `
+
+            <section class="home-page">
+
+                <button
+                    class="text-button"
+                    type="button"
+                    onclick="goBack()"
+                >
+
+                    ← Back
+
+                </button>
+
+
+                <div
+                    class="hero"
+                    style="
+                        margin-top: 25px;
+                    "
+                >
+
+                    <p class="eyebrow">
+                        PREMIUM
+                    </p>
+
+
+                    <h2>
+                        ${escapeHtml(
+                            word.word
+                        )}
+                    </h2>
+
+
+                    ${
+                        word.pronunciation
+                            ? `
+                                <p class="hero-description">
+                                    ${escapeHtml(
+                                        word.pronunciation
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
+
+
+                    <div
+                        style="
+                            margin-top: 28px;
+                            padding: 22px;
+                            background: var(--gold-light);
+                            border-radius: var(--radius-md);
+                            color: var(--text-primary);
+                            line-height: 1.7;
+                        "
+                    >
+
+                        <strong>
+                            Coming Soon
+                        </strong>
+
+                        <br><br>
+
+                        This is premium dictionary
+                        content. Full access is
+                        coming soon.
+
+                    </div>
+
+
+                    <div
+                        style="
+                            margin-top: 20px;
+                        "
+                    >
+
+                        <button
+                            class="text-button"
+                            type="button"
+                            onclick="toggleSavedWord(${word.id})"
+                        >
+
+                            ${
+                                saved
+                                    ? "♥ Saved"
+                                    : "♡ Save Word"
+                            }
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        `;
+
+    }
+
+
+    /* =====================================
+       FREE WORD
+    ===================================== */
+
+    return `
+
+        <section class="home-page">
+
+            <button
+                class="text-button"
+                type="button"
+                onclick="goBack()"
+            >
+
+                ← Back
+
+            </button>
+
+
+            <div
+                class="hero"
+                style="
+                    margin-top: 25px;
+                "
+            >
+
+                <p class="eyebrow">
+
+                    ${
+                        word.categoryName
+                            ? escapeHtml(
+                                word.categoryName
+                            )
+                            : "DICTIONARY"
+                    }
+
+                </p>
+
+
+                <div
+                    style="
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        gap: 20px;
+                    "
+                >
+
+                    <div>
+
+                        <h2>
+
+                            ${escapeHtml(
+                                word.word
+                            )}
+
+                        </h2>
+
+
+                        ${
+                            word.wordType
+                                ? `
+                                    <p
+                                        style="
+                                            color: var(--text-secondary);
+                                            text-transform: uppercase;
+                                            font-size: 12px;
+                                            letter-spacing: .5px;
+                                        "
+                                    >
+
+                                        ${escapeHtml(
+                                            word.wordType
+                                        )}
+
+                                    </p>
+                                `
+                                : ""
+                        }
+
+
+                        ${
+                            word.pronunciation
+                                ? `
+                                    <p class="hero-description">
+
+                                        ${escapeHtml(
+                                            word.pronunciation
+                                        )}
+
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <button
+                        class="text-button"
+                        type="button"
+                        onclick="toggleSavedWord(${word.id})"
+                        aria-label="Save word"
+                    >
+
+                        ${
+                            saved
+                                ? "♥"
+                                : "♡"
+                        }
+
+                    </button>
+
+                </div>
+
+
+                ${
+                    word.wordAudioPath
+                        ? `
+                            <button
+                                class="primary-button"
+                                type="button"
+                                onclick="playAudio('${escapeAttribute(
+                                    word.wordAudioPath
+                                )}')"
+                            >
+
+                                Listen
+
+                                <span>
+                                    ▶
+                                </span>
+
+                            </button>
+                        `
+                        : ""
+                }
+
+
+                <div
+                    style="
+                        margin-top: 30px;
+                    "
+                >
+
+                    <p class="eyebrow">
+                        MEANING
+                    </p>
+
+
+                    ${
+                        word.meanings.length > 0
+
+                            ? word.meanings.map(
+                                (meaning, index) => `
+
+                                    <div
+                                        style="
+                                            margin-top: 20px;
+                                        "
+                                    >
+
+                                        ${
+                                            word.meanings.length > 1
+                                                ? `
+                                                    <span
+                                                        style="
+                                                            color: var(--text-secondary);
+                                                            font-size: 13px;
+                                                        "
+                                                    >
+                                                        Meaning ${index + 1}
+                                                    </span>
+                                                `
+                                                : ""
+                                        }
+
+
+                                        <h3>
+
+                                            ${escapeHtml(
+                                                meaning.meaning
+                                            )}
+
+                                        </h3>
+
+
+                                        ${
+                                            meaning.examples
+                                                .map(
+                                                    example => `
+
+                                                        <div
+                                                            style="
+                                                                margin-top: 15px;
+                                                                padding: 20px;
+                                                                background: var(--surface-soft);
+                                                                border-radius: var(--radius-md);
+                                                                color: var(--text-secondary);
+                                                                line-height: 1.7;
+                                                            "
+                                                        >
+
+                                                            “${escapeHtml(
+                                                                example.exampleText
+                                                            )}”
+
+
+                                                            ${
+                                                                example.audioPath
+                                                                    ? `
+                                                                        <br><br>
+
+                                                                        <button
+                                                                            class="text-button"
+                                                                            type="button"
+                                                                            onclick="playAudio('${escapeAttribute(
+                                                                                example.audioPath
+                                                                            )}')"
+                                                                        >
+
+                                                                            ▶ Listen
+
+                                                                        </button>
+                                                                    `
+                                                                    : ""
+                                                            }
+
+                                                        </div>
+
+                                                    `
+                                                )
+                                                .join("")
+                                        }
+
+                                    </div>
+
+                                `
+                            ).join("")
+
+                            : `
+
+                                <p class="hero-description">
+
+                                    ${escapeHtml(
+                                        word.shortMeaning ||
+                                        "No meaning available."
+                                    )}
+
+                                </p>
+
+                            `
+                    }
+
+                </div>
+
+
+                ${
+                    word.contextNotes
+                        ? `
+                            <div
+                                style="
+                                    margin-top: 30px;
+                                "
+                            >
+
+                                <p class="eyebrow">
+                                    CONTEXT
+                                </p>
+
+                                <p class="hero-description">
+
+                                    ${escapeHtml(
+                                        word.contextNotes
+                                    )}
+
+                                </p>
+
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                <div
+                    style="
+                        margin-top: 30px;
+                    "
+                >
+
+                    <button
+                        class="text-button"
+                        type="button"
+                        onclick="toggleSavedWord(${word.id})"
+                    >
+
+                        ${
+                            saved
+                                ? "♥ Saved"
+                                : "♡ Save Word"
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    `;
+
+}
+
+
+/* =========================================
+   SAVED WORD CHECK
+========================================= */
+
+function isWordSaved(
+    wordId
+) {
+
+    return appState.savedWords.includes(
+        wordId
+    );
+
+}
+
+
+/* =========================================
+   SAVE / REMOVE WORD
+========================================= */
+
+async function toggleSavedWord(
+    wordId
+) {
+
+    if (!appState.user) {
+
+        console.error(
+            "No authenticated user."
+        );
+
+        return;
+
+    }
+
+
+    const alreadySaved =
+        isWordSaved(
+            wordId
+        );
+
+
+    /*
+       Optimistic UI update.
+    */
+
+    if (alreadySaved) {
+
+        appState.savedWords =
+            appState.savedWords.filter(
+                id =>
+                    id !== wordId
+            );
+
+    } else {
+
+        appState.savedWords.push(
+            wordId
+        );
+
+    }
+
+
+    try {
+
+        if (alreadySaved) {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("saved_words")
+                .delete()
+                .eq(
+                    "user_id",
+                    appState.user.id
+                )
+                .eq(
+                    "word_id",
+                    wordId
+                );
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+        } else {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("saved_words")
+                .insert({
+
+                    user_id:
+                        appState.user.id,
+
+                    word_id:
+                        wordId
+
+                });
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+        }
+
+
+        /*
+           Re-render the current page so
+           the heart/save state changes.
+        */
+
+        if (
+            appState.currentPage ===
+            "word-detail"
+        ) {
+
+            const word =
+                appState.words.find(
+                    item =>
+                        item.id ===
+                        wordId
+                );
+
+
+            if (word) {
+
+                document.getElementById(
+                    "main-content"
+                ).innerHTML =
+                    renderWordDetail(
+                        word
+                    );
+
+            }
+
+        } else {
+
+            renderPage();
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Save word error:",
+            error
+        );
+
+
+        /*
+           Database operation failed,
+           so restore the previous state.
+        */
+
+        if (alreadySaved) {
+
+            appState.savedWords.push(
+                wordId
+            );
+
+        } else {
+
+            appState.savedWords =
+                appState.savedWords.filter(
+                    id =>
+                        id !== wordId
+                );
+
+        }
+
+
+        if (
+            appState.currentPage ===
+            "word-detail"
+        ) {
+
+            const word =
+                appState.words.find(
+                    item =>
+                        item.id ===
+                        wordId
+                );
+
+
+            if (word) {
+
+                document.getElementById(
+                    "main-content"
+                ).innerHTML =
+                    renderWordDetail(
+                        word
+                    );
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   SAVED PAGE
+========================================= */
+
+function renderSaved() {
+
+    const words =
+        appState.words.filter(
+            word =>
+                appState.savedWords.includes(
+                    word.id
+                )
+        );
+
+
+    return `
+
+        <section class="home-page">
+
+            <p class="eyebrow">
+                YOUR WORDS
+            </p>
+
+
+            <h2
+                style="
+                    font-size: clamp(42px, 7vw, 64px);
+                    letter-spacing: -2px;
+                "
+            >
+                Saved.
+            </h2>
+
+
+            <p class="hero-description">
+
+                Words you found interesting
+                and decided to keep.
+
+            </p>
+
+
+            <div
+                style="
+                    display: grid;
+                    gap: 18px;
+                    margin-top: 30px;
+                "
+            >
+
+                ${
+                    words.length
+
+                        ? renderDictionaryCards(
+                            words
+                        )
+
+                        : `
+
+                            <div class="hero">
+
+                                <p class="eyebrow">
+                                    YOUR COLLECTION
+                                </p>
+
+
+                                <h3>
+                                    No saved words yet.
+                                </h3>
+
+
+                                <p class="hero-description">
+
+                                    When you find a word
+                                    you like, tap the
+                                    ♡ button to save it here.
+
+                                </p>
+
+
+                                <button
+                                    class="primary-button"
+                                    type="button"
+                                    onclick="navigateTo('dictionary')"
+                                >
+
+                                    Explore Dictionary
+
+                                    <span>
+                                        →
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        `
+                }
+
+            </div>
+
+        </section>
+
+    `;
 
 }
 
@@ -2068,576 +2935,7 @@ function renderDailyPage() {
 
 
 /* =========================================
-   OPEN REAL WORD
-========================================= */
-
-function openWord(id) {
-
-    const word =
-        appState.words.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!word) {
-
-        return;
-
-    }
-
-
-    appState.previousPage =
-        appState.currentPage;
-
-
-    appState.currentPage =
-        "word-detail";
-
-
-    const mainContent =
-        document.getElementById(
-            "main-content"
-        );
-
-
-    mainContent.innerHTML =
-        renderWordDetail(
-            word
-        );
-
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
-    });
-
-}
-
-
-/* =========================================
-   WORD DETAIL
-========================================= */
-
-function renderWordDetail(
-    word
-) {
-
-    if (word.isPremium) {
-
-        return `
-
-            <section class="home-page">
-
-                <button
-                    class="text-button"
-                    type="button"
-                    onclick="goBack()"
-                >
-
-                    ← Back
-
-                </button>
-
-
-                <div
-                    class="hero"
-                    style="
-                        margin-top: 25px;
-                    "
-                >
-
-                    <p class="eyebrow">
-                        PREMIUM
-                    </p>
-
-
-                    <h2>
-                        ${escapeHtml(
-                            word.word
-                        )}
-                    </h2>
-
-
-                    ${
-                        word.pronunciation
-                            ? `
-                                <p class="hero-description">
-                                    ${escapeHtml(
-                                        word.pronunciation
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-
-                    <div
-                        style="
-                            margin-top: 28px;
-                            padding: 22px;
-                            background: var(--gold-light);
-                            border-radius: var(--radius-md);
-                            color: var(--text-primary);
-                            line-height: 1.7;
-                        "
-                    >
-
-                        <strong>
-                            Coming Soon
-                        </strong>
-
-                        <br><br>
-
-                        This is premium dictionary
-                        content. Full access is
-                        coming soon.
-
-                    </div>
-
-                </div>
-
-            </section>
-
-        `;
-
-    }
-
-
-    const isSaved =
-        appState.savedWords.includes(
-            word.id
-        );
-
-
-    return `
-
-        <section class="home-page">
-
-            <button
-                class="text-button"
-                type="button"
-                onclick="goBack()"
-            >
-
-                ← Back
-
-            </button>
-
-
-            <div
-                class="hero"
-                style="
-                    margin-top: 25px;
-                "
-            >
-
-                <p class="eyebrow">
-
-                    ${
-                        word.categoryName
-                            ? escapeHtml(
-                                word.categoryName
-                            )
-                            : "DICTIONARY"
-                    }
-
-                </p>
-
-
-                <h2>
-
-                    ${escapeHtml(
-                        word.word
-                    )}
-
-                </h2>
-
-
-                ${
-                    word.pronunciation
-                        ? `
-                            <p class="hero-description">
-
-                                ${escapeHtml(
-                                    word.pronunciation
-                                )}
-
-                            </p>
-                        `
-                        : ""
-                }
-
-
-                ${
-                    word.wordAudioPath
-                        ? `
-                            <button
-                                class="primary-button"
-                                type="button"
-                                onclick="playAudio('${escapeAttribute(
-                                    word.wordAudioPath
-                                )}')"
-                            >
-
-                                Listen
-                                <span>▶</span>
-
-                            </button>
-                        `
-                        : ""
-                }
-
-
-                <div
-                    style="
-                        margin-top: 28px;
-                    "
-                >
-
-                    <p class="eyebrow">
-                        MEANING
-                    </p>
-
-
-                    ${
-                        word.meanings.length
-
-                            ? word.meanings.map(
-                                (meaning, index) => `
-
-                                    <div
-                                        style="
-                                            margin-top: 15px;
-                                        "
-                                    >
-
-                                        ${
-                                            word.meanings.length > 1
-                                                ? `
-                                                    <span
-                                                        style="
-                                                            color: var(--text-secondary);
-                                                            font-size: 13px;
-                                                        "
-                                                    >
-                                                        Meaning ${index + 1}
-                                                    </span>
-                                                `
-                                                : ""
-                                        }
-
-
-                                        <h3
-                                            style="
-                                                margin-top: 5px;
-                                            "
-                                        >
-
-                                            ${escapeHtml(
-                                                meaning.meaning
-                                            )}
-
-                                        </h3>
-
-
-                                        ${
-                                            meaning.examples
-                                                .map(
-                                                    example => `
-
-                                                        <div
-                                                            style="
-                                                                margin-top: 15px;
-                                                                padding: 20px;
-                                                                background: var(--surface-soft);
-                                                                border-radius: var(--radius-md);
-                                                                color: var(--text-secondary);
-                                                                line-height: 1.7;
-                                                            "
-                                                        >
-
-                                                            “${escapeHtml(
-                                                                example.exampleText
-                                                            )}”
-
-
-                                                            ${
-                                                                example.audioPath
-                                                                    ? `
-                                                                        <br><br>
-
-                                                                        <button
-                                                                            class="text-button"
-                                                                            type="button"
-                                                                            onclick="playAudio('${escapeAttribute(
-                                                                                example.audioPath
-                                                                            )}')"
-                                                                        >
-                                                                            ▶ Listen
-                                                                        </button>
-                                                                    `
-                                                                    : ""
-                                                            }
-
-                                                        </div>
-
-                                                    `
-                                                )
-                                                .join("")
-                                        }
-
-                                    </div>
-
-                                `
-                            ).join("")
-
-                            : `
-
-                                <p class="hero-description">
-
-                                    ${escapeHtml(
-                                        word.shortMeaning ||
-                                        "No meaning available."
-                                    )}
-
-                                </p>
-
-                            `
-                    }
-
-                </div>
-
-
-                ${
-                    word.contextNotes
-                        ? `
-                            <div
-                                style="
-                                    margin-top: 30px;
-                                "
-                            >
-
-                                <p class="eyebrow">
-                                    CONTEXT
-                                </p>
-
-                                <p
-                                    class="hero-description"
-                                >
-                                    ${escapeHtml(
-                                        word.contextNotes
-                                    )}
-                                </p>
-
-                            </div>
-                        `
-                        : ""
-                }
-
-
-                <div
-                    style="
-                        margin-top: 30px;
-                    "
-                >
-
-                    <button
-                        class="text-button"
-                        type="button"
-                        onclick="toggleSavedWord(${word.id})"
-                    >
-
-                        ${
-                            isSaved
-                                ? "♥ Saved"
-                                : "♡ Save Word"
-                        }
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    `;
-
-}
-
-
-/* =========================================
-   SAVED WORDS
-========================================= */
-
-function toggleSavedWord(
-    wordId
-) {
-
-    const index =
-        appState.savedWords.indexOf(
-            wordId
-        );
-
-
-    if (index >= 0) {
-
-        appState.savedWords.splice(
-            index,
-            1
-        );
-
-    } else {
-
-        appState.savedWords.push(
-            wordId
-        );
-
-    }
-
-
-    localStorage.setItem(
-        "angolanSlangSavedWords",
-        JSON.stringify(
-            appState.savedWords
-        )
-    );
-
-
-    if (
-        appState.currentPage ===
-        "saved"
-    ) {
-
-        renderPage();
-
-        return;
-
-    }
-
-
-    if (
-        appState.currentPage ===
-        "word-detail"
-    ) {
-
-        const word =
-            appState.words.find(
-                item =>
-                    item.id ===
-                    wordId
-            );
-
-
-        if (word) {
-
-            document.getElementById(
-                "main-content"
-            ).innerHTML =
-                renderWordDetail(
-                    word
-                );
-
-        }
-
-        return;
-
-    }
-
-
-    renderPage();
-
-}
-
-
-/* =========================================
-   SAVED PAGE
-========================================= */
-
-function renderSaved() {
-
-    const words =
-        appState.words.filter(
-            word =>
-                appState.savedWords.includes(
-                    word.id
-                )
-        );
-
-
-    return `
-
-        <section class="home-page">
-
-            <p class="eyebrow">
-                YOUR WORDS
-            </p>
-
-
-            <h2
-                style="
-                    font-size: clamp(42px, 7vw, 64px);
-                    letter-spacing: -2px;
-                "
-            >
-                Saved.
-            </h2>
-
-
-            <div
-                style="
-                    display: grid;
-                    gap: 18px;
-                    margin-top: 30px;
-                "
-            >
-
-                ${
-                    words.length
-                        ? renderDictionaryCards(
-                            words
-                        )
-                        : `
-                            <div class="hero">
-
-                                <p class="hero-description">
-
-                                    You haven't saved
-                                    any words yet.
-
-                                </p>
-
-                                <button
-                                    class="primary-button"
-                                    type="button"
-                                    onclick="navigateTo('dictionary')"
-                                >
-
-                                    Explore Dictionary
-
-                                    <span>→</span>
-
-                                </button>
-
-                            </div>
-                        `
-                }
-
-            </div>
-
-        </section>
-
-    `;
-
-}
-
-
-/* =========================================
-   AUDIO
+   AUDIO FROM SUPABASE STORAGE
 ========================================= */
 
 async function playAudio(
@@ -3067,20 +3365,22 @@ if (menuOverlay) {
 
 document
     .querySelectorAll(".nav-item")
-    .forEach((item) => {
+    .forEach(
+        item => {
 
-        item.addEventListener(
-            "click",
-            () => {
+            item.addEventListener(
+                "click",
+                () => {
 
-                navigateTo(
-                    item.dataset.page
-                );
+                    navigateTo(
+                        item.dataset.page
+                    );
 
-            }
-        );
+                }
+            );
 
-    });
+        }
+    );
 
 
 /* =========================================
@@ -3203,12 +3503,6 @@ function escapeAttribute(
 ========================================= */
 
 async function initializeApplication() {
-
-    /*
-       First load the user's information,
-       then Supabase dictionary data,
-       then render the original interface.
-    */
 
     await loadAppData();
 
