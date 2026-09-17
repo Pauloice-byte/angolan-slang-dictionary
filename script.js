@@ -1037,13 +1037,13 @@ function renderHome() {
             <section class="hero">
 
                 <p class="eyebrow">
-                    ANGOLA IN WORDS1
+                    ANGOLA IN WORDS
                 </p>
 
 
                 <h2>
 
-                    Welcome1,
+                    Welcome,
 
                     <br>
 
