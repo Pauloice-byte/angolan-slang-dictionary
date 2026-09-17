@@ -1043,7 +1043,7 @@ function renderHome() {
 
                 <h2>
 
-                    Welcome,
+                    Welcome1,
 
                     <br>
 
