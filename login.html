@@ -1,64 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Log In — Angolan Slang Dictionary</title>
+    <title>Entrar — Dicionário Angolano</title>
 
-<link rel="stylesheet" href="css/globals.css"></head>
+    <link rel="stylesheet" href="css/globals.css">
+</head>
 
-<body>
+<body class="auth-page">
 
-    <main class="hero">
+    <div class="auth-background-pattern"></div>
 
-        <div class="hero-content">
+    <main class="auth-layout">
 
-            <h1>Welcome Back</h1>
 
-            <p>
-                Log in to continue to the Angolan Slang Dictionary.
-            </p>
+        <!-- =====================================================
+             BRAND SIDE
+        ====================================================== -->
 
-            <form id="loginForm">
+        <section class="auth-brand">
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Email address"
-                    required
-                >
+            <a href="index.html" class="auth-brand-top">
 
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    required
-                >
+                <div class="brand-symbol">
+                    <span>DA</span>
+                </div>
 
-                <button type="submit" class="btn primary">
-                    Log In
-                </button>
+                <div>
+                    <strong>Dicionário Angolano</strong>
+                    <span>Calão & Expressões Populares</span>
+                </div>
 
-            </form>
+            </a>
 
-            <p id="loginMessage"></p>
 
-            <p>
-                <a href="forgot-password.html">
-                    Forgot your password?
+            <div class="auth-brand-content">
+
+                <span class="section-kicker">
+                    BEM-VINDO DE VOLTA
+                </span>
+
+                <h1>
+                    Continua a
+                    <em>descobrir Angola.</em>
+                </h1>
+
+                <p>
+                    Entra na tua conta e continua a explorar as palavras
+                    e expressões que fazem parte da nossa cultura.
+                </p>
+
+                <div class="auth-quote">
+
+                    <span>“</span>
+
+                    <p>
+                        Cada palavra conta uma história.
+                    </p>
+
+                    <small>
+                        Every word tells a story.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="auth-brand-bottom">
+
+                <span>ANGOLA</span>
+
+                <div class="mini-pattern"></div>
+
+                <span>AO</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             LOGIN SIDE
+        ====================================================== -->
+
+        <section class="auth-form-area">
+
+            <div class="auth-card">
+
+                <div class="mobile-brand">
+
+                    <div class="brand-symbol">
+                        <span>DA</span>
+                    </div>
+
+                    <strong>Dicionário Angolano</strong>
+
+                </div>
+
+
+                <div class="auth-heading">
+
+                    <span class="auth-kicker">
+                        CONTA
+                    </span>
+
+                    <h2>
+                        Bem-vindo de volta.
+                    </h2>
+
+                    <p>
+                        <span>Entre para continuar.</span>
+                        <small>Log in to continue.</small>
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="O teu endereço de email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <div class="label-row">
+
+                            <label for="password">
+                                Palavra-passe
+                            </label>
+
+                            <a href="forgot-password.html">
+                                Esqueceu?
+                            </a>
+
+                        </div>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="A tua palavra-passe"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button type="submit" class="auth-submit">
+                        <span>Entrar</span>
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+
+                <p id="loginMessage" class="auth-message"></p>
+
+
+                <div class="auth-divider">
+                    <span>ou</span>
+                </div>
+
+
+                <p class="auth-switch">
+
+                    Ainda não tens uma conta?
+
+                    <a href="register.html">
+                        Criar conta
+                    </a>
+
+                    <small>
+                        Don't have an account? Create one.
+                    </small>
+
+                </p>
+
+
+                <a href="index.html" class="back-home">
+                    ← Voltar ao início
                 </a>
-            </p>
 
-            <p>
-                Don't have an account?
-                <a href="register.html">Create an account</a>
-            </p>
+            </div>
 
-        </div>
+        </section>
 
     </main>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
