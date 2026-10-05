@@ -3808,3 +3808,35 @@ button {
     }
 
 }
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+.menu-item-logout {
+    margin-top: 18px;
+
+    border-top:
+        1px solid var(--border);
+
+    padding-top: 20px;
+
+    color: var(--red);
+}
+
+.menu-item-logout span {
+    color: var(--red);
+}
+
+.menu-item-logout:hover {
+    background:
+        rgba(166, 61, 64, 0.08);
+}
+
+.menu-item-logout:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.menu-item-logout.is-loading {
+    pointer-events: none;
+}
