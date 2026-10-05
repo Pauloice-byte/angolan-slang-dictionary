@@ -819,18 +819,30 @@ async function loadDailyWords() {
 
 async function loadAppData() {
 
-    await loadCurrentUser();
+    /*
+       Categories and dictionary can load together.
+       They do not need to wait for each other.
+    */
 
-    await loadCategories();
+    await Promise.all([
+        loadCategories(),
+        loadDictionaryWords()
+    ]);
 
-    await loadDictionaryWords();
 
-    await loadSavedWords();
+    /*
+       Saved words and Daily 3 depend on the
+       authenticated user / dictionary data.
+       Load them together after the main
+       dictionary is ready.
+    */
 
-    await loadDailyWords();
+    await Promise.all([
+        loadSavedWords(),
+        loadDailyWords()
+    ]);
 
 }
-
 
 /* =========================================
    NAVIGATION
@@ -937,10 +949,7 @@ function renderPage() {
             mainContent.innerHTML =
                 renderDictionary();
 
-            setTimeout(
-                setupDictionary,
-                0
-            );
+          setupDictionary();
 
             break;
 
@@ -950,10 +959,7 @@ function renderPage() {
             mainContent.innerHTML =
                 renderSearch();
 
-            setTimeout(
-                setupSearch,
-                0
-            );
+           setupSearch();
 
             break;
 
@@ -1654,6 +1660,23 @@ function setupDictionary() {
     }
 
 
+    /*
+       Prevent accidental duplicate listeners
+       if the page is rendered again.
+    */
+
+    if (
+        input.dataset.initialized === "true"
+    ) {
+
+        return;
+
+    }
+
+
+    input.dataset.initialized = "true";
+
+
     let selectedCategory =
         "all";
 
@@ -1901,6 +1924,23 @@ function setupSearch() {
         return;
 
     }
+
+
+    /*
+       Prevent duplicate listeners when
+       the page is rendered again.
+    */
+
+    if (
+        input.dataset.initialized === "true"
+    ) {
+
+        return;
+
+    }
+
+
+    input.dataset.initialized = "true";
 
 
     function performSearch() {
@@ -3473,22 +3513,75 @@ function escapeAttribute(
 
 }
 
-
 /* =========================================
    INITIALIZE APPLICATION
 ========================================= */
 
 async function initializeApplication() {
 
-    await loadAppData();
+    /*
+       STEP 1
+       Get the authenticated user first.
+
+       We need this for the personalised
+       greeting and user-specific data.
+    */
+
+    await loadCurrentUser();
+
+
+    /*
+       STEP 2
+       Render the application immediately.
+
+       The user should see the app shell/home
+       without waiting for dictionary queries,
+       saved words or Daily 3.
+    */
 
     renderPage();
+
+
+    /*
+       STEP 3
+       Load the remaining application data
+       in the background.
+
+       This keeps the first paint fast.
+    */
+
+    try {
+
+        await loadAppData();
+
+
+        /*
+           Update the currently visible page
+           after the data arrives.
+
+           This is especially important for
+           Daily 3 on the home screen.
+        */
+
+        renderPage();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Application data loading error:",
+            error
+        );
+
+    }
 
 }
 
 
 /* =========================================
-   START
+   START APPLICATION
 ========================================= */
 
 initializeApplication();
