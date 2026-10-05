@@ -3299,7 +3299,10 @@ const menuOverlay =
     document.getElementById(
         "menu-overlay"
     );
-
+const logoutButton =
+    document.getElementById(
+        "logout-button"
+    );
 
 function openMenu() {
 
