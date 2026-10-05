@@ -3304,6 +3304,7 @@ const logoutButton =
         "logout-button"
     );
 
+
 function openMenu() {
 
     if (sideMenu) {
@@ -3377,7 +3378,80 @@ if (menuOverlay) {
 
 }
 
+/* =========================================
+   LOGOUT
+========================================= */
 
+async function logoutUser() {
+
+    if (!supabaseClient) {
+
+        return;
+
+    }
+
+
+    if (logoutButton) {
+
+        logoutButton.disabled = true;
+
+        logoutButton.classList.add(
+            "is-loading"
+        );
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient.auth.signOut();
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        window.location.href =
+            "login.html";
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+
+        if (logoutButton) {
+
+            logoutButton.disabled = false;
+
+            logoutButton.classList.remove(
+                "is-loading"
+            );
+
+        }
+
+    }
+
+}
+
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        logoutUser
+    );
+
+}
 /* =========================================
    BOTTOM NAVIGATION
 ========================================= */
