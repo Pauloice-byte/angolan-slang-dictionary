@@ -1,242 +1,190 @@
-/* ============================================================
-   DICIONÁRIO ANGOLANO
-   APP EXPERIENCE
-   Dictionary / Search / Saved / Word Details
-   ============================================================ */
+/* =========================================
+   ANGOLAN SLANG DICTIONARY
+   SAMAKAKA-INSPIRED DESIGN SYSTEM
+========================================= */
 
 
-/* ============================================================
-01.	DESIGN VARIABLES
-============================================================ */
+/* =========================================
+   DESIGN VARIABLES
+========================================= */
 
 :root {
 
     --red: #A63D40;
-    --red-dark: #872F33;
-    --red-soft: #C76668;
-    --red-pale: #F4DEDC;
+    --red-dark: #7D292C;
+    --red-light: #F4DEDC;
 
     --gold: #D89B2B;
-    --gold-light: #E8BD68;
-    --gold-pale: #F7E8C5;
+    --gold-light: #F7E8C5;
 
     --green: #386A4B;
-    --green-dark: #294F3A;
-    --green-pale: #DCE9DF;
+    --green-light: #DCE9DF;
 
     --blue: #263D5B;
-    --blue-light: #526A86;
-    --blue-pale: #DDE4ED;
+    --blue-light: #DDE4ED;
 
-    --cream: #F6F0E5;
-    --cream-dark: #E8DDCB;
+    --background: #F6F0E5;
+    --surface: #FFFFFF;
+    --surface-soft: #EEE6D8;
 
-    --white: #FFFFFF;
-
-    --ink: #182A3D;
     --text-primary: #211D1A;
     --text-secondary: #706860;
     --text-light: #A69D93;
 
-    --border: rgba(38, 61, 91, 0.12);
-    --border-strong: #DED4C6;
-
-    --surface: #FFFFFF;
-    --surface-soft: #EEE6D8;
-
-    --shadow-sm:
-        0 5px 16px rgba(38, 61, 91, 0.07);
-
-    --shadow-md:
-        0 15px 35px rgba(38, 61, 91, 0.11);
-
-    --shadow-lg:
-        0 25px 60px rgba(38, 61, 91, 0.16);
-
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 32px;
-
-    --max-width: 1100px;
+    --border: #DED4C6;
 
     --primary: var(--red);
     --primary-dark: var(--red-dark);
+
+    --shadow-sm:
+        0 3px 10px
+        Rgba(33, 29, 26, 0.06);
+
+    --shadow-md:
+        0 10px 30px
+        Rgba(33, 29, 26, 0.10);
+
+    --shadow-lg:
+        0 25px 60px
+        Rgba(33, 29, 26, 0.15);
+
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 26px;
+    --radius-xl: 36px;
+
+    --max-width: 1100px;
 }
 
 
-/* ============================================================
-02.	RESET
-============================================================ */
+/* =========================================
+   RESET
+========================================= */
 
 •	{
-    Box-sizing: border-box;
     Margin: 0;
     Padding: 0;
+    Box-sizing: border-box;
 }
+
 
 Html {
     Min-height: 100%;
     Scroll-behavior: smooth;
 }
 
-Body {
 
+Body {
     Min-height: 100vh;
 
-    Background:
-        Var(--cream);
+    Background: var(--background);
 
-    Color:
-        Var(--text-primary);
+    Color: var(--text-primary);
 
     Font-family:
         Inter,
+        System-ui,
         -apple-system,
         BlinkMacSystemFont,
         “Segoe UI”,
-        Arial,
         Sans-serif;
 
     -webkit-font-smoothing: antialiased;
-
-    Overflow-x: hidden;
 }
+
 
 Button,
 Input {
-
     Font: inherit;
 }
 
+
 Button {
-
     Border: none;
-
     Cursor: pointer;
 }
 
+
 Button:focus-visible,
 Input:focus-visible {
-
-    Outline:
-        3px solid rgba(216, 155, 43, 0.45);
+    Outline: 3px solid
+        Rgba(166, 61, 64, 0.35);
 
     Outline-offset: 3px;
 }
 
-A {
 
-    Color: inherit;
+Button:disabled {
+    Cursor: not-allowed;
 }
 
 
-/* ============================================================
-03.	APPLICATION WRAPPER
-============================================================ */
+/* =========================================
+   APP
+========================================= */
 
 #app {
-
     Min-height: 100vh;
 
     Position: relative;
 
     Overflow-x: hidden;
 
-    Padding-bottom: 105px;
+    Padding-bottom: 100px;
 }
 
 
-/* ============================================================
-04.	ANGOLAN BACKGROUND PATTERN
-============================================================ */
+/* =========================================
+   PATTERN
+========================================= */
 
 .pattern {
-
     Position: absolute;
 
     Pointer-events: none;
 
-    z-index: 0;
+    Opacity: 0.9;
 
-    opacity: 0.75;
+    z-index: 0;
 }
 
-.pattern-top {
 
+.pattern-top {
     Top: 0;
     Left: 0;
     Right: 0;
 
-    Height: 120px;
+    Height: 110px;
 
     Background-image:
+        url(“assets/samakaka-pattern.png”);
 
-        Linear-gradient(
-            135deg,
-            Rgba(166, 61, 64, 0.07) 25%,
-            Transparent 25%
-        ),
+    background-size: cover;
 
-        Linear-gradient(
-            225deg,
-            Rgba(216, 155, 43, 0.07) 25%,
-            Transparent 25%
-        ),
+    background-position: center;
 
-        Linear-gradient(
-            45deg,
-            Rgba(56, 106, 75, 0.05) 25%,
-            Transparent 25%
-        ),
-
-        Linear-gradient(
-            315deg,
-            Rgba(38, 61, 91, 0.05) 25%,
-            Transparent 25%
-        );
-
-    Background-size:
-        70px 70px;
-
-    Mask-image:
-        Linear-gradient(
-            To bottom,
-            Black,
-            Transparent
-        );
-
-    -webkit-mask-image:
-        Linear-gradient(
-            To bottom,
-            Black,
-            Transparent
-        );
+    background-repeat: no-repeat;
 }
 
 
-/* ============================================================
-05.	HEADER
-============================================================ */
+/* =========================================
+   HEADER
+========================================= */
 
 .header {
-
     Width: 100%;
 
-    Max-width:
-        Var(--max-width);
+    Max-width: var(--max-width);
 
-    Min-height: 88px;
+    Min-height: 90px;
 
-    Margin:
-        0 auto;
+    Margin: 0 auto;
 
-    Padding:
-        18px 24px;
+    Padding: 18px 24px;
 
     Position: relative;
 
-    z-index: 20;
+    z-index: 10;
 
     display: flex;
 
@@ -246,11 +194,332 @@ A {
 }
 
 
-/* ============================================================
-06.	BRAND
-============================================================ */
-
 .brand {
+    Display: flex;
+
+    Align-items: center;
+
+    Gap: 11px;
+
+    Background: transparent;
+
+    Text-align: left;
+}
+
+
+.brand-symbol {
+    Width: 46px;
+    Height: 46px;
+
+    Display: flex;
+
+    Align-items: center;
+    Justify-content: center;
+
+    Background: var(--red);
+
+    Color: white;
+
+    Border: 3px solid var(--gold);
+
+    Border-radius: 16px;
+
+    Font-size: 22px;
+
+    Font-weight: 900;
+
+    Box-shadow: var(--shadow-sm);
+}
+
+
+.brand-text {
+    Display: flex;
+
+    Flex-direction: column;
+}
+
+
+.brand-text strong {
+    Font-size: 16px;
+
+    Font-weight: 800;
+
+    Line-height: 1.15;
+}
+
+
+.brand-text span {
+    Margin-top: 2px;
+
+    Color: var(--text-secondary);
+
+    Font-size: 12px;
+}
+
+
+.header-button {
+    Width: 44px;
+    Height: 44px;
+
+    Display: flex;
+
+    Align-items: center;
+    Justify-content: center;
+
+    Background: var(--surface);
+
+    Color: var(--blue);
+
+    Border: 1px solid var(--border);
+
+    Border-radius: 50%;
+
+    Font-size: 21px;
+
+    Box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+#main-content {
+    Width: 100%;
+
+    Max-width: var(--max-width);
+
+    Margin: 0 auto;
+
+    Padding: 20px 24px;
+
+    Position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   PAGE
+========================================= */
+
+.page {
+    Width: 100%;
+}
+
+
+.page-title {
+    Margin-bottom: 8px;
+
+    Font-size: clamp(38px, 6vw, 60px);
+
+    Line-height: 1;
+
+    Letter-spacing: -2px;
+}
+
+
+.page-description {
+    Max-width: 620px;
+
+    Color: var(--text-secondary);
+
+    Font-size: 16px;
+
+    Line-height: 1.7;
+}
+
+
+/* =========================================
+   HOME
+========================================= */
+
+.home-page {
+    Padding-top: 20px;
+}
+
+
+.hero {
+    Position: relative;
+
+    Overflow: hidden;
+
+    Padding:
+        55px
+        45px
+        55px;
+
+    Background: var(--surface);
+
+    Border:
+        2px solid
+        Var(--gold);
+
+    Border-radius: var(--radius-xl);
+
+    Box-shadow: var(--shadow-md);
+}
+
+
+.hero::before {
+    Content: “”;
+
+    Position: absolute;
+
+    Top: 0;
+    Right: 0;
+
+    Width: 150px;
+    Height: 150px;
+
+    Background:
+        Linear-gradient(
+            135deg,
+            Var(--red) 25%,
+            Var(--gold) 25%,
+            Var(--gold) 50%,
+            Var(--green) 50%,
+            Var(--green) 75%,
+            Var(--blue) 75%
+        );
+
+    Opacity: 0.16;
+
+    Clip-path:
+        Polygon(
+            0 0,
+            100% 0,
+            100% 100%
+        );
+}
+
+
+.hero::after {
+    Content: “”;
+
+    Position: absolute;
+
+    Left: -40px;
+    Bottom: -60px;
+
+    Width: 190px;
+    Height: 190px;
+
+    Border:
+        24px solid
+        Var(--gold-light);
+
+    Border-radius: 50%;
+
+    Opacity: 0.8;
+}
+
+
+.hero > * {
+    Position: relative;
+
+    z-index: 2;
+}
+
+
+.eyebrow {
+    Color: var(--red);
+
+    Font-size: 11px;
+
+    Font-weight: 900;
+
+    Letter-spacing: 1.7px;
+
+    Margin-bottom: 16px;
+}
+
+
+.hero h2 {
+    Max-width: 680px;
+
+    Font-size:
+        Clamp(48px, 7vw, 78px);
+
+    Line-height: 0.96;
+
+    Letter-spacing: -3px;
+}
+
+
+.hero h2 span {
+    Color: var(--red);
+}
+
+
+.hero-description {
+    Max-width: 530px;
+
+    Margin-top: 25px;
+
+    Color: var(--text-secondary);
+
+    Font-size: 16px;
+
+    Line-height: 1.7;
+}
+
+
+.primary-button {
+    Margin-top: 30px;
+
+    Min-height: 52px;
+
+    Padding:
+        14px
+        22px;
+
+    Display: inline-flex;
+
+    Align-items: center;
+    Justify-content: center;
+
+    Gap: 12px;
+
+    Background: var(--red);
+
+    Color: white;
+
+    Border-radius: 999px;
+
+    Font-weight: 800;
+
+    Box-shadow:
+        0 8px 20px
+        Rgba(166, 61, 64, 0.25);
+
+    Transition:
+        Transform 0.2s ease,
+        Background 0.2s ease;
+}
+
+
+.primary-button:hover {
+    Background: var(--red-dark);
+
+    Transform: translateY(-2px);
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.home-search {
+    Margin:
+        25px
+        0
+        65px;
+}
+
+
+.search-box {
+    Min-height: 68px;
 
     Display: flex;
 
@@ -258,696 +527,116 @@ A {
 
     Gap: 12px;
 
+    Padding:
+        8px
+        20px;
+
+    Background: var(--surface);
+
+    Border: 1px solid var(--border);
+
+    Border-radius: var(--radius-lg);
+
+    Box-shadow: var(--shadow-sm);
+}
+
+
+.search-box span {
+    Color: var(--red);
+
+    Font-size: 26px;
+}
+
+
+.search-box input {
+    Width: 100%;
+
+    Padding: 14px 0;
+
+    Border: none;
+
+    Outline: none;
+
     Background: transparent;
 
     Color: var(--text-primary);
-
-    Text-align: left;
 }
 
 
-.brand-symbol {
+/* =========================================
+   SECTIONS
+========================================= */
 
-    Width: 46px;
-    Height: 34px;
+.content-section {
+    Padding-bottom: 40px;
+}
 
-    Flex-shrink: 0;
 
+.section-heading {
     Display: flex;
 
-    Align-items: center;
+    Align-items: flex-end;
 
-    Justify-content: center;
+    Justify-content: space-between;
+
+    Gap: 20px;
+
+    Margin-bottom: 24px;
+}
+
+
+.section-heading h2 {
+    Font-size: 30px;
+
+    Letter-spacing: -1px;
+}
+
+
+.text-button {
+    Background: transparent;
+
+    Color: var(--red);
+
+    Font-weight: 800;
+}
+
+
+/* =========================================
+   DAILY WORDS
+========================================= */
+
+.daily-grid {
+    Display: grid;
+
+    Grid-template-columns:
+        Repeat(3, 1fr);
+
+    Gap: 16px;
+}
+
+
+.daily-card {
+    Min-height: 230px;
+
+    Position: relative;
 
     Overflow: hidden;
 
-    Border:
-        2px solid var(--gold);
-
-    Border-radius:
-        7px 12px 7px 12px;
-
-    Background:
-        Var(--red);
-
-    Box-shadow:
-        5px 5px 0
-        Rgba(216, 155, 43, 0.95);
-
-    Transform:
-        Rotate(-3deg);
-}
-
-
-.brand-symbol img {
-
-    Width: 100%;
-    Height: 100%;
-
-    Display: block;
-
-    Object-fit: cover;
-
-    Transform:
-        Rotate(3deg);
-}
-
-
-.brand-text {
+    Padding: 24px;
 
     Display: flex;
 
     Flex-direction: column;
 
-    Gap: 2px;
-}
-
-
-.brand-text strong {
-
-    Color:
-        Var(--blue);
-
-    Font-size:
-        15px;
-
-    Font-weight:
-        900;
-
-    Line-height:
-        1.1;
-}
-
-
-.brand-text span {
-
-    Color:
-        Var(--text-secondary);
-
-    Font-size:
-        10px;
-
-    Letter-spacing:
-        0.8px;
-
-    Text-transform:
-        Uppercase;
-}
-
-
-/* ============================================================
-07.	HEADER MENU BUTTON
-============================================================ */
-
-.header-button {
-
-    Width: 44px;
-    Height: 44px;
-
-    Display: flex;
-
-    Align-items: center;
-
-    Justify-content: center;
-
-    Background:
-        Rgba(255, 255, 255, 0.9);
-
-    Color:
-        Var(--blue);
+    Background: var(--surface);
 
     Border:
-        1px solid var(--border);
-
-    Border-radius:
-        12px;
-
-    Font-size:
-        20px;
-
-    Box-shadow:
-        Var(--shadow-sm);
-
-    Transition:
-        Transform 0.2s ease,
-        Color 0.2s ease,
-        Background 0.2s ease;
-}
-
-
-.header-button:hover {
-
-    Color:
-        Var(--red);
-
-    Background:
-        Var(--white);
-
-    Transform:
-        translateY(-2px);
-}
-
-
-/* ============================================================
-08.	MAIN CONTENT
-============================================================ */
-
-#main-content {
-
-    Width: 100%;
-
-    Max-width:
-        Var(--max-width);
-
-    Margin:
-        0 auto;
-
-    Padding:
-        20px 24px 30px;
-
-    Position:
-        Relative;
-
-    z-index:
-        2;
-}
-
-
-/* ============================================================
-09.	GENERIC PAGE
-============================================================ */
-
-.page {
-
-    Width: 100%;
-}
-
-.page-title {
-
-    Margin-bottom:
-        8px;
-
-    Color:
-        Var(--blue);
-
-    Font-size:
-        Clamp(38px, 6vw, 60px);
-
-    Line-height:
-        1;
-
-    Letter-spacing:
-        -2px;
-
-    Font-weight:
-        900;
-}
-
-
-.page-description {
-
-    Max-width:
-        620px;
-
-    Color:
-        Var(--text-secondary);
-
-    Font-size:
-        16px;
-
-    Line-height:
-        1.7;
-}
-
-
-/* ============================================================
-10.	HOME HERO
-============================================================ */
-
-.home-page {
-
-    Padding-top:
-        20px;
-}
-
-
-.hero {
-
-    Position:
-        Relative;
-
-    Overflow:
-        Hidden;
-
-    Padding:
-        55px 45px;
-
-    Background:
-        Var(--white);
-
-    Border:
-        1px solid
-        Rgba(38, 61, 91, 0.08);
-
-    Border-top:
-        4px solid
-        Var(--red);
-
-    Border-radius:
-        Var(--radius-xl);
-
-    Box-shadow:
-        Var(--shadow-md);
-}
-
-
-.hero::before {
-
-    Content:
-        “”;
-
-    Position:
-        Absolute;
-
-    Top:
-        -100px;
-
-    Right:
-        -100px;
-
-    Width:
-        300px;
-
-    Height:
-        300px;
-
-    Border:
-        55px solid
-        Rgba(216, 155, 43, 0.12);
-
-    Border-radius:
-        50%;
-
-    Pointer-events:
-        None;
-}
-
-
-.hero::after {
-
-    Content:
-        “”;
-
-    Position:
-        Absolute;
-
-    Left:
-        -70px;
-
-    Bottom:
-        -100px;
-
-    Width:
-        240px;
-
-    Height:
-        240px;
-
-    Border:
-        35px solid
-        Rgba(56, 106, 75, 0.09);
-
-    Border-radius:
-        50%;
-
-    Pointer-events:
-        None;
-}
-
-
-.hero > * {
-
-    Position:
-        Relative;
-
-    z-index:
-        2;
-}
-
-
-.eyebrow {
-
-    Color:
-        Var(--red);
-
-    Font-size:
-        11px;
-
-    Font-weight:
-        900;
-
-    Letter-spacing:
-        1.7px;
-
-    Margin-bottom:
-        16px;
-}
-
-
-.hero h2 {
-
-    Max-width:
-        680px;
-
-    Color:
-        Var(--blue);
-
-    Font-size:
-        Clamp(48px, 7vw, 78px);
-
-    Line-height:
-        0.96;
-
-    Letter-spacing:
-        -3px;
-
-    Font-weight:
-        900;
-}
-
-
-.hero h2 span {
-
-    Color:
-        Var(--red);
-
-    Font-family:
-        Georgia,
-        Serif;
-}
-
-
-.hero-description {
-
-    Max-width:
-        530px;
-
-    Margin-top:
-        25px;
-
-    Color:
-        Var(--text-secondary);
-
-    Font-size:
-        16px;
-
-    Line-height:
-        1.7;
-}
-
-
-.primary-button {
-
-    Margin-top:
-        30px;
-
-    Min-height:
-        52px;
-
-    Padding:
-        14px 22px;
-
-    Display:
-        Inline-flex;
-
-    Align-items:
-        Center;
-
-    Justify-content:
-        Center;
-
-    Gap:
-        12px;
-
-    Background:
-        Var(--red);
-
-    Color:
-        White;
-
-    Border-radius:
-        10px;
-
-    Font-weight:
-        800;
-
-    Box-shadow:
-        0 10px 25px
-        Rgba(166, 61, 64, 0.22);
-
-    Transition:
-        Transform 0.2s ease,
-        Background 0.2s ease,
-        Box-shadow 0.2s ease;
-}
-
-
-.primary-button:hover {
-
-    Background:
-        Var(--red-dark);
-
-    Transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 30px
-        Rgba(166, 61, 64, 0.27);
-}
-
-
-/* ============================================================
-11.	SEARCH
-============================================================ */
-
-.home-search {
-
-    Margin:
-        25px 0 65px;
-}
-
-
-.search-box {
-
-    Min-height:
-        68px;
-
-    Display:
-        Flex;
-
-    Align-items:
-        Center;
-
-    Gap:
-        12px;
-
-    Padding:
-        8px 20px;
-
-    Background:
-        Rgba(255, 255, 255, 0.92);
-
-    Border:
-        1px solid var(--border);
-
-    Border-radius:
-        Var(--radius-lg);
-
-    Box-shadow:
-        Var(--shadow-sm);
-
-    Transition:
-        Border 0.2s ease,
-        Box-shadow 0.2s ease;
-}
-
-
-.search-box:focus-within {
-
-    Border-color:
+        2px solid
         Var(--gold);
 
-    Box-shadow:
-        0 0 0 4px
-        Rgba(216, 155, 43, 0.08),
-        Var(--shadow-sm);
-}
+    Border-radius: var(--radius-lg);
 
-
-.search-box span {
-
-    Color:
-        Var(--red);
-
-    Font-size:
-        26px;
-}
-
-
-.search-box input {
-
-    Width:
-        100%;
-
-    Padding:
-        14px 0;
-
-    Border:
-        None;
-
-    Outline:
-        None;
-
-    Background:
-        Transparent;
-
-    Color:
-        Var(--text-primary);
-
-    Font-size:
-        15px;
-}
-
-
-.search-box input::placeholder {
-
-    Color:
-        Var(--text-light);
-}
-
-
-/* ============================================================
-12.	CONTENT SECTIONS
-============================================================ */
-
-.content-section {
-
-    Padding-bottom:
-        40px;
-}
-
-
-.section-heading {
-
-    Display:
-        Flex;
-
-    Align-items:
-        Flex-end;
-
-    Justify-content:
-        Space-between;
-
-    Gap:
-        20px;
-
-    Margin-bottom:
-        24px;
-}
-
-
-.section-heading h2 {
-
-    Color:
-        Var(--blue);
-
-    Font-size:
-        30px;
-
-    Letter-spacing:
-        -1px;
-
-    Font-weight:
-        900;
-}
-
-
-.text-button {
-
-    Background:
-        Transparent;
-
-    Color:
-        Var(--red);
-
-    Font-weight:
-        800;
-
-    Transition:
-        Color 0.2s ease;
-}
-
-
-.text-button:hover {
-
-    Color:
-        Var(--red-dark);
-}
-
-
-/* ============================================================
-13.	DAILY WORDS
-============================================================ */
-
-.daily-grid {
-
-    Display:
-        Grid;
-
-    Grid-template-columns:
-        Repeat(3, 1fr);
-
-    Gap:
-        16px;
-}
-
-
-.daily-card {
-
-    Min-height:
-        230px;
-
-    Position:
-        Relative;
-
-    Overflow:
-        Hidden;
-
-    Padding:
-        24px;
-
-    Display:
-        Flex;
-
-    Flex-direction:
-        Column;
-
-    Background:
-        Var(--white);
-
-    Border:
-        1px solid
-        Rgba(38, 61, 91, 0.08);
-
-    Border-top:
-        4px solid
-        Var(--red);
-
-    Border-radius:
-        Var(--radius-lg);
-
-    Box-shadow:
-        Var(--shadow-sm);
+    Box-shadow: var(--shadow-sm);
 
     Transition:
         Transform 0.25s ease,
@@ -955,268 +644,159 @@ A {
 }
 
 
-.daily-card::after {
+.daily-card:nth-child(2) {
+    Background: var(--blue);
 
-    Content:
-        “”;
-
-    Position:
-        Absolute;
-
-    Width:
-        100px;
-
-    Height:
-        100px;
-
-    Right:
-        -45px;
-
-    Bottom:
-        -45px;
+    Color: white;
 
     Border:
-        18px solid
-        Rgba(216, 155, 43, 0.12);
-
-    Border-radius:
-        50%;
-
-    Pointer-events:
-        None;
-}
-
-
-.daily-card:nth-child(2) {
-
-    Background:
-        Var(--blue);
-
-    Color:
-        White;
-
-    Border-top-color:
+        2px solid
         Var(--gold);
-}
-
-
-.daily-card:nth-child(3) {
-
-    Border-top-color:
-        Var(--green);
 }
 
 
 .daily-card:hover {
+    Transform: translateY(-5px);
 
-    Transform:
-        translateY(-5px);
-
-    box-shadow:
-        var(--shadow-md);
+    Box-shadow:
+        0 8px 24px
+        Rgba(216, 155, 43, 0.18);
 }
 
 
 .daily-number {
+    Color: var(--red);
 
-    Color:
-        Var(--red);
+    Font-size: 11px;
 
-    Font-size:
-        11px;
+    Font-weight: 900;
 
-    Font-weight:
-        900;
-
-    Letter-spacing:
-        1px;
+    Letter-spacing: 1px;
 }
 
 
 .daily-card:nth-child(2) .daily-number {
-
-    Color:
-        Var(--gold);
+    Color: var(--gold);
 }
 
 
 .daily-card:nth-child(3) .daily-number {
-
-    Color:
-        Var(--green);
+    Color: var(--green);
 }
 
 
 .daily-card h3 {
+    Margin-top: auto;
 
-    Margin-top:
-        Auto;
+    Font-size: 32px;
 
-    Color:
-        Inherit;
-
-    Font-size:
-        32px;
-
-    Letter-spacing:
-        -1px;
-
-    Font-weight:
-        900;
+    Letter-spacing: -1px;
 }
 
 
 .daily-card p {
+    Margin-top: 8px;
 
-    Margin-top:
-        8px;
+    Color: var(--text-secondary);
 
-    Color:
-        Var(--text-secondary);
-
-    Font-size:
-        14px;
-
-    Line-height:
-        1.5;
+    Font-size: 14px;
 }
 
 
 .daily-card:nth-child(2) p {
-
     Color:
         Rgba(255, 255, 255, 0.75);
 }
 
 
 .daily-card button {
+    Margin-top: 20px;
 
-    Margin-top:
-        20px;
+    Background: transparent;
 
-    Background:
-        Transparent;
+    Color: var(--red);
 
-    Color:
-        Var(--red);
+    Text-align: left;
 
-    Text-align:
-        Left;
-
-    Font-weight:
-        800;
+    Font-weight: 800;
 }
 
 
 .daily-card:nth-child(2) button {
-
-    Color:
-        Var(--gold);
+    Color: var(--gold);
 }
 
 
-/* ============================================================
-14.	DAILY SLIDER
-============================================================ */
+/* =========================================
+   DAILY SLIDER
+========================================= */
 
 .daily-slider {
+    Width: 100%;
 
-    Width:
-        100%;
+    Overflow-x: auto;
 
-    Overflow-x:
-        Auto;
+    Overflow-y: hidden;
 
-    Overflow-y:
-        Hidden;
+    Scroll-snap-type: x mandatory;
 
-    Scroll-snap-type:
-        X mandatory;
+    Scrollbar-width: none;
 
-    Scrollbar-width:
-        None;
-
-    -webkit-overflow-scrolling:
-        Touch;
+    -webkit-overflow-scrolling: touch;
 }
 
 
 .daily-slider::-webkit-scrollbar {
-
-    Display:
-        None;
+    Display: none;
 }
 
 
 .daily-slider-track {
+    Display: flex;
 
-    Display:
-        Flex;
-
-    Gap:
-        16px;
+    Gap: 16px;
 }
 
 
 .daily-slide {
+    Min-width: 100%;
 
-    Min-width:
-        100%;
-
-    Scroll-snap-align:
-        Center;
+    Scroll-snap-align: center;
 }
 
 
 .daily-slide .daily-card {
+    Width: 100%;
 
-    Width:
-        100%;
-
-    Min-height:
-        260px;
+    Min-height: 260px;
 }
 
 
-/* ============================================================
-15.	SLIDER DOTS
-============================================================ */
+/* =========================================
+   SLIDER DOTS
+========================================= */
 
 .slider-dots {
+    Display: flex;
 
-    Display:
-        Flex;
+    Align-items: center;
+    Justify-content: center;
 
-    Align-items:
-        Center;
+    Gap: 8px;
 
-    Justify-content:
-        Center;
-
-    Gap:
-        8px;
-
-    Margin-top:
-        18px;
+    Margin-top: 18px;
 }
 
 
 .slider-dot {
+    Width: 8px;
+    Height: 8px;
 
-    Width:
-        8px;
+    Padding: 0;
 
-    Height:
-        8px;
+    Background: var(--border);
 
-    Padding:
-        0;
-
-    Background:
-        Var(--border-strong);
-
-    Border-radius:
-        50%;
+    Border-radius: 50%;
 
     Transition:
         Width 0.25s ease,
@@ -1225,192 +805,131 @@ A {
 
 
 .slider-dot.active {
+    Width: 26px;
 
-    Width:
-        26px;
+    Background: var(--red);
 
-    Background:
-        Var(--red);
-
-    Border-radius:
-        999px;
+    Border-radius: 999px;
 }
 
 
-/* ============================================================
-16.	GENERIC CARDS
-============================================================ */
+/* =========================================
+   GENERIC CARDS
+========================================= */
 
 .card-grid {
-
-    Display:
-        Grid;
+    Display: grid;
 
     Grid-template-columns:
         Repeat(3, 1fr);
 
-    Gap:
-        16px;
+    Gap: 16px;
 }
 
 
 .app-card {
+    Padding: 24px;
 
-    Padding:
-        24px;
-
-    Background:
-        Var(--white);
+    Background: var(--surface);
 
     Border:
         1px solid
         Var(--border);
 
-    Border-radius:
-        Var(--radius-lg);
+    Border-radius: var(--radius-lg);
 
-    Box-shadow:
-        Var(--shadow-sm);
-
-    Transition:
-        Transform 0.2s ease,
-        Box-shadow 0.2s ease;
-}
-
-
-.app-card:hover {
-
-    Transform:
-        translateY(-3px);
-
-    box-shadow:
-        var(--shadow-md);
+    Box-shadow: var(--shadow-sm);
 }
 
 
 .app-card h3 {
+    Font-size: 22px;
 
-    Color:
-        Var(--blue);
-
-    Font-size:
-        22px;
-
-    Letter-spacing:
-        -0.5px;
+    Letter-spacing: -0.5px;
 }
 
 
 .app-card p {
+    Margin-top: 8px;
 
-    Margin-top:
-        8px;
+    Color: var(--text-secondary);
 
-    Color:
-        Var(--text-secondary);
-
-    Line-height:
-        1.6;
+    Line-height: 1.6;
 }
 
 
-/* ============================================================
-17.	WORD DETAIL
-============================================================ */
+/* =========================================
+   WORD DETAIL
+========================================= */
 
 .word-detail-page {
-
-    Padding-bottom:
-        120px;
+    Padding-bottom: 120px;
 }
 
 
 .word-detail {
+    Width: 100%;
 
-    Width:
-        100%;
+    Max-width: 760px;
 
-    Max-width:
-        760px;
-
-    Margin:
-        35px auto 0;
+    Margin: 35px auto 0;
 }
 
 
 .word-detail-header {
-
-    Padding:
-        35px 0 40px;
+    Padding: 35px 0 40px;
 }
 
 
 .word-title-row {
+    Display: flex;
 
-    Display:
-        Flex;
+    Align-items: center;
 
-    Align-items:
-        Center;
+    Justify-content: space-between;
 
-    Justify-content:
-        Space-between;
-
-    Gap:
-        20px;
+    Gap: 20px;
 }
 
 
 .word-title-row h1 {
-
     Margin:
-        10px 0 12px;
-
-    Color:
-        Var(--blue);
+        10px
+        0
+        12px;
 
     Font-size:
-        Clamp(58px, 12vw, 100px);
+        Clamp(
+            58px,
+            12vw,
+            100px
+        );
 
-    Line-height:
-        0.95;
+    Line-height: 0.95;
 
-    Letter-spacing:
-        -4px;
+    Letter-spacing: -4px;
 
-    Font-weight:
-        900;
+    Color: var(--text-primary);
 }
 
 
 .word-audio-button {
+    Width: 52px;
+    Height: 52px;
 
-    Width:
-        52px;
-
-    Height:
-        52px;
-
-    Flex-shrink:
-        0;
+    Flex-shrink: 0;
 
     Border:
-        1px solid var(--border);
+        1px solid
+        Var(--border);
 
-    Border-radius:
-        50%;
+    Border-radius: 50%;
 
-    Background:
-        Var(--white);
+    Background: var(--surface);
 
-    Color:
-        Var(--blue);
+    Font-size: 20px;
 
-    Font-size:
-        20px;
-
-    Cursor:
-        Pointer;
+    Cursor: pointer;
 
     Transition:
         Transform 0.2s ease,
@@ -1419,205 +938,531 @@ A {
 
 
 .word-audio-button:not(:disabled):hover {
-
-    Transform:
-        Scale(1.05);
-
-    Background:
-        Var(--gold-pale);
+    Transform: scale(1.05);
 }
 
 
 .word-audio-button:disabled {
+    Opacity: 0.35;
 
-    Opacity:
-        0.35;
-
-    Cursor:
-        Not-allowed;
+    Cursor: not-allowed;
 }
 
 
 .word-meta {
+    Display: flex;
 
-    Display:
-        Flex;
+    Flex-wrap: wrap;
 
-    Flex-wrap:
-        Wrap;
-
-    Gap:
-        10px;
+    Gap: 10px;
 }
 
 
 .word-meta span {
+    Display: inline-flex;
 
-    Display:
-        Inline-flex;
-
-    Align-items:
-        Center;
+    Align-items: center;
 
     Padding:
-        7px 12px;
+        7px
+        12px;
 
-    Border-radius:
-        999px;
+    Border-radius: 999px;
 
-    Background:
-        Var(--surface-soft);
+    Background: var(--surface-soft);
 
-    Color:
-        Var(--text-secondary);
+    Color: var(--text-secondary);
 
-    Font-size:
-        14px;
+    Font-size: 14px;
 }
 
 
-/* ============================================================
-18.	DETAIL SECTIONS
-============================================================ */
+/* =========================================
+   DETAIL SECTIONS
+========================================= */
 
 .word-detail-section {
-
     Padding:
-        28px 0;
+        28px
+        0;
 
     Border-top:
-        1px solid var(--border);
+        1px solid
+        Var(--border);
 }
 
 
 .detail-label {
+    Margin-bottom: 12px;
 
-    Margin-bottom:
-        12px;
+    Font-size: 11px;
 
-    Color:
-        Var(--red);
+    Font-weight: 700;
 
-    Font-size:
-        11px;
+    Letter-spacing: 1.5px;
 
-    Font-weight:
-        800;
-
-    Letter-spacing:
-        1.5px;
-
-    Text-transform:
-        Uppercase;
+    Color: var(--text-secondary);
 }
 
 
 .word-meaning {
+    Font-size: 24px;
 
-    Color:
-        Var(--text-primary);
+    Line-height: 1.5;
 
-    Font-size:
-        24px;
-
-    Line-height:
-        1.5;
+    Color: var(--text-primary);
 }
 
 
 .word-secondary {
+    Font-size: 18px;
 
-    Color:
-        Var(--text-secondary);
+    Line-height: 1.6;
 
-    Font-size:
-        18px;
-
-    Line-height:
-        1.6;
+    Color: var(--text-secondary);
 }
 
 
-/* ============================================================
-19.	EXAMPLE
-============================================================ */
+/* =========================================
+   EXAMPLE
+========================================= */
 
 .word-example {
+    Margin-top: 10px;
 
-    Margin-top:
-        10px;
+    Padding: 25px;
 
-    Padding:
-        25px;
+    Background: var(--surface-soft);
 
-    Background:
-        Var(--surface-soft);
-
-    Border-left:
-        4px solid var(--gold);
-
-    Border-radius:
-        Var(--radius-md);
+    Border-radius: var(--radius-md);
 }
 
 
 .example-original {
+    Margin-bottom: 12px;
 
-    Margin-bottom:
-        12px;
+    Font-size: 20px;
 
-    Color:
-        Var(--text-primary);
+    Line-height: 1.6;
 
-    Font-size:
-        20px;
-
-    Line-height:
-        1.6;
+    Color: var(--text-primary);
 }
 
 
 .example-translation {
+    Font-size: 15px;
 
-    Color:
-        Var(--text-secondary);
+    Line-height: 1.6;
 
-    Font-size:
-        15px;
-
-    Line-height:
-        1.6;
+    Color: var(--text-secondary);
 }
 
 
-/* ============================================================
-20.	ALTERNATIVES
-============================================================ */
+/* =========================================
+   ALTERNATIVES
+========================================= */
 
 .word-alternatives {
+    Display: flex;
 
-    Display:
-        Flex;
+    Flex-wrap: wrap;
 
-    Flex-wrap:
-        Wrap;
-
-    Gap:
-        8px;
+    Gap: 8px;
 }
 
 
 .word-alternatives span {
+    Padding:
+        8px
+        13px;
+
+    Background: var(--surface-soft);
+
+    Border-radius: 999px;
+
+    Font-size: 14px;
+
+    Color: var(--text-secondary);
+}
+
+
+/* =========================================
+   SAVE BUTTON
+========================================= */
+
+.word-save-button {
+    Margin-top: 30px;
+
+    Width: 100%;
+
+    Justify-content: center;
+}
+
+
+/* =========================================
+   BOTTOM NAVIGATION
+========================================= */
+
+.bottom-navigation {
+    Position: fixed;
+
+    Left: 0;
+    Right: 0;
+    Bottom: 0;
+
+    Height: 78px;
 
     Padding:
-        8px 13px;
+        8px
+        14px;
+
+    Display: flex;
+
+    Align-items: center;
+
+    Justify-content: space-around;
 
     Background:
-        Var(--surface-soft);
+        Rgba(255, 255, 255, 0.96);
 
-    Border-radius:
-        999px;
+    Backdrop-filter:
+        Blur(18px);
 
-    Color:
+    Border-top:
+        1px solid
+        Var(--border);
+
+    z-index: 100;
+}
+
+
+.nav-item {
+    Min-width: 68px;
+
+    Height: 58px;
+
+    Display: flex;
+
+    Flex-direction: column;
+
+    Align-items: center;
+
+    Justify-content: center;
+
+    Gap: 4px;
+
+    Background: transparent;
+
+    Color: var(--text-secondary);
+
+    Border-radius: 16px;
+
+    Font-size: 11px;
+}
+
+
+.nav-icon {
+    Font-size: 20px;
+
+    Line-height: 1;
+}
+
+
+.nav-item.active {
+    Color: var(--red);
+
+    Font-weight: 800;
+}
+
+
+.nav-search {
+    Position: relative;
+}
+
+
+.nav-search .nav-icon {
+    Width: 42px;
+    Height: 42px;
+
+    Display: flex;
+
+    Align-items: center;
+    Justify-content: center;
+
+    Margin-top: -12px;
+
+    Background: var(--red);
+
+    Color: white;
+
+    Border:
+        3px solid
+        Var(--background);
+
+    Border-radius: 50%;
+
+    Box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   SIDE MENU
+========================================= */
+
+.menu-overlay {
+    Position: fixed;
+
+    Inset: 0;
+
+    Background:
+        Rgba(20, 18, 16, 0.4);
+
+    Opacity: 0;
+
+    Visibility: hidden;
+
+    Transition:
+        Opacity 0.25s ease;
+
+    z-index: 199;
+}
+
+
+.menu-overlay.open {
+    Opacity: 1;
+
+    Visibility: visible;
+}
+
+
+.side-menu {
+    Position: fixed;
+
+    Top: 0;
+    Right: 0;
+    Bottom: 0;
+
+    Width:
+        Min(340px, 88vw);
+
+    Padding:
+        28px
+        20px;
+
+    Display: flex;
+
+    Flex-direction: column;
+
+    Background: var(--surface);
+
+    Transform:
+        translateX(100%);
+
+    transition:
+        transform 0.3s ease;
+
+    box-shadow: var(--shadow-lg);
+
+    z-index: 200;
+
+    overflow-y: auto;
+}
+
+
+.side-menu.open {
+    Transform:
+        translateX(0);
+}
+
+
+.menu-header {
+    Padding-bottom: 30px;
+
+    Display: flex;
+
+    Align-items: flex-start;
+
+    Justify-content: space-between;
+
+    Border-bottom:
+        1px solid
+        Var(--border);
+}
+
+
+.menu-small-title {
+    Color: var(--red);
+
+    Font-size: 10px;
+
+    Font-weight: 900;
+
+    Letter-spacing: 1.5px;
+}
+
+
+.menu-header h2 {
+    Margin-top: 7px;
+
+    Font-size: 36px;
+
+    Letter-spacing: -2px;
+}
+
+
+.close-menu {
+    Width: 42px;
+    Height: 42px;
+
+    Background: var(--surface-soft);
+
+    Border-radius: 50%;
+
+    Font-size: 28px;
+
+    Color: var(--text-primary);
+}
+
+
+.menu-item {
+    Width: 100%;
+
+    Padding:
+        20px
+        10px;
+
+    Display: flex;
+
+    Align-items: center;
+
+    Gap: 15px;
+
+    Background: transparent;
+
+    Border-bottom:
+        1px solid
+        Var(--border);
+
+    Text-align: left;
+
+    Color: var(--text-primary);
+
+    Font-weight: 700;
+}
+
+
+.menu-item span {
+    Width: 30px;
+
+    Color: var(--red);
+
+    Font-size: 20px;
+
+    Text-align: center;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .header,
+    #main-content {
+        Padding-left: 18px;
+        Padding-right: 18px;
+    }
+
+
+    .header {
+        Min-height: 80px;
+    }
+
+
+    .hero {
+        Padding:
+            42px
+            25px
+            48px;
+
+        Border-radius: 28px;
+    }
+
+
+    .hero h2 {
+        Font-size: 48px;
+
+        Letter-spacing: -2px;
+    }
+
+
+    .daily-grid {
+        Grid-template-columns: 1fr;
+    }
+
+
+    .daily-card {
+        Min-height: 180px;
+    }
+
+
+    .card-grid {
+        Grid-template-columns: 1fr;
+    }
+
+
+    .section-heading {
+        Align-items: flex-start;
+
+        Flex-direction: column;
+    }
+}
+
+
+@media (min-width: 701px) {
+
+    .bottom-navigation {
+        Left: 50%;
+
+        Right: auto;
+
+        Bottom: 20px;
+
+        Transform:
+            translateX(-50%);
+
+        width: auto;
+
+        height: 70px;
+
+        padding:
+            7px
+            18px;
+
+        Border:
+            1px solid
+            Var(--border);
+
+        Border-radius: 24px;
+
+        Box-shadow: var(--shadow-md);
+    }
+   }
+.brand-symbol {
+    Width: 42px;
+    Height: 30px;
+    Overflow: hidden;
+    Border-radius: 4px;
+    Flex-shrink: 0;
+}
+
+.brand-symbol img {
+    Width: 100%;
+    Height: 100%;
+    Object-fit: cover;
+    Display: block;
+}
+
 
 
