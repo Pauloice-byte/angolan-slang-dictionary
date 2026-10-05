@@ -37,45 +37,47 @@
              HEADER
         ========================== -->
 
-        <header class="header">
+      <header class="header">
 
-            <button
-                class="brand"
-                type="button"
-                onclick="navigateTo('home')"
-                aria-label="Go to home"
-            >
-         <div class="brand-symbol">
-    <img
-        src="assets/angola-flag2.png"
-        alt="Angola"
+    <button
+        class="brand"
+        type="button"
+        onclick="navigateTo('home')"
+        aria-label="Go to home"
     >
-</div>
-                <div class="brand-text">
 
-                    <strong>
-                        Angolan Slang
-                    </strong>
-
-                    <span>
-                        Dictionary
-                    </span>
-
-                </div>
-
-            </button>
-
-
-            <button
-                class="header-button"
-                id="menu-button"
-                type="button"
-                aria-label="Open menu"
+        <span class="brand-symbol">
+            <img
+                src="assets/angola-flag2.png"
+                alt="Angola"
             >
-                ☰
-            </button>
+        </span>
 
-        </header>
+        <span class="brand-text">
+
+            <strong>
+                Angolan Slang
+            </strong>
+
+            <span>
+                Dictionary
+            </span>
+
+        </span>
+
+    </button>
+
+
+    <button
+        class="header-button"
+        id="menu-button"
+        type="button"
+        aria-label="Open menu"
+    >
+        <span aria-hidden="true">☰</span>
+    </button>
+
+</header>
 
 
         <!-- =========================
@@ -240,8 +242,8 @@
 
 
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="script.js"></script>
+<script src="js/supabase.js"></script>
+<script src="script.js"></script>
 
 </body>
 
