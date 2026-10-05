@@ -1,74 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Create Account — Angolan Slang Dictionary</title>
+    <title>Criar Conta — Dicionário Angolano</title>
 
-<link rel="stylesheet" href="css/globals.css"></head>
+    <link rel="stylesheet" href="css/globals.css">
+</head>
 
-<body>
+<body class="auth-page">
 
-    <main class="hero">
+    <div class="auth-background-pattern"></div>
 
-        <div class="hero-content">
+    <main class="auth-layout">
 
-            <h1>Create Your Account</h1>
 
-            <p>
-                Create an account to save words and track your progress.
-            </p>
+        <!-- =====================================================
+             BRAND SIDE
+        ====================================================== -->
 
-            <form id="registerForm">
+        <section class="auth-brand">
 
-                <input
-                    type="text"
-                    id="fullName"
-                    placeholder="Full name"
-                    required
-                >
+            <a href="index.html" class="auth-brand-top">
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Email address"
-                    required
-                >
+                <div class="brand-symbol">
+                    <span>DA</span>
+                </div>
 
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    minlength="6"
-                    required
-                >
+                <div>
+                    <strong>Dicionário Angolano</strong>
+                    <span>Calão & Expressões Populares</span>
+                </div>
 
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    placeholder="Confirm password"
-                    minlength="6"
-                    required
-                >
+            </a>
 
-                <button type="submit" class="btn primary">
-                    Create Account
-                </button>
 
-            </form>
+            <div class="auth-brand-content">
 
-            <p id="registerMessage"></p>
+                <span class="section-kicker">
+                    JUNTA-TE À EXPERIÊNCIA
+                </span>
 
-            <p>
-                Already have an account?
-                <a href="login.html">Log in</a>
-            </p>
+                <h1>
+                    A nossa língua
+                    <em>também é nossa história.</em>
+                </h1>
 
-        </div>
+                <p>
+                    Cria a tua conta e começa a construir a tua própria
+                    colecção de palavras e expressões angolanas.
+                </p>
+
+                <div class="auth-benefits">
+
+                    <div>
+                        <strong>01</strong>
+                        <span>Descobre novas palavras</span>
+                    </div>
+
+                    <div>
+                        <strong>02</strong>
+                        <span>Recebe 3 palavras todos os dias</span>
+                    </div>
+
+                    <div>
+                        <strong>03</strong>
+                        <span>Guarda as tuas favoritas</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="auth-brand-bottom">
+
+                <span>ANGOLA</span>
+
+                <div class="mini-pattern"></div>
+
+                <span>AO</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REGISTER SIDE
+        ====================================================== -->
+
+        <section class="auth-form-area">
+
+            <div class="auth-card register-card">
+
+                <div class="mobile-brand">
+
+                    <div class="brand-symbol">
+                        <span>DA</span>
+                    </div>
+
+                    <strong>Dicionário Angolano</strong>
+
+                </div>
+
+
+                <div class="auth-heading">
+
+                    <span class="auth-kicker">
+                        NOVA CONTA
+                    </span>
+
+                    <h2>
+                        Começa a tua jornada.
+                    </h2>
+
+                    <p>
+                        <span>Cria a tua conta gratuitamente.</span>
+                        <small>Create your free account.</small>
+                    </p>
+
+                </div>
+
+
+                <form id="registerForm">
+
+                    <div class="input-group">
+
+                        <label for="fullName">
+                            Nome completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="O teu nome"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="O teu endereço de email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="password">
+                            Palavra-passe
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Mínimo de 6 caracteres"
+                            minlength="6"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label for="confirmPassword">
+                            Confirmar palavra-passe
+                        </label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Repete a palavra-passe"
+                            minlength="6"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button type="submit" class="auth-submit">
+                        <span>Criar conta</span>
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+
+                <p id="registerMessage" class="auth-message"></p>
+
+
+                <p class="terms-text">
+                    Ao criar uma conta, estás a entrar numa experiência
+                    dedicada à língua e cultura angolana.
+                </p>
+
+
+                <p class="auth-switch">
+
+                    Já tens uma conta?
+
+                    <a href="login.html">
+                        Entrar
+                    </a>
+
+                    <small>
+                        Already have an account? Log in.
+                    </small>
+
+                </p>
+
+
+                <a href="index.html" class="back-home">
+                    ← Voltar ao início
+                </a>
+
+            </div>
+
+        </section>
 
     </main>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
