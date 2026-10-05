@@ -614,182 +614,47 @@ button {
 }
 
 
-.dictionary-book {
+.dictionary-book-image {
 
     position: relative;
 
-    width: 300px;
-    height: 430px;
+    z-index: 3;
 
-    background:
-        linear-gradient(
-            135deg,
-            var(--red),
-            var(--red-dark)
+    display: block;
+
+    width: 300px;
+
+    height: auto;
+
+    max-width: 100%;
+
+    object-fit: contain;
+
+    filter:
+        drop-shadow(
+            22px 28px 25px rgba(38,61,91,0.25)
         );
 
-    border-radius:
-        8px 18px 18px 8px;
+    transform:
+        rotate(-5deg);
 
-    box-shadow:
-        22px 28px 50px rgba(38,61,91,0.25),
-        -8px 0 0 rgba(38,61,91,0.12);
+    transition:
+        transform 0.3s ease,
+        filter 0.3s ease;
+}
+
+
+.dictionary-book-image:hover {
 
     transform:
         rotate(-5deg)
-        perspective(900px)
-        rotateY(-8deg);
+        translateY(-6px);
 
-    overflow: hidden;
-
-    z-index: 3;
-}
-
-
-.dictionary-book::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 16px;
-
-    width: 5px;
-    height: 100%;
-
-    background:
-        rgba(255,255,255,0.14);
-}
-
-
-.book-top-pattern,
-.book-bottom-pattern {
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-
-    height: 52px;
-
-    background:
-        repeating-linear-gradient(
-            45deg,
-            rgba(255,255,255,0.13) 0,
-            rgba(255,255,255,0.13) 8px,
-            transparent 8px,
-            transparent 16px
+    filter:
+        drop-shadow(
+            22px 34px 30px rgba(38,61,91,0.30)
         );
 }
-
-
-.book-top-pattern {
-    top: 0;
-}
-
-
-.book-bottom-pattern {
-    bottom: 0;
-
-    transform: rotate(180deg);
-}
-
-
-.book-content {
-
-    position: absolute;
-
-    inset: 70px 30px;
-
-    border:
-        1px solid rgba(255,255,255,0.35);
-
-    padding: 28px 22px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    text-align: center;
-
-    color: white;
-}
-
-
-.book-label {
-
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    font-weight: 800;
-
-    opacity: 0.85;
-}
-
-
-.book-content h2 {
-
-    margin-top: 18px;
-
-    font-family: Georgia, serif;
-
-    font-size: 45px;
-
-    line-height: 1;
-
-    font-weight: 700;
-}
-
-
-.book-divider {
-
-    width: 55px;
-    height: 2px;
-
-    margin: 19px 0;
-
-    background: var(--gold-light);
-}
-
-
-.book-content p {
-
-    font-size: 15px;
-
-    line-height: 1.65;
-
-    letter-spacing: 1.5px;
-
-    font-weight: 700;
-}
-
-
-.book-symbol {
-
-    margin-top: auto;
-
-    font-size: 26px;
-
-    color: var(--gold-light);
-}
-
-
-.book-caption {
-
-    margin-top: 10px;
-
-    font-size: 8px;
-
-    letter-spacing: 2px;
-
-    opacity: 0.75;
-}
-
-
 /* ============================================================
    10. FLOATING WORDS
 ============================================================ */
@@ -2430,12 +2295,10 @@ button {
     }
 
 
-    .dictionary-book {
+ .dictionary-book-image {
 
-        width: 260px;
-
-        height: 370px;
-    }
+    width: 260px;
+}
 
 
     .floating-word {
