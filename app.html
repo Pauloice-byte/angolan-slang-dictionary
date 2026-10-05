@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -17,23 +18,18 @@
     <title>Angolan Slang Dictionary</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-    <!-- =========================
-         APP
-    ========================== -->
-
     <div id="app">
 
-        <!-- Decorative Samakaka-inspired pattern -->
         <div class="pattern pattern-top"></div>
 
-
-        <!-- =========================
+        <!-- =========================================
              HEADER
-        ========================== -->
+        ========================================== -->
 
         <header class="header">
 
@@ -43,9 +39,15 @@
                 onclick="navigateTo('home')"
                 aria-label="Go to home"
             >
-          <div class="brand-symbol">
-    <img src="assets/angola-flag.png" alt="Angola flag">
-</div>
+
+                <div class="brand-symbol">
+
+                    <img
+                        src="assets/angola-flag2.png"
+                        alt="Angola"
+                    >
+
+                </div>
 
                 <div class="brand-text">
 
@@ -74,22 +76,24 @@
         </header>
 
 
-        <!-- =========================
-             MAIN APP CONTENT
-        ========================== -->
+        <!-- =========================================
+             MAIN APPLICATION
+             JavaScript renders pages here
+        ========================================== -->
 
         <main id="main-content">
-
             <!-- JavaScript renders pages here -->
-
         </main>
 
 
-        <!-- =========================
+        <!-- =========================================
              BOTTOM NAVIGATION
-        ========================== -->
+        ========================================== -->
 
-        <nav class="bottom-navigation">
+        <nav
+            class="bottom-navigation"
+            aria-label="Main navigation"
+        >
 
             <button
                 class="nav-item active"
@@ -153,9 +157,9 @@
         </nav>
 
 
-        <!-- =========================
-             MENU PANEL
-        ========================== -->
+        <!-- =========================================
+             MENU OVERLAY
+        ========================================== -->
 
         <div
             class="menu-overlay"
@@ -163,9 +167,14 @@
         ></div>
 
 
+        <!-- =========================================
+             SIDE MENU
+        ========================================== -->
+
         <aside
             class="side-menu"
             id="side-menu"
+            aria-label="Application menu"
         >
 
             <div class="menu-header">
@@ -198,36 +207,52 @@
             <button
                 class="menu-item"
                 onclick="navigateTo('daily')"
+                type="button"
             >
+
                 <span>☀</span>
+
                 3 Words of the Day
+
             </button>
 
 
             <button
                 class="menu-item"
                 onclick="navigateTo('updates')"
+                type="button"
             >
+
                 <span>✦</span>
+
                 Updates
+
             </button>
 
 
             <button
                 class="menu-item"
                 onclick="navigateTo('about')"
+                type="button"
             >
+
                 <span>i</span>
+
                 About the Dictionary
+
             </button>
 
 
             <button
                 class="menu-item"
                 onclick="navigateTo('settings')"
+                type="button"
             >
+
                 <span>⚙</span>
+
                 Settings
+
             </button>
 
         </aside>
@@ -235,10 +260,17 @@
     </div>
 
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- =========================================
+         SCRIPTS
+    ========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="js/supabase.js"></script>
+
     <script src="script.js"></script>
 
 </body>
 
 </html>
+
