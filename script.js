@@ -727,151 +727,67 @@ function getTodayDate() {
 /* =========================================
    LOAD DAILY 3
 ========================================= */
-
 async function loadDailyWords() {
-
     try {
-
-        /*
-           Daily 3 is admin-curated.
-
-           We read the published record for today's
-           date directly from the daily_three table.
-        */
-
-        const today =
-            new Date().toLocaleDateString(
-                "en-CA"
-            );
-
-
         const {
             data: dailyRecord,
             error: dailyError
         } = await supabaseClient
-            .from("daily_three")
-            .select(`
-                id,
-                daily_date,
-                word_1_id,
-                word_2_id,
-                word_3_id,
-                is_published
-            `)
-            .eq(
-                "daily_date",
-                today
-            )
-            .eq(
-                "is_published",
-                true
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1)
-            .maybeSingle();
-
+            .rpc("get_or_create_daily_three");
 
         if (dailyError) {
-
-            console.error(
-                "Daily 3 database error:",
-                dailyError
-            );
-
+            console.error("Daily 3 RPC error:", dailyError);
             appState.dailyWords = [];
-
             appState.dailyLoaded = false;
-
             return;
-
         }
 
+        let record = dailyRecord;
 
-        if (!dailyRecord) {
+        if (Array.isArray(record)) {
+            record = record[0];
+        }
 
-            console.warn(
-                "No published Daily 3 found for:",
-                today
-            );
-
+        if (!record) {
+            console.warn("No Daily 3 record returned.");
             appState.dailyWords = [];
-
             appState.dailyLoaded = true;
-
             return;
-
         }
-
-
-        /*
-           Preserve the exact order selected
-           by the administrator.
-        */
 
         const wordIds = [
+            record.word_1_id,
+            record.word_2_id,
+            record.word_3_id
+        ].filter(
+            id => id !== null && id !== undefined
+        );
 
-            dailyRecord.word_1_id,
-
-            dailyRecord.word_2_id,
-
-            dailyRecord.word_3_id
-
-        ];
-
-
-        /*
-           Convert the IDs into the complete word
-           objects already loaded into appState.words.
-        */
-
-        appState.dailyWords =
-            wordIds
-                .filter(
-                    id =>
-                        id !== null &&
-                        id !== undefined
+        appState.dailyWords = wordIds
+            .map(id =>
+                appState.words.find(
+                    word => Number(word.id) === Number(id)
                 )
-                .map(
-                    id =>
-                        appState.words.find(
-                            word =>
-                                Number(word.id) ===
-                                Number(id)
-                        )
-                )
-                .filter(Boolean);
-
+            )
+            .filter(Boolean);
 
         appState.dailyLoaded = true;
-
 
         console.log(
             "Daily 3 loaded:",
             appState.dailyWords
         );
 
-    }
-
-    catch (error) {
-
+    } catch (error) {
         console.error(
             "Daily 3 loading error:",
             error
         );
 
         appState.dailyWords = [];
-
         appState.dailyLoaded = false;
-
     }
-
 }
-
 
 /* =========================================
    LOAD APP DATA
