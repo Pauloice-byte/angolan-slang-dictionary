@@ -2,60 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="theme-color"
-        content="#F6F0E5"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F6F0E5">
     <title>Maka — Angolan Slang</title>
 
-    <link
-        rel="stylesheet"
-        href="globals.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="css/maka.css"
-    >
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="css/maka.css">
 </head>
 
 <body>
 
 <div class="maka-app">
 
-    <!-- HEADER -->
-
     <header class="maka-header">
 
-        <a
-            href="app.html"
-            class="maka-brand"
-            aria-label="Back to dictionary"
-        >
-            <div class="brand-symbol">
-                <img
-                    src="assets/samakaka-pattern.png"
-                    alt=""
-                >
+        <a href="app.html" class="maka-brand" aria-label="Back to dictionary">
+
+            <div class="maka-flag" aria-hidden="true">
+                <svg viewBox="0 0 96 64" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="96" height="32" fill="#CE1126"/>
+                    <rect y="32" width="96" height="32" fill="#000000"/>
+
+                    <!-- Machete -->
+                    <path
+                        d="M43 18
+                           C48 21 55 27 63 35
+                           L58 40
+                           C50 32 43 27 38 25
+                           Z"
+                        fill="#F9D616"
+                    />
+
+                    <!-- Gear -->
+                    <path
+                        d="M31 24
+                           L34 20
+                           L38 22
+                           L41 19
+                           L45 22
+                           L49 20
+                           L51 24
+                           L55 25
+                           L54 30
+                           L57 33
+                           L53 36
+                           L54 41
+                           L49 42
+                           L47 46
+                           L42 44
+                           L38 47
+                           L35 43
+                           L30 44
+                           L29 39
+                           L25 36
+                           L28 32
+                           L26 27
+                           Z"
+                        fill="#F9D616"
+                    />
+
+                    <!-- Gear hole -->
+                    <circle cx="40" cy="33" r="5" fill="#000000"/>
+
+                    <!-- Star -->
+                    <path
+                        d="M40 26
+                           L41.8 31
+                           L47 31
+                           L42.8 34.2
+                           L44.3 39
+                           L40 36
+                           L35.7 39
+                           L37.2 34.2
+                           L33 31
+                           L38.2 31
+                           Z"
+                        fill="#F9D616"
+                    />
+                </svg>
             </div>
 
             <div class="maka-brand-text">
                 <strong>ANGOLAN SLANG</strong>
                 <span>Maka</span>
             </div>
+
         </a>
 
-        <a
-            href="app.html"
-            class="maka-back"
-        >
+        <a href="app.html" class="maka-back">
             <span>←</span>
             Dictionary
         </a>
@@ -63,26 +97,16 @@
     </header>
 
 
-    <!-- MAIN -->
-
     <main class="maka-main">
 
-        <!-- START SCREEN -->
-
-        <section
-            class="maka-screen maka-start-screen"
-            id="start-screen"
-        >
+        <!-- START -->
+        <section class="maka-screen maka-start-screen" id="start-screen">
 
             <div class="maka-intro">
 
-                <p class="maka-eyebrow">
-                    ANGOLAN SLANG
-                </p>
+                <p class="maka-eyebrow">ANGOLAN SLANG</p>
 
-                <h1>
-                    Maka
-                </h1>
+                <h1>Maka</h1>
 
                 <p class="maka-tagline">
                     How well do you know
@@ -90,9 +114,8 @@
                 </p>
 
                 <p class="maka-description">
-                    Test your knowledge of
-                    Angolan slang through
-                    five quick questions.
+                    Keep playing, learn new words,
+                    and build your score.
                 </p>
 
             </div>
@@ -100,18 +123,27 @@
 
             <div class="maka-start-card">
 
-                <div class="maka-start-icon">
-                    ✦
-                </div>
+                <div class="maka-start-icon">✦</div>
 
-                <h2>
-                    Ready?
-                </h2>
+                <h2>Ready?</h2>
 
                 <p>
-                    You will get 5 questions,
-                    each with 4 possible answers.
+                    Maka uses the words currently
+                    available in the dictionary.
+                    Every round can be different.
                 </p>
+
+                <div class="maka-start-stats">
+                    <div>
+                        <strong id="available-word-count">—</strong>
+                        <span>available words</span>
+                    </div>
+
+                    <div>
+                        <strong>∞</strong>
+                        <span>continuous play</span>
+                    </div>
+                </div>
 
                 <button
                     class="maka-primary-button"
@@ -122,10 +154,7 @@
                     <span>→</span>
                 </button>
 
-                <a
-                    href="app.html"
-                    class="maka-secondary-link"
-                >
+                <a href="app.html" class="maka-secondary-link">
                     Back to Dictionary
                 </a>
 
@@ -134,8 +163,7 @@
         </section>
 
 
-        <!-- GAME SCREEN -->
-
+        <!-- GAME -->
         <section
             class="maka-screen maka-game-screen hidden"
             id="game-screen"
@@ -144,19 +172,16 @@
             <div class="maka-game-top">
 
                 <div>
-                    <p class="maka-eyebrow">
-                        MAKA
-                    </p>
+
+                    <p class="maka-eyebrow">MAKA</p>
 
                     <h1 id="question-counter">
-                        Question 1 of 5
+                        Question 1
                     </h1>
+
                 </div>
 
-                <div
-                    class="maka-score"
-                    id="score-display"
-                >
+                <div class="maka-score" id="score-display">
                     0 pts
                 </div>
 
@@ -173,40 +198,61 @@
             </div>
 
 
+            <div class="maka-progress-labels">
+                <span id="played-count">0 played</span>
+                <span id="remaining-count">0 remaining</span>
+            </div>
+
+
             <article class="question-card">
 
-                <div class="question-number">
-                    <span id="question-number">
-                        01
-                    </span>
+                <div class="question-header">
+
+                    <div class="question-number">
+                        <span id="question-number">01</span>
+                    </div>
+
+                    <p
+                        class="question-type"
+                        id="question-type"
+                    >
+                        QUESTION
+                    </p>
+
                 </div>
 
-                <p
-                    class="question-type"
-                    id="question-type"
+
+                <div
+                    class="question-context hidden"
+                    id="question-context"
                 >
-                    QUESTION
-                </p>
+                </div>
+
 
                 <h2 id="question-text">
                     Loading question...
                 </h2>
+
 
                 <div
                     class="answer-grid"
                     id="answer-grid"
                 ></div>
 
+
                 <div
                     class="answer-feedback hidden"
                     id="answer-feedback"
                 >
+
                     <strong id="feedback-title">
                         Correct!
                     </strong>
 
                     <p id="feedback-text"></p>
+
                 </div>
+
 
                 <button
                     class="maka-next-button hidden"
@@ -222,8 +268,7 @@
         </section>
 
 
-        <!-- RESULT SCREEN -->
-
+        <!-- RESULT -->
         <section
             class="maka-screen maka-result-screen hidden"
             id="result-screen"
@@ -231,9 +276,7 @@
 
             <div class="result-card">
 
-                <div class="result-symbol">
-                    ✦
-                </div>
+                <div class="result-symbol">✦</div>
 
                 <p class="maka-eyebrow">
                     MAKA COMPLETE
@@ -251,7 +294,7 @@
                     class="result-score"
                     id="final-score"
                 >
-                    0 / 5
+                    0 / 0
                 </div>
 
                 <p
@@ -285,29 +328,27 @@
 
 
         <!-- LOADING -->
-
         <div
             class="maka-loading hidden"
             id="loading-state"
         >
+
             <div class="loading-spinner"></div>
 
-            <p>
+            <p id="loading-message">
                 Preparing your Maka...
             </p>
+
         </div>
 
 
         <!-- ERROR -->
-
         <div
             class="maka-error hidden"
             id="error-state"
         >
 
-            <div class="error-icon">
-                !
-            </div>
+            <div class="error-icon">!</div>
 
             <h2>
                 Maka is unavailable
@@ -333,9 +374,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="js/supabase.js"></script>
-
 <script src="js/maka.js"></script>
 
 </body>
