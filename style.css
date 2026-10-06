@@ -4124,3 +4124,629 @@ button {
     }
 
 }
+/* =========================================================
+   MAKA HOME FEATURE
+========================================================= */
+
+.maka-home-section {
+
+    margin-top: 34px;
+
+    margin-bottom: 34px;
+
+}
+
+
+.maka-home-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 320px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 34px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #263D5B 0%,
+            #386A4B 52%,
+            #A63D40 100%
+        );
+
+    color: #FFFFFF;
+
+    box-shadow:
+        0 22px 55px
+        rgba(
+            38,
+            61,
+            91,
+            0.28
+        );
+
+}
+
+
+.maka-home-glow {
+
+    position: absolute;
+
+    width: 280px;
+
+    height: 280px;
+
+    right: -90px;
+
+    top: -110px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            216,
+            155,
+            43,
+            0.25
+        );
+
+    filter: blur(5px);
+
+}
+
+
+.maka-home-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 620px;
+
+}
+
+
+.maka-home-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.14
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.2
+        );
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.maka-home-badge span {
+
+    color: #D89B2B;
+
+    font-size: 16px;
+
+}
+
+
+.maka-home-eyebrow {
+
+    margin-top: 22px;
+
+    margin-bottom: 4px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    opacity: 0.72;
+
+}
+
+
+.maka-home-content h2 {
+
+    margin: 0;
+
+    font-size: clamp(
+        48px,
+        8vw,
+        78px
+    );
+
+    line-height: 0.95;
+
+    letter-spacing: -3px;
+
+    color: #FFFFFF;
+
+}
+
+
+.maka-home-description {
+
+    max-width: 560px;
+
+    margin-top: 18px;
+
+    margin-bottom: 22px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.82
+        );
+
+    font-size: 15px;
+
+    line-height: 1.65;
+
+}
+
+
+.maka-home-stats {
+
+    display: flex;
+
+    gap: 26px;
+
+    margin-bottom: 24px;
+
+}
+
+
+.maka-home-stats div {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.maka-home-stats strong {
+
+    font-size: 21px;
+
+    color: #FFFFFF;
+
+}
+
+
+.maka-home-stats span {
+
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.62
+        );
+
+}
+
+
+.maka-home-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: #FFFFFF;
+
+    color: #263D5B;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.maka-home-button span {
+
+    font-size: 18px;
+
+}
+
+
+.maka-home-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 25px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
+
+}
+
+
+.maka-home-symbol {
+
+    position: relative;
+
+    z-index: 1;
+
+    width: 210px;
+
+    height: 210px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.maka-game-icon {
+
+    width: 105px;
+
+    height: 105px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.3
+        );
+
+    color: #D89B2B;
+
+    font-size: 55px;
+
+    box-shadow:
+        0 0 45px
+        rgba(
+            216,
+            155,
+            43,
+            0.28
+        );
+
+}
+
+
+.maka-game-orbit {
+
+    position: absolute;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.18
+        );
+
+    border-radius: 50%;
+
+}
+
+
+.orbit-one {
+
+    width: 145px;
+
+    height: 145px;
+
+}
+
+
+.orbit-two {
+
+    width: 185px;
+
+    height: 185px;
+
+}
+
+
+.orbit-three {
+
+    width: 220px;
+
+    height: 220px;
+
+    border-color:
+        rgba(
+            216,
+            155,
+            43,
+            0.22
+        );
+
+}
+
+
+/* =========================================================
+   DAILY 3 LOADING / EMPTY
+========================================================= */
+
+.daily-loading {
+
+    min-height: 220px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    color:
+        var(--text-secondary);
+
+}
+
+
+.daily-loading-spinner {
+
+    font-size: 28px;
+
+    color:
+        var(--gold);
+
+    animation:
+        makaSpin 1.2s
+        linear infinite;
+
+}
+
+
+.daily-loading p {
+
+    margin: 0;
+
+    font-size: 14px;
+
+}
+
+
+.daily-empty {
+
+    min-height: 220px;
+
+    padding: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background:
+        var(--surface-soft);
+
+}
+
+
+.daily-empty-icon {
+
+    margin-bottom: 10px;
+
+    font-size: 30px;
+
+    color:
+        var(--gold);
+
+}
+
+
+.daily-empty h3 {
+
+    margin: 0 0 8px;
+
+}
+
+
+.daily-empty p {
+
+    margin: 0;
+
+    color:
+        var(--text-secondary);
+
+}
+
+
+@keyframes makaSpin {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+    max-width: 700px
+) {
+
+    .maka-home-card {
+
+        min-height: 0;
+
+        padding: 28px 22px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .maka-home-symbol {
+
+        position: absolute;
+
+        width: 150px;
+
+        height: 150px;
+
+        right: -35px;
+
+        bottom: -30px;
+
+        opacity: 0.7;
+
+    }
+
+
+    .maka-game-icon {
+
+        width: 75px;
+
+        height: 75px;
+
+        font-size: 38px;
+
+    }
+
+
+    .orbit-one {
+
+        width: 105px;
+
+        height: 105px;
+
+    }
+
+
+    .orbit-two {
+
+        width: 135px;
+
+        height: 135px;
+
+    }
+
+
+    .orbit-three {
+
+        width: 160px;
+
+        height: 160px;
+
+    }
+
+
+    .maka-home-stats {
+
+        gap: 18px;
+
+    }
+
+
+    .maka-home-stats strong {
+
+        font-size: 18px;
+
+    }
+
+}
