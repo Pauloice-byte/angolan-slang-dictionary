@@ -361,7 +361,101 @@
         </section>
 
     </main>
+<!-- PASSWORD RESET POPUP -->
+<div class="password-reset-overlay" id="passwordResetOverlay" aria-hidden="true">
+    <div class="password-reset-modal" role="dialog" aria-modal="true" aria-labelledby="passwordResetTitle">
 
+        <div class="password-reset-icon">✓</div>
+
+        <span class="auth-kicker">NOVA PALAVRA-PASSE</span>
+
+        <h2 id="passwordResetTitle">Cria uma nova palavra-passe.</h2>
+
+        <p class="password-reset-description">
+            Define uma nova palavra-passe para a tua conta. A palavra-passe antiga deixará de funcionar.
+        </p>
+
+        <form id="passwordResetForm">
+
+            <div class="input-group">
+                <label for="resetPassword">Nova palavra-passe</label>
+
+                <div class="password-field">
+                    <input
+                        type="password"
+                        id="resetPassword"
+                        placeholder="Mínimo de 6 caracteres"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="resetPasswordToggle"
+                        aria-label="Mostrar palavra-passe"
+                        aria-pressed="false"
+                    >
+                        <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                            <circle cx="12" cy="12" r="2.5"></circle>
+                        </svg>
+
+                        <svg class="eye-icon eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3l18 18"></path>
+                            <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a17.8 17.8 0 0 1-3.2 3.8"></path>
+                            <path d="M6.1 6.1C3.4 8.1 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.4 4.5-1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="resetPasswordConfirm">Confirmar nova palavra-passe</label>
+
+                <div class="password-field">
+                    <input
+                        type="password"
+                        id="resetPasswordConfirm"
+                        placeholder="Repete a palavra-passe"
+                        minlength="6"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="resetPasswordConfirmToggle"
+                        aria-label="Mostrar palavra-passe"
+                        aria-pressed="false"
+                    >
+                        <svg class="eye-icon eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                            <circle cx="12" cy="12" r="2.5"></circle>
+                        </svg>
+
+                        <svg class="eye-icon eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3l18 18"></path>
+                            <path d="M10.6 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a17.8 17.8 0 0 1-3.2 3.8"></path>
+                            <path d="M6.1 6.1C3.4 8.1 2 12 2 12c0 0 3.5 7 10 7 1.7 0 3.2-.4 4.5-1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-submit password-reset-submit">
+                <span>Alterar palavra-passe</span>
+                <span>→</span>
+            </button>
+
+        </form>
+
+        <p id="passwordResetMessage" class="auth-message"></p>
+
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
