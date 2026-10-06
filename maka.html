@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#F6F0E5"
+    >
+
+    <title>Maka — Angolan Slang</title>
+
+    <link
+        rel="stylesheet"
+        href="globals.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/maka.css"
+    >
+</head>
+
+<body>
+
+<div class="maka-app">
+
+    <!-- HEADER -->
+
+    <header class="maka-header">
+
+        <a
+            href="app.html"
+            class="maka-brand"
+            aria-label="Back to dictionary"
+        >
+            <div class="brand-symbol">
+                <img
+                    src="assets/samakaka-pattern.png"
+                    alt=""
+                >
+            </div>
+
+            <div class="maka-brand-text">
+                <strong>ANGOLAN SLANG</strong>
+                <span>Maka</span>
+            </div>
+        </a>
+
+        <a
+            href="app.html"
+            class="maka-back"
+        >
+            <span>←</span>
+            Dictionary
+        </a>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="maka-main">
+
+        <!-- START SCREEN -->
+
+        <section
+            class="maka-screen maka-start-screen"
+            id="start-screen"
+        >
+
+            <div class="maka-intro">
+
+                <p class="maka-eyebrow">
+                    ANGOLAN SLANG
+                </p>
+
+                <h1>
+                    Maka
+                </h1>
+
+                <p class="maka-tagline">
+                    How well do you know
+                    the language of Angola?
+                </p>
+
+                <p class="maka-description">
+                    Test your knowledge of
+                    Angolan slang through
+                    five quick questions.
+                </p>
+
+            </div>
+
+
+            <div class="maka-start-card">
+
+                <div class="maka-start-icon">
+                    ✦
+                </div>
+
+                <h2>
+                    Ready?
+                </h2>
+
+                <p>
+                    You will get 5 questions,
+                    each with 4 possible answers.
+                </p>
+
+                <button
+                    class="maka-primary-button"
+                    id="start-button"
+                    type="button"
+                >
+                    Start Maka
+                    <span>→</span>
+                </button>
+
+                <a
+                    href="app.html"
+                    class="maka-secondary-link"
+                >
+                    Back to Dictionary
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- GAME SCREEN -->
+
+        <section
+            class="maka-screen maka-game-screen hidden"
+            id="game-screen"
+        >
+
+            <div class="maka-game-top">
+
+                <div>
+                    <p class="maka-eyebrow">
+                        MAKA
+                    </p>
+
+                    <h1 id="question-counter">
+                        Question 1 of 5
+                    </h1>
+                </div>
+
+                <div
+                    class="maka-score"
+                    id="score-display"
+                >
+                    0 pts
+                </div>
+
+            </div>
+
+
+            <div class="maka-progress">
+
+                <div
+                    class="maka-progress-bar"
+                    id="progress-bar"
+                ></div>
+
+            </div>
+
+
+            <article class="question-card">
+
+                <div class="question-number">
+                    <span id="question-number">
+                        01
+                    </span>
+                </div>
+
+                <p
+                    class="question-type"
+                    id="question-type"
+                >
+                    QUESTION
+                </p>
+
+                <h2 id="question-text">
+                    Loading question...
+                </h2>
+
+                <div
+                    class="answer-grid"
+                    id="answer-grid"
+                ></div>
+
+                <div
+                    class="answer-feedback hidden"
+                    id="answer-feedback"
+                >
+                    <strong id="feedback-title">
+                        Correct!
+                    </strong>
+
+                    <p id="feedback-text"></p>
+                </div>
+
+                <button
+                    class="maka-next-button hidden"
+                    id="next-button"
+                    type="button"
+                >
+                    Next Question
+                    <span>→</span>
+                </button>
+
+            </article>
+
+        </section>
+
+
+        <!-- RESULT SCREEN -->
+
+        <section
+            class="maka-screen maka-result-screen hidden"
+            id="result-screen"
+        >
+
+            <div class="result-card">
+
+                <div class="result-symbol">
+                    ✦
+                </div>
+
+                <p class="maka-eyebrow">
+                    MAKA COMPLETE
+                </p>
+
+                <h1 id="result-title">
+                    Well played!
+                </h1>
+
+                <p class="result-score-label">
+                    Your score
+                </p>
+
+                <div
+                    class="result-score"
+                    id="final-score"
+                >
+                    0 / 5
+                </div>
+
+                <p
+                    class="result-message"
+                    id="result-message"
+                ></p>
+
+                <div class="result-actions">
+
+                    <button
+                        class="maka-primary-button"
+                        id="play-again-button"
+                        type="button"
+                    >
+                        Play Again
+                        <span>↻</span>
+                    </button>
+
+                    <a
+                        href="app.html"
+                        class="maka-secondary-button"
+                    >
+                        Back to Dictionary
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOADING -->
+
+        <div
+            class="maka-loading hidden"
+            id="loading-state"
+        >
+            <div class="loading-spinner"></div>
+
+            <p>
+                Preparing your Maka...
+            </p>
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            class="maka-error hidden"
+            id="error-state"
+        >
+
+            <div class="error-icon">
+                !
+            </div>
+
+            <h2>
+                Maka is unavailable
+            </h2>
+
+            <p id="error-message">
+                We couldn't load the game.
+            </p>
+
+            <button
+                class="maka-primary-button"
+                id="retry-button"
+                type="button"
+            >
+                Try Again
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/maka.js"></script>
+
+</body>
+</html>
