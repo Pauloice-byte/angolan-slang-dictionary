@@ -1100,9 +1100,9 @@ function renderHome() {
             </section>
 
 
-            <!-- =========================
+                      <!-- =========================
                  DAILY 3
-            ========================== -->
+            ========================= -->
 
             <section class="daily-section">
 
@@ -1137,97 +1137,170 @@ function renderHome() {
 
                         ? `
 
-                            <div class="daily-home-grid">
+                            <div class="daily-home-carousel">
 
-                                ${dailyWords.map(
-                                    (item, index) => `
+                                <div
+                                    class="daily-home-slider"
+                                    id="dailyHomeSlider"
+                                >
 
-                                    <article
-                                        class="daily-home-card"
+                                    <div
+                                        class="daily-home-track"
+                                        id="dailyHomeTrack"
                                     >
 
-                                        <div
-                                            class="daily-home-card-top"
-                                        >
+                                        ${dailyWords.map(
+                                            (item, index) => {
 
-                                            <span
-                                                class="daily-home-number"
-                                            >
-                                                0${index + 1}
-                                            </span>
+                                                const meaning =
+                                                    item.isPremium
+                                                        ? "Premium content — Coming Soon."
+                                                        : (
+                                                            item.shortMeaning ||
+                                                            item.firstMeaning ||
+                                                            "Discover today's word."
+                                                        );
 
-                                            <span
-                                                class="daily-home-label"
-                                            >
-                                                DAILY WORD
-                                            </span>
+                                                return `
 
-                                        </div>
-
-
-                                        <div
-                                            class="daily-home-word"
-                                        >
-
-                                            ${escapeHtml(
-                                                item.word
-                                            )}
-
-                                        </div>
-
-
-                                        ${
-                                            item.pronunciation
-                                                ? `
-                                                    <div
-                                                        class="daily-home-pronunciation"
+                                                    <article
+                                                        class="daily-home-card daily-home-slide"
+                                                        data-daily-index="${index}"
                                                     >
-                                                        ${escapeHtml(
+
+                                                        <div
+                                                            class="daily-home-card-top"
+                                                        >
+
+                                                            <span
+                                                                class="daily-home-number"
+                                                            >
+                                                                ${String(index + 1).padStart(2, "0")}
+                                                            </span>
+
+                                                            <span
+                                                                class="daily-home-label"
+                                                            >
+                                                                DAILY WORD
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <div
+                                                            class="daily-home-word"
+                                                        >
+
+                                                            ${escapeHtml(
+                                                                item.word
+                                                            )}
+
+                                                        </div>
+
+
+                                                        ${
                                                             item.pronunciation
-                                                        )}
-                                                    </div>
-                                                `
-                                                : ""
-                                        }
+                                                                ? `
+                                                                    <div
+                                                                        class="daily-home-pronunciation"
+                                                                    >
+                                                                        ${escapeHtml(
+                                                                            item.pronunciation
+                                                                        )}
+                                                                    </div>
+                                                                `
+                                                                : ""
+                                                        }
 
 
-                                        <p
-                                            class="daily-home-meaning"
-                                        >
+                                                        <div
+                                                            class="daily-home-meaning"
+                                                        >
 
-                                            ${
-                                                item.isPremium
+                                                            <span
+                                                                class="daily-meaning-hidden"
+                                                            >
+                                                                Meaning hidden
+                                                            </span>
 
-                                                    ? "Premium content — Coming Soon."
 
-                                                    : escapeHtml(
-                                                        item.shortMeaning ||
-                                                        item.firstMeaning ||
-                                                        "Discover today's word."
-                                                    )
+                                                            <span
+                                                                class="daily-meaning-text"
+                                                                hidden
+                                                            >
+                                                                ${escapeHtml(
+                                                                    meaning
+                                                                )}
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <button
+                                                            type="button"
+                                                            class="daily-reveal-button"
+                                                            data-daily-reveal
+                                                        >
+                                                            Reveal Meaning
+                                                        </button>
+
+
+                                                        <button
+                                                            class="primary-button daily-home-button"
+                                                            type="button"
+                                                            onclick="openWord(${item.id})"
+                                                        >
+
+                                                            Open Word
+
+                                                            <span>
+                                                                →
+                                                            </span>
+
+                                                        </button>
+
+                                                    </article>
+
+                                                `;
+
                                             }
+                                        ).join("")}
 
-                                        </p>
+                                    </div>
+
+                                </div>
 
 
-                                        <button
-                                            class="primary-button daily-home-button"
-                                            type="button"
-                                            onclick="openWord(${item.id})"
-                                        >
+                                <div class="daily-home-controls">
 
-                                            Open Word
+                                    <button
+                                        type="button"
+                                        class="daily-carousel-button"
+                                        id="dailyHomePrev"
+                                        aria-label="Previous daily word"
+                                    >
+                                        ←
+                                    </button>
 
-                                            <span>
-                                                →
-                                            </span>
 
-                                        </button>
+                                    <div
+                                        class="daily-home-counter"
+                                        id="dailyHomeCounter"
+                                    >
+                                        1 / ${dailyWords.length}
+                                    </div>
 
-                                    </article>
 
-                                `
-                                ).join("")}
+                                    <button
+                                        type="button"
+                                        class="daily-carousel-button"
+                                        id="dailyHomeNext"
+                                        aria-label="Next daily word"
+                                    >
+                                        →
+                                    </button>
+
+                                </div>
 
                             </div>
 
@@ -1269,7 +1342,6 @@ function renderHome() {
                 }
 
             </section>
-
 
             <!-- =========================
                  MAKA
