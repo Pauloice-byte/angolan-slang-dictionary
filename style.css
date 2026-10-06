@@ -6185,3 +6185,347 @@ button {
 }
 
 
+
+/* =========================================================
+   WELCOME CARD — RICH FEATURE DESIGN
+========================================================= */
+
+.welcome-card {
+    position: relative;
+    min-height: 320px;
+    padding: 32px;
+    overflow: hidden;
+    isolation: isolate;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 26px;
+
+    color: var(--white);
+
+    background:
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(216, 155, 43, 0.30),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 8% 90%,
+            rgba(56, 106, 75, 0.30),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #A63D40 0%,
+            #8B3035 48%,
+            #263D5B 100%
+        );
+
+    box-shadow:
+        0 24px 55px rgba(38, 61, 91, 0.20);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+
+/* Large decorative typography */
+
+.welcome-card::before {
+    content: "AO";
+
+    position: absolute;
+    right: -18px;
+    bottom: -18px;
+
+    z-index: -1;
+
+    color: rgba(255, 255, 255, 0.055);
+
+    font-size: 170px;
+    font-weight: 900;
+    line-height: .8;
+    letter-spacing: -12px;
+
+    pointer-events: none;
+}
+
+
+/* Decorative circle */
+
+.welcome-card::after {
+    content: "";
+
+    position: absolute;
+    right: -75px;
+    top: -75px;
+
+    width: 220px;
+    height: 220px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 28px rgba(255, 255, 255, 0.025),
+        0 0 0 56px rgba(255, 255, 255, 0.018);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   WELCOME CONTENT
+========================================================= */
+
+.welcome-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+.welcome-card h1,
+.welcome-card h2,
+.welcome-card h3 {
+    color: var(--white);
+}
+
+
+.welcome-card p {
+    color: rgba(255, 255, 255, 0.74);
+}
+
+
+/* =========================================================
+   WELCOME KICKER
+========================================================= */
+
+.welcome-card .section-kicker,
+.welcome-card .welcome-kicker {
+    display: inline-block;
+
+    margin-bottom: 13px;
+
+    color: var(--gold-light);
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .16em;
+}
+
+
+/* =========================================================
+   WELCOME TITLE
+========================================================= */
+
+.welcome-card h1,
+.welcome-card h2 {
+    max-width: 650px;
+
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: .98;
+    letter-spacing: -.055em;
+}
+
+
+/* Highlighted part of title */
+
+.welcome-card h1 em,
+.welcome-card h2 em {
+    color: var(--gold-light);
+    font-style: normal;
+}
+
+
+/* =========================================================
+   WELCOME DESCRIPTION
+========================================================= */
+
+.welcome-card .welcome-description,
+.welcome-card > p {
+    max-width: 540px;
+
+    margin-top: 17px;
+
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   WELCOME QUOTE / CULTURAL LINE
+========================================================= */
+
+.welcome-card .welcome-quote {
+    max-width: 420px;
+
+    margin-top: 24px;
+    padding: 14px 17px;
+
+    border-left: 2px solid var(--gold);
+
+    border-radius: 0 12px 12px 0;
+
+    background: rgba(255, 255, 255, 0.055);
+}
+
+
+.welcome-card .welcome-quote p {
+    margin: 0;
+
+    color: var(--white);
+
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   WELCOME BUTTON
+========================================================= */
+
+.welcome-card .welcome-button,
+.welcome-card .primary-button {
+    position: relative;
+    z-index: 3;
+
+    margin-top: 24px;
+
+    border: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold),
+            #B98220
+        );
+
+    color: var(--ink);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+
+.welcome-card .welcome-button:hover,
+.welcome-card .primary-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.20);
+}
+
+
+/* =========================================================
+   FLAG / DECORATIVE BRAND ELEMENT
+========================================================= */
+
+.welcome-card .welcome-flag {
+    position: absolute;
+
+    top: 28px;
+    right: 28px;
+
+    z-index: 2;
+
+    width: 48px;
+    height: 48px;
+
+    overflow: hidden;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    background: rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+.welcome-card .welcome-flag img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.welcome-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 30px 65px rgba(38, 61, 91, 0.25);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .welcome-card {
+        min-height: 300px;
+        padding: 24px;
+        border-radius: 23px;
+    }
+
+
+    .welcome-card h1,
+    .welcome-card h2 {
+        font-size: 36px;
+    }
+
+
+    .welcome-card .welcome-description,
+    .welcome-card > p {
+        font-size: 13px;
+    }
+
+
+    .welcome-card::before {
+        font-size: 120px;
+    }
+
+
+    .welcome-card .welcome-flag {
+        top: 22px;
+        right: 22px;
+
+        width: 42px;
+        height: 42px;
+    }
+
+}
+
+
+@media (max-width: 380px) {
+
+    .welcome-card {
+        padding: 21px;
+    }
+
+
+    .welcome-card h1,
+    .welcome-card h2 {
+        font-size: 32px;
+    }
+
+
+    .welcome-card .welcome-description,
+    .welcome-card > p {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+}
+
