@@ -188,24 +188,48 @@
          SIDE MENU
     ========================== -->
 
-    <aside
-        class="side-menu"
-        id="side-menu"
-    >
+ <aside
+    class="side-menu"
+    id="side-menu"
+>
 
-        <div class="menu-header">
+    <!-- =========================
+         BRAND PANEL
+    ========================== -->
 
-            <div>
+    <div class="menu-brand-panel">
 
-                <p class="menu-small-title">
-                    ANGOLAN SLANG
-                </p>
+        <div class="menu-brand-top">
 
-                <h2>
-                    Explore
-                </h2>
+            <button
+                class="menu-brand"
+                type="button"
+                onclick="navigateTo('home')"
+                aria-label="Go to home"
+            >
 
-            </div>
+                <span class="menu-brand-symbol">
+
+                    <img
+                        src="assets/angola-flag2.png"
+                        alt="Angola"
+                    >
+
+                </span>
+
+                <span class="menu-brand-name">
+
+                    <strong>
+                        Dicionário Angolano
+                    </strong>
+
+                    <span>
+                        Calão & Expressões Populares
+                    </span>
+
+                </span>
+
+            </button>
 
 
             <button
@@ -218,6 +242,69 @@
             </button>
 
         </div>
+
+
+        <div class="menu-brand-content">
+
+            <span class="menu-section-kicker">
+                EXPLORA ANGOLA
+            </span>
+
+            <h2>
+                Continua a
+                <em>descobrir Angola.</em>
+            </h2>
+
+            <p>
+                Explora as palavras e expressões que fazem parte da nossa cultura.
+            </p>
+
+
+            <div class="menu-quote">
+
+                <span>
+                    “
+                </span>
+
+                <p>
+                    Cada palavra conta uma história.
+                </p>
+
+                <small>
+                    Every word tells a story.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="menu-brand-bottom">
+
+            <span>
+                ANGOLA
+            </span>
+
+            <div class="menu-mini-pattern"></div>
+
+            <span>
+                AO
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MENU ITEMS
+    ========================== -->
+
+    <div class="menu-navigation">
+
+        <p class="menu-navigation-title">
+            EXPLORAR
+        </p>
 
 
         <button
@@ -294,22 +381,28 @@
 
         </button>
 
+    </div>
 
-        <button
-            class="menu-item menu-item-logout"
-            id="logout-button"
-            type="button"
-        >
 
-            <span>
-                ↪
-            </span>
+    <!-- =========================
+         LOGOUT
+    ========================== -->
 
-            Log out
+    <button
+        class="menu-item menu-item-logout"
+        id="logout-button"
+        type="button"
+    >
 
-        </button>
+        <span>
+            ↪
+        </span>
 
-    </aside>
+        Log out
+
+    </button>
+
+</aside>
 
 </div>
 
