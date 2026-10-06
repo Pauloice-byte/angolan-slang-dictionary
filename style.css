@@ -499,24 +499,18 @@ h4 {
 ============================================================ */
 
 /* ============================================================
-   HOME HERO — BRANDED WELCOME CARD
+   HOME HERO — DEEP BLUE / GREEN / GOLD
    Content and layout unchanged
 ============================================================ */
 
 .hero {
     position: relative;
-
     width: 100%;
-
     display: grid;
-
     grid-template-columns:
         minmax(0, 1.25fr)
         minmax(250px, 0.75fr);
-
-    gap:
-        clamp(30px, 6vw, 80px);
-
+    gap: clamp(30px, 6vw, 80px);
     align-items: center;
 
     padding:
@@ -525,39 +519,39 @@ h4 {
 
     margin-bottom: 35px;
 
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.16);
-
+    border: 1px solid rgba(255,255,255,.14);
     border-radius: 28px;
 
     overflow: hidden;
-
     isolation: isolate;
 
-    color: var(--white);
+    color: #FFFFFF;
 
     background:
         radial-gradient(
-            circle at 88% 12%,
-            rgba(216, 155, 43, 0.30),
-            transparent 27%
+            circle at 88% 10%,
+            rgba(216,155,43,.30),
+            transparent 24%
         ),
         radial-gradient(
-            circle at 8% 90%,
-            rgba(56, 106, 75, 0.30),
+            circle at 8% 88%,
+            rgba(56,106,75,.42),
             transparent 30%
         ),
+        radial-gradient(
+            circle at 70% 75%,
+            rgba(82,106,134,.22),
+            transparent 35%
+        ),
         linear-gradient(
-            145deg,
-            #A63D40 0%,
-            #8B3035 48%,
-            #263D5B 100%
+            135deg,
+            #182A3D 0%,
+            #263D5B 48%,
+            #294F3A 100%
         );
 
     box-shadow:
-        0 24px 55px
-        rgba(38, 61, 91, 0.20);
+        0 24px 55px rgba(24,42,61,.24);
 
     transition:
         transform .3s ease,
@@ -565,168 +559,131 @@ h4 {
 }
 
 
-/* Large decorative AO */
-
+/* Large AO decoration */
 .hero::before {
     content: "AO";
 
     position: absolute;
-
     right: -18px;
     bottom: -18px;
 
     z-index: -1;
 
-    color:
-        rgba(255, 255, 255, 0.055);
+    color: rgba(255,255,255,.045);
 
     font-size: 170px;
-
     font-weight: 900;
-
     line-height: .8;
-
     letter-spacing: -12px;
 
     pointer-events: none;
 }
 
 
-/* Decorative rings */
-
+/* Decorative golden rings */
 .hero::after {
     content: "";
 
     position: absolute;
-
     right: -75px;
     top: -75px;
 
     width: 220px;
     height: 220px;
 
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.10);
-
+    border: 1px solid rgba(216,155,43,.22);
     border-radius: 50%;
 
     box-shadow:
-        0 0 0 28px
-        rgba(255, 255, 255, 0.025),
-
-        0 0 0 56px
-        rgba(255, 255, 255, 0.018);
+        0 0 0 28px rgba(216,155,43,.045),
+        0 0 0 56px rgba(216,155,43,.025);
 
     pointer-events: none;
 }
 
 
-/* Keep all existing content above decoration */
-
 .hero > * {
     position: relative;
-
     z-index: 2;
 }
 
 
-/* Welcome text */
-
-.hero h2 {
-    color: var(--white);
-}
-
-.hero h2 span {
-    color: var(--gold-light);
-}
-
-.hero-description {
-    color:
-        rgba(255, 255, 255, 0.76);
-}
-
-
-/* Eyebrow */
-
+/* Small section label */
 .hero .eyebrow {
-    background:
-        rgba(255, 255, 255, 0.10);
+    background: rgba(216,155,43,.12);
 
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(216,155,43,.28);
 
-    color:
-        var(--gold-light);
+    color: #F1CC78;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.08);
+}
+
+
+/* Main heading */
+.hero h2 {
+    color: #FFFFFF;
+
+    text-shadow:
+        0 2px 15px rgba(0,0,0,.18);
+}
+
+
+/* Highlighted part of heading */
+.hero h2 span {
+    color: #F1CC78;
+
+    text-shadow:
+        0 2px 12px rgba(216,155,43,.15);
+}
+
+
+/* Description */
+.hero-description {
+    color: rgba(255,255,255,.78);
 }
 
 
 /* Main action */
-
 .hero .primary-button {
     background:
         linear-gradient(
             135deg,
-            var(--gold),
-            #B98220
+            #D89B2B 0%,
+            #F1CC78 100%
         );
 
-    color:
-        var(--ink);
+    color: #182A3D;
+
+    border: 1px solid rgba(255,255,255,.16);
 
     box-shadow:
-        0 10px 25px
-        rgba(0, 0, 0, 0.15);
+        0 10px 25px rgba(0,0,0,.16);
 }
+
 
 .hero .primary-button:hover {
     background:
         linear-gradient(
             135deg,
-            var(--gold-light),
-            var(--gold)
+            #F1CC78 0%,
+            #D89B2B 100%
         );
 
-    color:
-        var(--ink);
+    color: #182A3D;
 
     box-shadow:
-        0 14px 30px
-        rgba(0, 0, 0, 0.20);
+        0 14px 30px rgba(0,0,0,.22);
 }
 
 
-/* Hover */
-
+/* Subtle lift */
 .hero:hover {
     transform: translateY(-2px);
 
     box-shadow:
-        0 30px 65px
-        rgba(38, 61, 91, 0.25);
-}
-
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-
-    width: fit-content;
-
-    margin-bottom: 14px;
-    padding: 7px 12px;
-
-    border-radius: 999px;
-
-    background: rgba(216, 155, 43, 0.14);
-
-    color: var(--red);
-
-    font-size: 11px;
-    font-weight: 800;
-
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+        0 30px 65px rgba(24,42,61,.28);
 }
 
 .hero h2 {
@@ -6751,42 +6708,52 @@ button {
     }
 
 }
-/* ============================================================
-   WELCOME HERO — MOBILE BRAND TREATMENT
-   Content/layout unchanged
-============================================================ */
-
-@media (max-width: 760px) {
+@media (max-width:760px) {
 
     .hero {
         background:
             radial-gradient(
-                circle at 90% 10%,
-                rgba(216, 155, 43, 0.26),
+                circle at 90% 8%,
+                rgba(216,155,43,.25),
                 transparent 30%
             ),
             radial-gradient(
                 circle at 8% 92%,
-                rgba(56, 106, 75, 0.25),
+                rgba(56,106,75,.38),
                 transparent 32%
             ),
             linear-gradient(
                 145deg,
-                #A63D40 0%,
-                #8B3035 50%,
-                #263D5B 100%
+                #182A3D 0%,
+                #263D5B 52%,
+                #294F3A 100%
             );
     }
 
     .hero::before {
         font-size: 120px;
+        right: -12px;
+        bottom: -10px;
     }
 
     .hero::after {
         right: -90px;
         top: -90px;
-
         width: 190px;
         height: 190px;
+    }
+
+    .hero h2 span {
+        color: #F1CC78;
+    }
+
+    .hero-description {
+        color: rgba(255,255,255,.80);
+    }
+
+    .hero .eyebrow {
+        color: #F1CC78;
+        background: rgba(216,155,43,.13);
+        border-color: rgba(216,155,43,.25);
     }
 }
