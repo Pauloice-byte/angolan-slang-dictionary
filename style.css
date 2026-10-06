@@ -6183,3 +6183,515 @@ button {
     }
 
 }
+
+
+/* =========================================================
+   APP — FULL BRAND VISUAL SYSTEM
+   Based on the login page + branded sidebar
+========================================================= */
+
+
+/* =========================================================
+   APP BACKGROUND
+========================================================= */
+
+body {
+    background:
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(216, 155, 43, 0.16),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 92% 18%,
+            rgba(56, 106, 75, 0.18),
+            transparent 28%
+        ),
+        linear-gradient(
+            145deg,
+            #A63D40 0%,
+            #8B3035 34%,
+            #263D5B 100%
+        );
+
+    color: var(--white);
+}
+
+
+/* =========================================================
+   APP SHELL
+========================================================= */
+
+#app {
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(255, 255, 255, 0.05),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 100% 50%,
+            rgba(216, 155, 43, 0.06),
+            transparent 28%
+        );
+
+    color: var(--ink);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    position: relative;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(24, 42, 61, 0.28),
+            rgba(24, 42, 61, 0.08)
+        );
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 10px 35px rgba(24, 42, 61, 0.12);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   HEADER BRAND
+========================================================= */
+
+.header .brand {
+    color: var(--white);
+}
+
+
+.header .brand-symbol {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+
+.header .brand-text strong {
+    color: var(--white);
+}
+
+
+.header .brand-text span {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+
+/* =========================================================
+   HEADER MENU BUTTON
+========================================================= */
+
+.header .header-button {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--white);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+
+.header .header-button:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+
+/* =========================================================
+   MAIN CONTENT AREA
+========================================================= */
+
+#main-content {
+    position: relative;
+
+    color: var(--ink);
+}
+
+
+/* =========================================================
+   DECORATIVE APP GLOW
+========================================================= */
+
+#main-content::before {
+    content: "";
+
+    position: fixed;
+
+    top: 110px;
+    right: -120px;
+
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(216, 155, 43, 0.14),
+            transparent 68%
+        );
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* =========================================================
+   HOME / CONTENT WRAPPER
+========================================================= */
+
+#main-content > * {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   HOME HERO
+========================================================= */
+
+.home-hero {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(216, 155, 43, 0.24),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 5% 92%,
+            rgba(56, 106, 75, 0.24),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #A63D40 0%,
+            #8B3035 52%,
+            #263D5B 100%
+        );
+
+    border-color: rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 25px 65px rgba(38, 61, 91, 0.22);
+
+    color: var(--white);
+}
+
+
+/* decorative AO */
+
+.home-hero::before {
+    color: rgba(255, 255, 255, 0.055);
+}
+
+
+/* =========================================================
+   HERO TEXT
+========================================================= */
+
+.home-hero h1,
+.home-hero h2,
+.home-hero .hero-title {
+    color: var(--white);
+}
+
+
+.home-hero p,
+.home-hero .hero-description {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+
+/* =========================================================
+   SECTION TITLES
+========================================================= */
+
+#main-content h2 {
+    color: var(--white);
+}
+
+
+#main-content h3 {
+    color: var(--ink);
+}
+
+
+/* =========================================================
+   CONTENT SECTIONS
+========================================================= */
+
+#main-content section {
+    position: relative;
+}
+
+
+/* =========================================================
+   STANDARD CARDS
+========================================================= */
+
+.card,
+.content-card,
+.dictionary-card,
+.word-card,
+.home-card {
+    border-color: rgba(255, 255, 255, 0.18);
+
+    box-shadow:
+        0 18px 45px rgba(24, 42, 61, 0.12);
+}
+
+
+/* =========================================================
+   DICTIONARY / SEARCH SURFACES
+========================================================= */
+
+.dictionary-card,
+.word-card,
+.search-card {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(246, 240, 229, 0.96)
+        );
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+input,
+textarea,
+select {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--ink);
+}
+
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--gold);
+    box-shadow:
+        0 0 0 3px rgba(216, 155, 43, 0.15);
+}
+
+
+/* =========================================================
+   PRIMARY BUTTONS
+========================================================= */
+
+button.primary,
+.primary-button,
+.btn-primary {
+    background:
+        linear-gradient(
+            135deg,
+            var(--red),
+            var(--red-dark)
+        );
+
+    color: var(--white);
+
+    border-color: transparent;
+
+    box-shadow:
+        0 10px 25px rgba(166, 61, 64, 0.22);
+}
+
+
+button.primary:hover,
+.primary-button:hover,
+.btn-primary:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 14px 30px rgba(166, 61, 64, 0.28);
+}
+
+
+/* =========================================================
+   GOLD ACCENTS
+========================================================= */
+
+.section-kicker,
+.section-label,
+.eyebrow {
+    color: var(--gold);
+}
+
+
+/* =========================================================
+   DAILY 3
+========================================================= */
+
+.daily-home-card {
+    background:
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(216, 155, 43, 0.30),
+            transparent 26%
+        ),
+        radial-gradient(
+            circle at 8% 92%,
+            rgba(56, 106, 75, 0.30),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #A63D40 0%,
+            #8B3035 48%,
+            #263D5B 100%
+        );
+
+    border-color: rgba(255, 255, 255, 0.16);
+
+    box-shadow:
+        0 25px 60px rgba(38, 61, 91, 0.24);
+}
+
+
+/* =========================================================
+   MAKA
+========================================================= */
+
+.maka-home-card {
+    background:
+        radial-gradient(
+            circle at 88% 12%,
+            rgba(216, 155, 43, 0.28),
+            transparent 26%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(166, 61, 64, 0.26),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #263D5B 0%,
+            #386A4B 48%,
+            #A63D40 100%
+        );
+
+    box-shadow:
+        0 25px 60px rgba(38, 61, 91, 0.24);
+}
+
+
+/* =========================================================
+   BOTTOM NAVIGATION
+========================================================= */
+
+.bottom-navigation {
+    background:
+        rgba(24, 42, 61, 0.88);
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 -15px 40px rgba(24, 42, 61, 0.18);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+
+.bottom-navigation .nav-item {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+
+.bottom-navigation .nav-item.active {
+    color: var(--gold-light);
+}
+
+
+.bottom-navigation .nav-icon {
+    color: inherit;
+}
+
+
+.bottom-navigation .nav-item:hover {
+    color: var(--white);
+}
+
+
+/* =========================================================
+   PATTERN
+========================================================= */
+
+.pattern {
+    opacity: .20;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    body {
+        background:
+            linear-gradient(
+                145deg,
+                #A63D40 0%,
+                #8B3035 42%,
+                #263D5B 100%
+            );
+    }
+
+
+    #app {
+        background:
+            radial-gradient(
+                circle at 90% 10%,
+                rgba(216, 155, 43, 0.08),
+                transparent 28%
+            );
+    }
+
+
+    .header {
+        background:
+            rgba(24, 42, 61, 0.24);
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+
+    .bottom-navigation {
+        background:
+            rgba(24, 42, 61, 0.94);
+    }
+
+}
+
+
