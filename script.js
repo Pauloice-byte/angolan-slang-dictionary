@@ -736,7 +736,10 @@ async function loadDailyWords() {
             .rpc("get_or_create_daily_three");
 
         if (dailyError) {
-            console.error("Daily 3 RPC error:", dailyError);
+           console.error(
+    "DAILY 3 RPC ERROR:",
+    JSON.stringify(dailyError, null, 2)
+);
             appState.dailyWords = [];
             appState.dailyLoaded = false;
             return;
