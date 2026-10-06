@@ -197,7 +197,7 @@ passwordRecoveryForm.addEventListener(
                         email,
                         {
                             redirectTo:
-                                "https://angolan-slang-dictionary.vercel.app/login.html"
+                                "https://angolan-slang-dictionary.vercel.app/register.html"
                         }
                     );
 
