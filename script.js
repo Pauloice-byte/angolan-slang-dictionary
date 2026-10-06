@@ -28,10 +28,9 @@ const appState = {
 
     dictionaryLoaded: false,
 
-    dailyLoaded: false,
-
-    savedLoaded: false
-   dailyCarouselTimer: null
+  dailyLoaded: false,
+savedLoaded: false,
+dailyCarouselTimer: null
 
 };
 
