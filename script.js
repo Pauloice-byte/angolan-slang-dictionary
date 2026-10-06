@@ -31,7 +31,7 @@ const appState = {
     dailyLoaded: false,
 
     savedLoaded: false
-   dailyCarouselTimer: null,
+   dailyCarouselTimer: null
 
 };
 
