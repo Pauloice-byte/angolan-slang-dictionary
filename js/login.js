@@ -1,6 +1,45 @@
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 
+const passwordInput = document.getElementById("password");
+const passwordToggle = document.getElementById("passwordToggle");
+
+
+/* ============================================================
+   PASSWORD VISIBILITY TOGGLE
+============================================================ */
+
+passwordToggle.addEventListener("click", function () {
+
+    const isVisible =
+        passwordInput.type === "text";
+
+    passwordInput.type =
+        isVisible ? "password" : "text";
+
+    passwordToggle.classList.toggle(
+        "is-visible",
+        !isVisible
+    );
+
+    passwordToggle.setAttribute(
+        "aria-label",
+        isVisible
+            ? "Mostrar palavra-passe"
+            : "Ocultar palavra-passe"
+    );
+
+    passwordToggle.setAttribute(
+        "aria-pressed",
+        String(!isVisible)
+    );
+
+});
+
+
+/* ============================================================
+   LOGIN
+============================================================ */
 
 loginForm.addEventListener("submit", async function (event) {
 
