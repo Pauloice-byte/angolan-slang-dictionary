@@ -6,10 +6,15 @@
 
 
 /* =========================================
-   STATE
+   CONSTANTS
 ========================================= */
 
 const MAKA_TOTAL_QUESTIONS = 5;
+
+
+/* =========================================
+   STATE
+========================================= */
 
 const makaState = {
     user: null,
@@ -148,7 +153,10 @@ function shuffleArray(array) {
 
 function escapeHtml(value) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
         return "";
     }
 
@@ -158,6 +166,18 @@ function escapeHtml(value) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
+
+
+function formatQuestionType(type) {
+
+    if (!type) {
+        return "QUESTION";
+    }
+
+    return String(type)
+        .replaceAll("_", " ")
+        .toUpperCase();
 }
 
 
@@ -235,16 +255,44 @@ async function loadQuestions() {
         throw error;
     }
 
-    if (!data || data.length < MAKA_TOTAL_QUESTIONS) {
+    if (!Array.isArray(data)) {
+        throw new Error(
+            "No Maka questions were returned."
+        );
+    }
+
+    const validQuestions =
+        data.filter(question => {
+
+            return (
+                question &&
+                question.id &&
+                question.question_text &&
+                question.option_a &&
+                question.option_b &&
+                question.option_c &&
+                question.option_d &&
+                question.correct_option
+            );
+
+        });
+
+    if (
+        validQuestions.length <
+        MAKA_TOTAL_QUESTIONS
+    ) {
 
         throw new Error(
-            "There are not enough active Maka questions yet."
+            `Maka needs at least ${MAKA_TOTAL_QUESTIONS} active questions.`
         );
     }
 
     makaState.questions =
-        shuffleArray(data)
-            .slice(0, MAKA_TOTAL_QUESTIONS);
+        shuffleArray(validQuestions)
+            .slice(
+                0,
+                MAKA_TOTAL_QUESTIONS
+            );
 }
 
 
@@ -263,7 +311,8 @@ async function createGameSession() {
             user_id:
                 makaState.user.id,
 
-            score: 0,
+            score:
+                0,
 
             total_questions:
                 MAKA_TOTAL_QUESTIONS
@@ -273,6 +322,13 @@ async function createGameSession() {
 
     if (error) {
         throw error;
+    }
+
+    if (!data || !data.id) {
+
+        throw new Error(
+            "The Maka session could not be created."
+        );
     }
 
     makaState.sessionId =
@@ -289,6 +345,13 @@ async function saveAnswer(
     selectedOption,
     isCorrect
 ) {
+
+    if (!makaState.sessionId) {
+
+        throw new Error(
+            "Maka session is missing."
+        );
+    }
 
     const {
         error
@@ -321,6 +384,10 @@ async function saveAnswer(
 async function updateGameSession(
     completed = false
 ) {
+
+    if (!makaState.sessionId) {
+        return;
+    }
 
     const payload = {
         score:
@@ -357,18 +424,24 @@ async function updateGameSession(
 async function startGame() {
 
     hideElement(startScreen);
+    hideElement(resultScreen);
     hideElement(errorState);
+
     showElement(loadingState);
 
+    startButton.disabled = true;
+
     try {
+
+        makaState.questions = [];
+        makaState.currentQuestion = 0;
+        makaState.score = 0;
+        makaState.sessionId = null;
+        makaState.answered = false;
 
         await loadQuestions();
 
         await createGameSession();
-
-        makaState.currentQuestion = 0;
-        makaState.score = 0;
-        makaState.answered = false;
 
         hideElement(loadingState);
         showElement(gameScreen);
@@ -392,6 +465,12 @@ async function startGame() {
         );
 
     }
+
+    finally {
+
+        startButton.disabled = false;
+
+    }
 }
 
 
@@ -407,7 +486,9 @@ function renderQuestion() {
         ];
 
     if (!question) {
+
         finishGame();
+
         return;
     }
 
@@ -434,29 +515,28 @@ function renderQuestion() {
         `${makaState.score} pts`;
 
     progressBar.style.width =
-        `${(number / MAKA_TOTAL_QUESTIONS) * 100}%`;
+        `${(
+            number /
+            MAKA_TOTAL_QUESTIONS
+        ) * 100}%`;
 
-    answerFeedback.classList.add("hidden");
-    answerFeedback.classList.remove(
-        "correct-feedback",
-        "wrong-feedback"
+    answerFeedback.className =
+        "answer-feedback hidden";
+
+    feedbackTitle.textContent =
+        "";
+
+    feedbackText.textContent =
+        "";
+
+    nextButton.classList.add(
+        "hidden"
     );
 
-    nextButton.classList.add("hidden");
+    answerGrid.innerHTML =
+        "";
 
     renderAnswers(question);
-}
-
-
-function formatQuestionType(type) {
-
-    if (!type) {
-        return "QUESTION";
-    }
-
-    return String(type)
-        .replaceAll("_", " ")
-        .toUpperCase();
 }
 
 
@@ -499,7 +579,9 @@ function renderAnswers(question) {
                         </span>
 
                         <span class="answer-text">
-                            ${escapeHtml(option.value)}
+                            ${escapeHtml(
+                                option.value
+                            )}
                         </span>
                     </button>
                 `
@@ -507,7 +589,9 @@ function renderAnswers(question) {
             .join("");
 
     answerGrid
-        .querySelectorAll(".answer-button")
+        .querySelectorAll(
+            ".answer-button"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -537,12 +621,16 @@ async function handleAnswer(
         return;
     }
 
-    makaState.answered = true;
-
     const question =
         makaState.questions[
             makaState.currentQuestion
         ];
+
+    if (!question) {
+        return;
+    }
+
+    makaState.answered = true;
 
     const buttons =
         answerGrid.querySelectorAll(
@@ -550,14 +638,27 @@ async function handleAnswer(
         );
 
     buttons.forEach(button => {
+
         button.disabled = true;
+
     });
 
-    const isCorrect =
-        selectedOption.toLowerCase() ===
+    const correctOption =
         String(
             question.correct_option
-        ).toLowerCase();
+        )
+            .trim()
+            .toLowerCase();
+
+    const selected =
+        String(
+            selectedOption
+        )
+            .trim()
+            .toLowerCase();
+
+    const isCorrect =
+        selected === correctOption;
 
     if (isCorrect) {
         makaState.score++;
@@ -566,14 +667,13 @@ async function handleAnswer(
     buttons.forEach(button => {
 
         const option =
-            button.dataset.option;
-
-        if (
-            option.toLowerCase() ===
             String(
-                question.correct_option
-            ).toLowerCase()
-        ) {
+                button.dataset.option
+            )
+                .trim()
+                .toLowerCase();
+
+        if (option === correctOption) {
 
             button.classList.add(
                 "correct"
@@ -582,8 +682,7 @@ async function handleAnswer(
         }
 
         if (
-            option.toLowerCase() ===
-            selectedOption.toLowerCase() &&
+            option === selected &&
             !isCorrect
         ) {
 
@@ -611,7 +710,9 @@ async function handleAnswer(
             isCorrect
         );
 
-        await updateGameSession(false);
+        await updateGameSession(
+            false
+        );
 
     }
 
@@ -619,6 +720,10 @@ async function handleAnswer(
 
         console.error(
             "Maka answer save error:",
+            error
+        );
+
+        showDatabaseWarning(
             error
         );
 
@@ -639,9 +744,8 @@ function showFeedback(
     isCorrect
 ) {
 
-    answerFeedback.classList.remove(
-        "hidden"
-    );
+    answerFeedback.className =
+        "answer-feedback";
 
     if (isCorrect) {
 
@@ -680,23 +784,29 @@ function showFeedback(
                 ? word.meanings
                 : [];
 
-        if (meanings.length) {
+        if (meanings.length > 0) {
 
             const sortedMeanings =
-                [...meanings]
-                    .sort(
-                        (a, b) =>
-                            (
-                                a.display_order || 0
-                            ) -
-                            (
-                                b.display_order || 0
-                            )
-                    );
+                [...meanings].sort(
+                    (a, b) => {
+
+                        return (
+                            Number(
+                                a.display_order
+                            ) || 0
+                        ) -
+                        (
+                            Number(
+                                b.display_order
+                            ) || 0
+                        );
+
+                    }
+                );
 
             explanation =
-                sortedMeanings[0].meaning;
-
+                sortedMeanings[0].meaning ||
+                "";
         }
 
     }
@@ -708,10 +818,36 @@ function showFeedback(
 
 
 /* =========================================
+   DATABASE WARNING
+========================================= */
+
+function showDatabaseWarning(
+    error
+) {
+
+    console.error(
+        "Maka database warning:",
+        error
+    );
+
+    /*
+        The answer remains visible locally.
+        The game can continue even if
+        Supabase rejects the save.
+    */
+
+}
+
+
+/* =========================================
    NEXT QUESTION
 ========================================= */
 
 function nextQuestion() {
+
+    if (!makaState.answered) {
+        return;
+    }
 
     makaState.currentQuestion++;
 
@@ -726,6 +862,11 @@ function nextQuestion() {
     }
 
     renderQuestion();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 
@@ -736,11 +877,14 @@ function nextQuestion() {
 async function finishGame() {
 
     hideElement(gameScreen);
+
     showElement(loadingState);
 
     try {
 
-        await updateGameSession(true);
+        await updateGameSession(
+            true
+        );
 
     }
 
@@ -754,6 +898,7 @@ async function finishGame() {
     }
 
     hideElement(loadingState);
+
     showResult();
 }
 
@@ -773,84 +918,57 @@ function showResult() {
     finalScore.textContent =
         `${score} / ${total}`;
 
-    let title;
-    let message;
-
     if (score === 5) {
 
-        title =
+        resultTitle.textContent =
             "Maka master!";
 
-        message =
-            "You know your Angolan slang. Perfect score.";
-
-    } else if (score >= 4) {
-
-        title =
-            "Muito bem!";
-
-        message =
-            "Almost perfect. Your knowledge of Angolan slang is strong.";
-
-    } else if (score >= 3) {
-
-        title =
-            "Not bad!";
-
-        message =
-            "You know your way around the language. Keep discovering.";
-
-    } else if (score >= 1) {
-
-        title =
-            "Keep going!";
-
-        message =
-            "Every Maka is another chance to learn something new.";
-
-    } else {
-
-        title =
-            "A fresh start!";
-
-        message =
-            "Don't worry. Explore the dictionary and come back for another Maka.";
+        resultMessage.textContent =
+            "Perfect score. You really know your Angolan slang.";
 
     }
 
-    resultTitle.textContent =
-        title;
+    else if (score === 4) {
 
-    resultMessage.textContent =
-        message;
+        resultTitle.textContent =
+            "Muito bem!";
+
+        resultMessage.textContent =
+            "Almost perfect. Your Angolan slang is strong.";
+
+    }
+
+    else if (score === 3) {
+
+        resultTitle.textContent =
+            "Not bad!";
+
+        resultMessage.textContent =
+            "You know your way around Angolan slang. Keep discovering.";
+
+    }
+
+    else if (score >= 1) {
+
+        resultTitle.textContent =
+            "Keep going!";
+
+        resultMessage.textContent =
+            "Every Maka is another chance to learn something new.";
+
+    }
+
+    else {
+
+        resultTitle.textContent =
+            "Fresh start!";
+
+        resultMessage.textContent =
+            "Explore the dictionary and come back for another Maka.";
+
+    }
 
     showElement(resultScreen);
-}
-
-
-/* =========================================
-   RESET
-========================================= */
-
-function resetGame() {
-
-    makaState.questions = [];
-    makaState.currentQuestion = 0;
-    makaState.score = 0;
-    makaState.sessionId = null;
-    makaState.answered = false;
-
-    hideElement(resultScreen);
-    hideElement(gameScreen);
-    hideElement(errorState);
-
-    showElement(startScreen);
-
-    scoreDisplay.textContent =
-        "0 pts";
-
-    progressBar.style.width =
-        "20%";
 }
 
 
@@ -858,20 +976,18 @@ function resetGame() {
    ERROR
 ========================================= */
 
-function showError(message) {
+function showError(
+    message
+) {
 
     hideElement(startScreen);
     hideElement(gameScreen);
     hideElement(resultScreen);
     hideElement(loadingState);
 
-    if (errorMessage) {
-
-        errorMessage.textContent =
-            message ||
-            "Something went wrong.";
-
-    }
+    errorMessage.textContent =
+        message ||
+        "Something went wrong.";
 
     showElement(errorState);
 }
@@ -926,7 +1042,12 @@ async function initializeMaka() {
 
     try {
 
-        await loadCurrentUser();
+        const user =
+            await loadCurrentUser();
+
+        if (!user) {
+            return;
+        }
 
     }
 
