@@ -498,6 +498,11 @@ h4 {
    HOME HERO
 ============================================================ */
 
+/* ============================================================
+   HOME HERO — BRANDED WELCOME CARD
+   Content and layout unchanged
+============================================================ */
+
 .hero {
     position: relative;
 
@@ -509,7 +514,8 @@ h4 {
         minmax(0, 1.25fr)
         minmax(250px, 0.75fr);
 
-    gap: clamp(30px, 6vw, 80px);
+    gap:
+        clamp(30px, 6vw, 80px);
 
     align-items: center;
 
@@ -519,66 +525,186 @@ h4 {
 
     margin-bottom: 35px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.16);
+
     border-radius: 28px;
+
+    overflow: hidden;
+
+    isolation: isolate;
+
+    color: var(--white);
 
     background:
         radial-gradient(
-            circle at 90% 15%,
-            rgba(216, 155, 43, 0.15),
-            transparent 25%
+            circle at 88% 12%,
+            rgba(216, 155, 43, 0.30),
+            transparent 27%
         ),
         radial-gradient(
-            circle at 5% 90%,
-            rgba(56, 106, 75, 0.08),
-            transparent 28%
+            circle at 8% 90%,
+            rgba(56, 106, 75, 0.30),
+            transparent 30%
         ),
-        rgba(255, 255, 255, 0.74);
+        linear-gradient(
+            145deg,
+            #A63D40 0%,
+            #8B3035 48%,
+            #263D5B 100%
+        );
 
-    box-shadow: var(--shadow);
+    box-shadow:
+        0 24px 55px
+        rgba(38, 61, 91, 0.20);
 
-    overflow: hidden;
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
 }
 
+
+/* Large decorative AO */
+
 .hero::before {
-    content: "";
+    content: "AO";
 
     position: absolute;
 
-    width: 170px;
-    height: 170px;
+    right: -18px;
+    bottom: -18px;
 
-    right: -60px;
-    bottom: -70px;
+    z-index: -1;
 
-    border-radius: 50%;
+    color:
+        rgba(255, 255, 255, 0.055);
 
-    background: rgba(166, 61, 64, 0.08);
+    font-size: 170px;
+
+    font-weight: 900;
+
+    line-height: .8;
+
+    letter-spacing: -12px;
 
     pointer-events: none;
 }
+
+
+/* Decorative rings */
 
 .hero::after {
     content: "";
 
     position: absolute;
 
-    width: 90px;
-    height: 90px;
+    right: -75px;
+    top: -75px;
 
-    left: -35px;
-    top: -35px;
+    width: 220px;
+    height: 220px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
 
     border-radius: 50%;
 
-    border: 18px solid rgba(216, 155, 43, 0.09);
+    box-shadow:
+        0 0 0 28px
+        rgba(255, 255, 255, 0.025),
+
+        0 0 0 56px
+        rgba(255, 255, 255, 0.018);
 
     pointer-events: none;
 }
 
+
+/* Keep all existing content above decoration */
+
 .hero > * {
     position: relative;
-    z-index: 1;
+
+    z-index: 2;
+}
+
+
+/* Welcome text */
+
+.hero h2 {
+    color: var(--white);
+}
+
+.hero h2 span {
+    color: var(--gold-light);
+}
+
+.hero-description {
+    color:
+        rgba(255, 255, 255, 0.76);
+}
+
+
+/* Eyebrow */
+
+.hero .eyebrow {
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    color:
+        var(--gold-light);
+}
+
+
+/* Main action */
+
+.hero .primary-button {
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold),
+            #B98220
+        );
+
+    color:
+        var(--ink);
+
+    box-shadow:
+        0 10px 25px
+        rgba(0, 0, 0, 0.15);
+}
+
+.hero .primary-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold-light),
+            var(--gold)
+        );
+
+    color:
+        var(--ink);
+
+    box-shadow:
+        0 14px 30px
+        rgba(0, 0, 0, 0.20);
+}
+
+
+/* Hover */
+
+.hero:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 30px 65px
+        rgba(38, 61, 91, 0.25);
 }
 
 .eyebrow {
@@ -6625,4 +6751,42 @@ button {
     }
 
 }
+/* ============================================================
+   WELCOME HERO — MOBILE BRAND TREATMENT
+   Content/layout unchanged
+============================================================ */
 
+@media (max-width: 760px) {
+
+    .hero {
+        background:
+            radial-gradient(
+                circle at 90% 10%,
+                rgba(216, 155, 43, 0.26),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 8% 92%,
+                rgba(56, 106, 75, 0.25),
+                transparent 32%
+            ),
+            linear-gradient(
+                145deg,
+                #A63D40 0%,
+                #8B3035 50%,
+                #263D5B 100%
+            );
+    }
+
+    .hero::before {
+        font-size: 120px;
+    }
+
+    .hero::after {
+        right: -90px;
+        top: -90px;
+
+        width: 190px;
+        height: 190px;
+    }
+}
