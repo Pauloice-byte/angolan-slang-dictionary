@@ -1,38 +1,37 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="theme-color"
+        content="#A63D40"
+    >
 
-<meta
-    name="theme-color"
-    content="#A63D40"
->
+    <title>Angolan Slang Dictionary</title>
 
-<title>Angolan Slang Dictionary</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
 <body>
 
-
-<!-- =========================
-     APP
-========================== -->
-
 <div id="app">
 
-    <!-- Decorative Samakaka-inspired pattern -->
+    <!-- =========================
+         DECORATIVE PATTERN
+    ========================== -->
+
     <div class="pattern pattern-top"></div>
 
 
@@ -50,10 +49,12 @@
         >
 
             <span class="brand-symbol">
+
                 <img
                     src="assets/angola-flag2.png"
                     alt="Angola"
                 >
+
             </span>
 
             <span class="brand-text">
@@ -77,7 +78,11 @@
             type="button"
             aria-label="Open menu"
         >
-            <span aria-hidden="true">☰</span>
+
+            <span aria-hidden="true">
+                ☰
+            </span>
+
         </button>
 
     </header>
@@ -87,18 +92,17 @@
          MAIN APP CONTENT
     ========================== -->
 
-    <main id="main-content">
-
-        <!-- JavaScript renders pages here -->
-
-    </main>
+    <main id="main-content"></main>
 
 
     <!-- =========================
          BOTTOM NAVIGATION
     ========================== -->
 
-    <nav class="bottom-navigation">
+    <nav
+        class="bottom-navigation"
+        aria-label="Main navigation"
+    >
 
         <button
             class="nav-item active"
@@ -106,7 +110,9 @@
             type="button"
         >
 
-            <span class="nav-icon">⌂</span>
+            <span class="nav-icon">
+                ⌂
+            </span>
 
             <span class="nav-label">
                 Home
@@ -121,7 +127,9 @@
             type="button"
         >
 
-            <span class="nav-icon">▤</span>
+            <span class="nav-icon">
+                ▤
+            </span>
 
             <span class="nav-label">
                 Dictionary
@@ -136,7 +144,9 @@
             type="button"
         >
 
-            <span class="nav-icon">⌕</span>
+            <span class="nav-icon">
+                ⌕
+            </span>
 
             <span class="nav-label">
                 Search
@@ -151,7 +161,9 @@
             type="button"
         >
 
-            <span class="nav-icon">♡</span>
+            <span class="nav-icon">
+                ♡
+            </span>
 
             <span class="nav-label">
                 Saved
@@ -163,7 +175,7 @@
 
 
     <!-- =========================
-         MENU PANEL
+         MENU OVERLAY
     ========================== -->
 
     <div
@@ -171,6 +183,10 @@
         id="menu-overlay"
     ></div>
 
+
+    <!-- =========================
+         SIDE MENU
+    ========================== -->
 
     <aside
         class="side-menu"
@@ -209,8 +225,13 @@
             type="button"
             onclick="navigateTo('daily')"
         >
-            <span>☀</span>
+
+            <span>
+                ☀
+            </span>
+
             3 Words of the Day
+
         </button>
 
 
@@ -219,8 +240,13 @@
             type="button"
             onclick="navigateTo('updates')"
         >
-            <span>✦</span>
+
+            <span>
+                ✦
+            </span>
+
             Updates
+
         </button>
 
 
@@ -229,8 +255,13 @@
             type="button"
             onclick="navigateTo('about')"
         >
-            <span>i</span>
+
+            <span>
+                i
+            </span>
+
             About the Dictionary
+
         </button>
 
 
@@ -239,8 +270,13 @@
             type="button"
             onclick="window.location.href='maka.html'"
         >
-            <span>✦</span>
+
+            <span>
+                ✦
+            </span>
+
             Maka
+
         </button>
 
 
@@ -249,8 +285,13 @@
             type="button"
             onclick="navigateTo('settings')"
         >
-            <span>⚙</span>
+
+            <span>
+                ⚙
+            </span>
+
             Settings
+
         </button>
 
 
@@ -259,8 +300,13 @@
             id="logout-button"
             type="button"
         >
-            <span>↪</span>
+
+            <span>
+                ↪
+            </span>
+
             Log out
+
         </button>
 
     </aside>
@@ -268,10 +314,15 @@
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="script.js"></script>
+<!-- =========================
+     SCRIPTS
+========================== -->
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 
