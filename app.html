@@ -1,271 +1,278 @@
-
-
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+```
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta
-        name="theme-color"
-        content="#A63D40"
-    >
+<meta
+    name="theme-color"
+    content="#A63D40"
+>
 
-    <title>Angolan Slang Dictionary</title>
+<title>Angolan Slang Dictionary</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+```
+
 </head>
 
 <body>
 
+```
+<!-- =========================
+     APP
+========================== -->
+
+<div id="app">
+
+    <!-- Decorative Samakaka-inspired pattern -->
+    <div class="pattern pattern-top"></div>
+
+
     <!-- =========================
-         APP
+         HEADER
     ========================== -->
 
-    <div id="app">
+    <header class="header">
 
-        <!-- Decorative Samakaka-inspired pattern -->
-        <div class="pattern pattern-top"></div>
+        <button
+            class="brand"
+            type="button"
+            onclick="navigateTo('home')"
+            aria-label="Go to home"
+        >
 
-
-        <!-- =========================
-             HEADER
-        ========================== -->
-
-      <header class="header">
-
-    <button
-        class="brand"
-        type="button"
-        onclick="navigateTo('home')"
-        aria-label="Go to home"
-    >
-
-        <span class="brand-symbol">
-            <img
-                src="assets/angola-flag2.png"
-                alt="Angola"
-            >
-        </span>
-
-        <span class="brand-text">
-
-            <strong>
-                Angolan Slang
-            </strong>
-
-            <span>
-                Dictionary
+            <span class="brand-symbol">
+                <img
+                    src="assets/angola-flag2.png"
+                    alt="Angola"
+                >
             </span>
 
-        </span>
+            <span class="brand-text">
 
-    </button>
+                <strong>
+                    Angolan Slang
+                </strong>
 
-
-    <button
-        class="header-button"
-        id="menu-button"
-        type="button"
-        aria-label="Open menu"
-    >
-        <span aria-hidden="true">☰</span>
-    </button>
-
-</header>
-
-
-        <!-- =========================
-             MAIN APP CONTENT
-        ========================== -->
-
-        <main id="main-content">
-
-            <!-- JavaScript renders pages here -->
-
-        </main>
-
-
-        <!-- =========================
-             BOTTOM NAVIGATION
-        ========================== -->
-
-        <nav class="bottom-navigation">
-
-            <button
-                class="nav-item active"
-                data-page="home"
-                type="button"
-            >
-
-                <span class="nav-icon">⌂</span>
-
-                <span class="nav-label">
-                    Home
-                </span>
-
-            </button>
-
-
-            <button
-                class="nav-item"
-                data-page="dictionary"
-                type="button"
-            >
-
-                <span class="nav-icon">▤</span>
-
-                <span class="nav-label">
+                <span>
                     Dictionary
                 </span>
 
-            </button>
+            </span>
+
+        </button>
 
 
-            <button
-                class="nav-item nav-search"
-                data-page="search"
-                type="button"
-            >
+        <button
+            class="header-button"
+            id="menu-button"
+            type="button"
+            aria-label="Open menu"
+        >
+            <span aria-hidden="true">☰</span>
+        </button>
 
-                <span class="nav-icon">⌕</span>
-
-                <span class="nav-label">
-                    Search
-                </span>
-
-            </button>
+    </header>
 
 
-            <button
-                class="nav-item"
-                data-page="saved"
-                type="button"
-            >
+    <!-- =========================
+         MAIN APP CONTENT
+    ========================== -->
 
-                <span class="nav-icon">♡</span>
+    <main id="main-content">
 
-                <span class="nav-label">
-                    Saved
-                </span>
+        <!-- JavaScript renders pages here -->
 
-            </button>
-
-        </nav>
+    </main>
 
 
-        <!-- =========================
-             MENU PANEL
-        ========================== -->
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
 
-        <div
-            class="menu-overlay"
-            id="menu-overlay"
-        ></div>
+    <nav class="bottom-navigation">
 
-
-        <aside
-            class="side-menu"
-            id="side-menu"
+        <button
+            class="nav-item active"
+            data-page="home"
+            type="button"
         >
 
-            <div class="menu-header">
+            <span class="nav-icon">⌂</span>
 
-                <div>
+            <span class="nav-label">
+                Home
+            </span>
 
-                    <p class="menu-small-title">
-                        ANGOLAN SLANG
-                    </p>
-
-                    <h2>
-                        Explore
-                    </h2>
-
-                </div>
+        </button>
 
 
-                <button
-                    class="close-menu"
-                    id="close-menu"
-                    type="button"
-                    aria-label="Close menu"
-                >
-                    ×
-                </button>
+        <button
+            class="nav-item"
+            data-page="dictionary"
+            type="button"
+        >
+
+            <span class="nav-icon">▤</span>
+
+            <span class="nav-label">
+                Dictionary
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item nav-search"
+            data-page="search"
+            type="button"
+        >
+
+            <span class="nav-icon">⌕</span>
+
+            <span class="nav-label">
+                Search
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="saved"
+            type="button"
+        >
+
+            <span class="nav-icon">♡</span>
+
+            <span class="nav-label">
+                Saved
+            </span>
+
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         MENU PANEL
+    ========================== -->
+
+    <div
+        class="menu-overlay"
+        id="menu-overlay"
+    ></div>
+
+
+    <aside
+        class="side-menu"
+        id="side-menu"
+    >
+
+        <div class="menu-header">
+
+            <div>
+
+                <p class="menu-small-title">
+                    ANGOLAN SLANG
+                </p>
+
+                <h2>
+                    Explore
+                </h2>
 
             </div>
 
 
             <button
-                class="menu-item"
-                onclick="navigateTo('daily')"
+                class="close-menu"
+                id="close-menu"
+                type="button"
+                aria-label="Close menu"
             >
-                <span>☀</span>
-                3 Words of the Day
+                ×
             </button>
 
-
-            <button
-                class="menu-item"
-                onclick="navigateTo('updates')"
-            >
-                <span>✦</span>
-                Updates
-            </button>
+        </div>
 
 
-            <button
-                class="menu-item"
-                onclick="navigateTo('about')"
-            >
-                <span>i</span>
-                About the Dictionary
-            </button>
-<button
-    class="menu-item"
-    type="button"
-    onclick="window.location.href='maka.html'"
->
-    <span>✦</span>
-    Maka
-</button>
-
-          <button
-    class="menu-item"
-    onclick="navigateTo('settings')"
->
-    <span>⚙</span>
-    Settings
-</button>
+        <button
+            class="menu-item"
+            type="button"
+            onclick="navigateTo('daily')"
+        >
+            <span>☀</span>
+            3 Words of the Day
+        </button>
 
 
-<button
-    class="menu-item menu-item-logout"
-    id="logout-button"
-    type="button"
->
-    <span>↪</span>
-    Log out
-</button>
-
-            
-
-        </aside>
-
-    </div>
+        <button
+            class="menu-item"
+            type="button"
+            onclick="navigateTo('updates')"
+        >
+            <span>✦</span>
+            Updates
+        </button>
 
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <button
+            class="menu-item"
+            type="button"
+            onclick="navigateTo('about')"
+        >
+            <span>i</span>
+            About the Dictionary
+        </button>
+
+
+        <button
+            class="menu-item"
+            type="button"
+            onclick="window.location.href='maka.html'"
+        >
+            <span>✦</span>
+            Maka
+        </button>
+
+
+        <button
+            class="menu-item"
+            type="button"
+            onclick="navigateTo('settings')"
+        >
+            <span>⚙</span>
+            Settings
+        </button>
+
+
+        <button
+            class="menu-item menu-item-logout"
+            id="logout-button"
+            type="button"
+        >
+            <span>↪</span>
+            Log out
+        </button>
+
+    </aside>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
-        <script src="js/maka.js"></script>
 <script src="script.js"></script>
+```
 
 </body>
 
 </html>
-
