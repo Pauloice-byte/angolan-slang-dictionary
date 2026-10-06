@@ -693,61 +693,117 @@ async function loadSavedWords() {
 
 
 /* =========================================
+   GET TODAY'S DATE
+========================================= */
+
+function getTodayDate() {
+
+    const now = new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+/* =========================================
    LOAD DAILY 3
 ========================================= */
 
 async function loadDailyWords() {
 
-    if (!appState.user) {
+    appState.dailyWords = [];
 
-        appState.dailyWords = [];
-
-        return;
-
-    }
+    appState.dailyLoaded = false;
 
 
     try {
 
+        const today =
+            getTodayDate();
+
+
+        console.log(
+            "Loading Daily 3 for:",
+            today
+        );
+
+
+        /* =====================================
+           GET TODAY'S ADMIN-CURATED RECORD
+        ===================================== */
+
         const {
-            data,
-            error
+            data: dailyRecord,
+            error: dailyError
         } = await supabaseClient
-            .rpc(
-                "get_or_create_daily_three"
-            );
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        let dailyRecord = data;
-
-
-        if (
-            Array.isArray(
-                dailyRecord
+            .from("daily_three")
+            .select(`
+                id,
+                daily_date,
+                word_1_id,
+                word_2_id,
+                word_3_id,
+                is_published
+            `)
+            .eq(
+                "daily_date",
+                today
             )
-        ) {
+            .eq(
+                "is_published",
+                true
+            )
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1)
+            .maybeSingle();
 
-            dailyRecord =
-                dailyRecord[0];
+
+        if (dailyError) {
+
+            throw dailyError;
 
         }
 
 
         if (!dailyRecord) {
 
-            appState.dailyWords = [];
+            console.warn(
+                "No published Daily 3 found for:",
+                today
+            );
 
             return;
 
         }
 
+
+        /* =====================================
+           PRESERVE ADMIN ORDER
+        ===================================== */
 
         const wordIds = [
 
@@ -766,32 +822,59 @@ async function loadDailyWords() {
 
         if (!wordIds.length) {
 
-            appState.dailyWords = [];
+            console.warn(
+                "Today's Daily 3 has no word IDs."
+            );
 
             return;
 
         }
 
 
-        /*
-           Use the words already loaded from
-           Supabase instead of querying them again.
-        */
+        /* =====================================
+           MATCH AGAINST LOADED WORDS
+        ===================================== */
+
+        const dailyWords = [];
+
+
+        wordIds.forEach(
+            id => {
+
+                const word =
+                    appState.words.find(
+                        item =>
+                            String(item.id) ===
+                            String(id)
+                    );
+
+
+                if (word) {
+
+                    dailyWords.push(
+                        word
+                    );
+
+                }
+
+            }
+        );
+
 
         appState.dailyWords =
-            wordIds
-                .map(
-                    id =>
-                        appState.words.find(
-                            word =>
-                                word.id === id
-                        )
-                )
-                .filter(Boolean);
+            dailyWords;
 
 
         appState.dailyLoaded =
             true;
+
+
+        console.log(
+            "Daily 3 loaded:",
+            appState.dailyWords.map(
+                word => word.word
+            )
+        );
 
 
     }
@@ -820,8 +903,7 @@ async function loadDailyWords() {
 async function loadAppData() {
 
     /*
-       Categories and dictionary can load together.
-       They do not need to wait for each other.
+       Categories and dictionary load together.
     */
 
     await Promise.all([
@@ -831,10 +913,8 @@ async function loadAppData() {
 
 
     /*
-       Saved words and Daily 3 depend on the
-       authenticated user / dictionary data.
-       Load them together after the main
-       dictionary is ready.
+       Saved words and Daily 3 depend on
+       the authenticated user / dictionary.
     */
 
     await Promise.all([
@@ -843,6 +923,7 @@ async function loadAppData() {
     ]);
 
 }
+
 
 /* =========================================
    NAVIGATION
@@ -949,7 +1030,7 @@ function renderPage() {
             mainContent.innerHTML =
                 renderDictionary();
 
-          setupDictionary();
+            setupDictionary();
 
             break;
 
@@ -959,7 +1040,7 @@ function renderPage() {
             mainContent.innerHTML =
                 renderSearch();
 
-           setupSearch();
+            setupSearch();
 
             break;
 
@@ -1040,6 +1121,11 @@ function renderHome() {
 
         <section class="home-page">
 
+
+            <!-- =================================
+                 HERO
+            ================================= -->
+
             <section class="hero">
 
                 <p class="eyebrow">
@@ -1091,6 +1177,10 @@ function renderHome() {
             </section>
 
 
+            <!-- =================================
+                 SEARCH
+            ================================= -->
+
             <section class="home-search">
 
                 <div
@@ -1114,6 +1204,10 @@ function renderHome() {
 
             </section>
 
+
+            <!-- =================================
+                 DAILY 3
+            ================================= -->
 
             <section class="daily-section">
 
@@ -1166,6 +1260,7 @@ function renderHome() {
 
                                                 </span>
 
+
                                                 <h3>
 
                                                     ${escapeHtml(
@@ -1174,18 +1269,23 @@ function renderHome() {
 
                                                 </h3>
 
+
                                                 <p>
 
                                                     ${
                                                         item.isPremium
+
                                                             ? "Premium word — Coming Soon."
+
                                                             : escapeHtml(
                                                                 item.shortMeaning ||
+                                                                item.firstMeaning ||
                                                                 "Discover today's word."
                                                             )
                                                     }
 
                                                 </p>
+
 
                                                 <button
                                                     type="button"
@@ -1229,20 +1329,34 @@ function renderHome() {
 
                         : `
 
-                            <div class="daily-card">
+                            <div class="daily-card daily-empty-card">
 
                                 <span class="daily-number">
-                                    03
+                                    TODAY
                                 </span>
+
 
                                 <h3>
                                     Your Daily 3
                                 </h3>
 
+
                                 <p>
-                                    Your three words for today
-                                    are being loaded.
+
+                                    Today's three words
+                                    are not available yet.
+
                                 </p>
+
+
+                                <button
+                                    type="button"
+                                    onclick="navigateTo('daily')"
+                                >
+
+                                    Open Daily 3 →
+
+                                </button>
 
                             </div>
 
@@ -1250,6 +1364,234 @@ function renderHome() {
                 }
 
             </section>
+
+
+            <!-- =================================
+                 MAKA GAME
+            ================================= -->
+
+            <section class="maka-home-section">
+
+                <div class="maka-home-card">
+
+                    <div class="maka-home-glow"></div>
+
+
+                    <div class="maka-home-content">
+
+                        <div class="maka-home-top">
+
+                            <div>
+
+                                <span class="maka-home-badge">
+                                    DAILY CHALLENGE
+                                </span>
+
+
+                                <p class="maka-home-eyebrow">
+                                    HOW WELL DO YOU KNOW ANGOLA?
+                                </p>
+
+                            </div>
+
+
+                            <div class="maka-game-icon">
+
+                                <span>
+                                    ✦
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <h2>
+                            Maka
+                        </h2>
+
+
+                        <p class="maka-home-description">
+
+                            Think you know your
+                            Angolan slang?
+
+                            <br>
+
+                            Put your knowledge to the test.
+
+                        </p>
+
+
+                        <div class="maka-home-stats">
+
+                            <div>
+
+                                <strong>
+                                    ${appState.words.length || 45}+
+                                </strong>
+
+                                <span>
+                                    words
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    3
+                                </strong>
+
+                                <span>
+                                    question types
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    ∞
+                                </strong>
+
+                                <span>
+                                    fun
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="maka.html"
+                            class="maka-home-button"
+                        >
+
+                            <span>
+                                Play Maka
+                            </span>
+
+                            <span>
+                                →
+                            </span>
+
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="maka-game-orbit"
+                        aria-hidden="true"
+                    >
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 EXPLORE
+            ================================= -->
+
+            <section class="home-explore-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            KEEP EXPLORING
+                        </p>
+
+
+                        <h2>
+                            The Dictionary
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="home-explore-grid">
+
+                    <button
+                        class="home-explore-card"
+                        type="button"
+                        onclick="navigateTo('dictionary')"
+                    >
+
+                        <span>
+                            ▤
+                        </span>
+
+                        <strong>
+                            Browse Words
+                        </strong>
+
+                        <small>
+                            Explore the full dictionary
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="home-explore-card"
+                        type="button"
+                        onclick="navigateTo('search')"
+                    >
+
+                        <span>
+                            ⌕
+                        </span>
+
+                        <strong>
+                            Search
+                        </strong>
+
+                        <small>
+                            Find a word or meaning
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="home-explore-card"
+                        type="button"
+                        onclick="navigateTo('saved')"
+                    >
+
+                        <span>
+                            ♡
+                        </span>
+
+                        <strong>
+                            Saved Words
+                        </strong>
+
+                        <small>
+                            Keep the words you love
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </section>
+
 
         </section>
 
@@ -1363,12 +1705,15 @@ function renderDictionary() {
             >
 
                 <span id="dictionary-count">
+
                     ${appState.words.length}
+
                     ${
                         appState.words.length === 1
                             ? "word"
                             : "words"
                     }
+
                 </span>
 
             </div>
@@ -1423,7 +1768,10 @@ function renderDictionaryCards(
 
 
                 <p class="hero-description">
-                    Try another word, meaning or category.
+
+                    Try another word,
+                    meaning or category.
+
                 </p>
 
             </div>
@@ -1479,9 +1827,11 @@ function renderDictionaryCards(
                         word.categoryName
                             ? `
                                 <span class="eyebrow">
+
                                     ${escapeHtml(
                                         word.categoryName
                                     )}
+
                                 </span>
                             `
                             : ""
@@ -1501,9 +1851,11 @@ function renderDictionaryCards(
                                         letter-spacing: .5px;
                                     "
                                 >
+
                                     ${escapeHtml(
                                         word.wordType
                                     )}
+
                                 </span>
                             `
                             : ""
@@ -1532,9 +1884,11 @@ function renderDictionaryCards(
                                         margin-top: -8px;
                                     "
                                 >
+
                                     ${escapeHtml(
                                         word.pronunciation
                                     )}
+
                                 </p>
                             `
                             : ""
@@ -1629,6 +1983,8 @@ function renderDictionaryCards(
     ).join("");
 
 }
+
+
 /* =========================================
    DICTIONARY SEARCH + FILTER
 ========================================= */
@@ -1660,11 +2016,6 @@ function setupDictionary() {
     }
 
 
-    /*
-       Prevent accidental duplicate listeners
-       if the page is rendered again.
-    */
-
     if (
         input.dataset.initialized === "true"
     ) {
@@ -1692,10 +2043,6 @@ function setupDictionary() {
         let results =
             [...appState.words];
 
-
-        /* =====================================
-           SEARCH WORD + MEANINGS
-        ===================================== */
 
         if (term) {
 
@@ -1736,10 +2083,6 @@ function setupDictionary() {
 
         }
 
-
-        /* =====================================
-           CATEGORY
-        ===================================== */
 
         if (
             selectedCategory !==
@@ -1925,11 +2268,6 @@ function setupSearch() {
 
     }
 
-
-    /*
-       Prevent duplicate listeners when
-       the page is rendered again.
-    */
 
     if (
         input.dataset.initialized === "true"
@@ -2121,9 +2459,11 @@ function renderWordDetail(
 
 
                     <h2>
+
                         ${escapeHtml(
                             word.word
                         )}
+
                     </h2>
 
 
@@ -2131,9 +2471,11 @@ function renderWordDetail(
                         word.pronunciation
                             ? `
                                 <p class="hero-description">
+
                                     ${escapeHtml(
                                         word.pronunciation
                                     )}
+
                                 </p>
                             `
                             : ""
@@ -2550,10 +2892,6 @@ async function toggleSavedWord(
         );
 
 
-    /*
-       Optimistic UI update.
-    */
-
     if (alreadySaved) {
 
         appState.savedWords =
@@ -2622,11 +2960,6 @@ async function toggleSavedWord(
         }
 
 
-        /*
-           Re-render the current page so
-           the heart/save state changes.
-        */
-
         if (
             appState.currentPage ===
             "word-detail"
@@ -2666,11 +2999,6 @@ async function toggleSavedWord(
             error
         );
 
-
-        /*
-           Database operation failed,
-           so restore the previous state.
-        */
 
         if (alreadySaved) {
 
@@ -2857,6 +3185,14 @@ function renderDailyPage() {
             </h2>
 
 
+            <p class="hero-description">
+
+                Three hand-picked words
+                to discover today.
+
+            </p>
+
+
             ${
                 dailyWords.length
 
@@ -2897,6 +3233,7 @@ function renderDailyPage() {
                                                 ? "Premium content — Coming Soon."
                                                 : escapeHtml(
                                                     item.shortMeaning ||
+                                                    item.firstMeaning ||
                                                     "Discover today's word."
                                                 )
                                         }
@@ -2931,10 +3268,20 @@ function renderDailyPage() {
                             "
                         >
 
+                            <p class="eyebrow">
+                                DAILY 3
+                            </p>
+
+
+                            <h3>
+                                Nothing published yet.
+                            </h3>
+
+
                             <p class="hero-description">
 
-                                Your Daily 3 could not be
-                                loaded right now.
+                                There is no published
+                                Daily 3 for today.
 
                             </p>
 
@@ -3118,9 +3465,7 @@ function renderUpdates() {
             >
 
                 <p class="eyebrow">
-
                     COMING SOON
-
                 </p>
 
 
@@ -3129,9 +3474,7 @@ function renderUpdates() {
                         font-size: 28px;
                     "
                 >
-
                     New update
-
                 </h3>
 
 
@@ -3299,6 +3642,8 @@ const menuOverlay =
     document.getElementById(
         "menu-overlay"
     );
+
+
 const logoutButton =
     document.getElementById(
         "logout-button"
@@ -3378,6 +3723,7 @@ if (menuOverlay) {
 
 }
 
+
 /* =========================================
    LOGOUT
 ========================================= */
@@ -3452,6 +3798,8 @@ if (logoutButton) {
     );
 
 }
+
+
 /* =========================================
    BOTTOM NAVIGATION
 ========================================= */
@@ -3590,6 +3938,7 @@ function escapeAttribute(
 
 }
 
+
 /* =========================================
    INITIALIZE APPLICATION
 ========================================= */
@@ -3599,9 +3948,6 @@ async function initializeApplication() {
     /*
        STEP 1
        Get the authenticated user first.
-
-       We need this for the personalised
-       greeting and user-specific data.
     */
 
     await loadCurrentUser();
@@ -3611,9 +3957,7 @@ async function initializeApplication() {
        STEP 2
        Render the application immediately.
 
-       The user should see the app shell/home
-       without waiting for dictionary queries,
-       saved words or Daily 3.
+       This keeps the first paint fast.
     */
 
     renderPage();
@@ -3621,10 +3965,11 @@ async function initializeApplication() {
 
     /*
        STEP 3
-       Load the remaining application data
-       in the background.
+       Load dictionary, categories,
+       saved words and Daily 3.
 
-       This keeps the first paint fast.
+       The home initially renders immediately,
+       then refreshes when the data arrives.
     */
 
     try {
@@ -3633,15 +3978,11 @@ async function initializeApplication() {
 
 
         /*
-           Update the currently visible page
-           after the data arrives.
-
-           This is especially important for
-           Daily 3 on the home screen.
+           Re-render the currently visible page
+           once the real data is available.
         */
 
         renderPage();
-
 
     }
 
