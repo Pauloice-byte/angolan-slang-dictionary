@@ -2583,3 +2583,81 @@ button {
         animation: none !important;
     }
 }
+/* ============================================================
+   PASSWORD VISIBILITY TOGGLE
+============================================================ */
+
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 52px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    margin: 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--muted);
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+
+    border-radius: 8px;
+
+    transition:
+        color .2s ease,
+        background .2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--red);
+
+    background: rgba(166,61,64,.08);
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+
+    display: block;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+}
+
+.eye-closed {
+    display: none;
+}
+
+.password-toggle.is-visible .eye-open {
+    display: none;
+}
+
+.password-toggle.is-visible .eye-closed {
+    display: block;
+}
