@@ -3396,7 +3396,7 @@ function initDailyHomeCarousel() {
         appState.dailyCarouselTimer =
             setInterval(
                 moveNext,
-                5000
+                3000
             );
     }
 
