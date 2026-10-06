@@ -913,10 +913,14 @@ function renderPage() {
         appState.currentPage
     ) {
 
-        case "home":
+             case "home":
 
             mainContent.innerHTML =
                 renderHome();
+
+            initDailyHomeCarousel();
+
+            initDailyHomeSwipe();
 
             break;
 
@@ -3276,7 +3280,346 @@ function goToDailySlide(
 
 }
 
+/* =========================================
+   HOME DAILY 3 CAROUSEL
+========================================= */
 
+function initDailyHomeCarousel() {
+
+    const track =
+        document.getElementById(
+            "dailyHomeTrack"
+        );
+
+    const prevButton =
+        document.getElementById(
+            "dailyHomePrev"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "dailyHomeNext"
+        );
+
+    const counter =
+        document.getElementById(
+            "dailyHomeCounter"
+        );
+
+
+    if (
+        !track ||
+        !prevButton ||
+        !nextButton ||
+        !counter
+    ) {
+
+        return;
+
+    }
+
+
+    const slides =
+        Array.from(
+            track.querySelectorAll(
+                ".daily-home-slide"
+            )
+        );
+
+
+    if (!slides.length) {
+
+        return;
+
+    }
+
+
+    let currentIndex = 0;
+
+
+    function updateCarousel() {
+
+        track.style.transform =
+            `translateX(-${currentIndex * 100}%)`;
+
+
+        counter.textContent =
+            `${currentIndex + 1} / ${slides.length}`;
+
+
+        prevButton.disabled =
+            currentIndex === 0;
+
+
+        nextButton.disabled =
+            currentIndex === slides.length - 1;
+
+
+        slides.forEach(
+            (slide, index) => {
+
+                slide.setAttribute(
+                    "aria-hidden",
+                    index !== currentIndex
+                );
+
+            }
+        );
+
+    }
+
+
+    prevButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentIndex > 0
+            ) {
+
+                currentIndex--;
+
+                updateCarousel();
+
+            }
+
+        }
+    );
+
+
+    nextButton.addEventListener(
+        "click",
+        () => {
+
+            if (
+                currentIndex <
+                slides.length - 1
+            ) {
+
+                currentIndex++;
+
+                updateCarousel();
+
+            }
+
+        }
+    );
+
+
+    slides.forEach(
+        slide => {
+
+            const revealButton =
+                slide.querySelector(
+                    ".daily-reveal-button"
+                );
+
+
+            const hiddenMeaning =
+                slide.querySelector(
+                    ".daily-meaning-hidden"
+                );
+
+
+            const meaningText =
+                slide.querySelector(
+                    ".daily-meaning-text"
+                );
+
+
+            if (
+                !revealButton ||
+                !hiddenMeaning ||
+                !meaningText
+            ) {
+
+                return;
+
+            }
+
+
+            revealButton.addEventListener(
+                "click",
+                () => {
+
+                    hiddenMeaning.hidden =
+                        true;
+
+
+                    meaningText.hidden =
+                        false;
+
+
+                    revealButton.textContent =
+                        "Meaning Revealed";
+
+
+                    revealButton.classList.add(
+                        "revealed"
+                    );
+
+
+                    revealButton.disabled =
+                        true;
+
+                }
+            );
+
+        }
+    );
+
+
+    updateCarousel();
+
+}
+
+
+/* =========================================
+   HOME DAILY 3 CAROUSEL
+   TOUCH / SWIPE
+========================================= */
+
+function initDailyHomeSwipe() {
+
+    const slider =
+        document.getElementById(
+            "dailyHomeSlider"
+        );
+
+
+    const track =
+        document.getElementById(
+            "dailyHomeTrack"
+        );
+
+
+    if (
+        !slider ||
+        !track
+    ) {
+
+        return;
+
+    }
+
+
+    let startX = 0;
+
+    let currentX = 0;
+
+    let isDragging = false;
+
+
+    slider.addEventListener(
+        "touchstart",
+        event => {
+
+            if (
+                !event.touches ||
+                !event.touches.length
+            ) {
+
+                return;
+
+            }
+
+
+            startX =
+                event.touches[0].clientX;
+
+            currentX =
+                startX;
+
+            isDragging =
+                true;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    slider.addEventListener(
+        "touchmove",
+        event => {
+
+            if (
+                !isDragging ||
+                !event.touches ||
+                !event.touches.length
+            ) {
+
+                return;
+
+            }
+
+
+            currentX =
+                event.touches[0].clientX;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    slider.addEventListener(
+        "touchend",
+        () => {
+
+            if (!isDragging) {
+
+                return;
+
+            }
+
+
+            isDragging =
+                false;
+
+
+            const difference =
+                currentX - startX;
+
+
+            const threshold =
+                50;
+
+
+            if (
+                Math.abs(difference) <
+                threshold
+            ) {
+
+                return;
+
+            }
+
+
+            if (difference < 0) {
+
+                document
+                    .getElementById(
+                        "dailyHomeNext"
+                    )
+                    ?.click();
+
+            } else {
+
+                document
+                    .getElementById(
+                        "dailyHomePrev"
+                    )
+                    ?.click();
+
+            }
+
+        }
+    );
+
+}
 /* =========================================
    BACK
 ========================================= */
