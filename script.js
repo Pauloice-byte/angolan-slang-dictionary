@@ -31,6 +31,7 @@ const appState = {
     dailyLoaded: false,
 
     savedLoaded: false
+   dailyCarouselTimer: null,
 
 };
 
@@ -3287,25 +3288,16 @@ function goToDailySlide(
 function initDailyHomeCarousel() {
 
     const track =
-        document.getElementById(
-            "dailyHomeTrack"
-        );
+        document.getElementById("dailyHomeTrack");
 
     const prevButton =
-        document.getElementById(
-            "dailyHomePrev"
-        );
+        document.getElementById("dailyHomePrev");
 
     const nextButton =
-        document.getElementById(
-            "dailyHomeNext"
-        );
+        document.getElementById("dailyHomeNext");
 
     const counter =
-        document.getElementById(
-            "dailyHomeCounter"
-        );
-
+        document.getElementById("dailyHomeCounter");
 
     if (
         !track ||
@@ -3313,24 +3305,36 @@ function initDailyHomeCarousel() {
         !nextButton ||
         !counter
     ) {
-
         return;
-
     }
 
 
     const slides =
         Array.from(
-            track.querySelectorAll(
-                ".daily-home-slide"
-            )
+            track.querySelectorAll(".daily-home-slide")
         );
 
 
     if (!slides.length) {
-
         return;
+    }
 
+
+    /*
+        Clear any previous timer.
+
+        This prevents multiple automatic
+        carousels from running after navigating
+        between pages.
+    */
+
+    if (appState.dailyCarouselTimer) {
+
+        clearInterval(
+            appState.dailyCarouselTimer
+        );
+
+        appState.dailyCarouselTimer = null;
     }
 
 
@@ -3347,24 +3351,60 @@ function initDailyHomeCarousel() {
             `${currentIndex + 1} / ${slides.length}`;
 
 
-        prevButton.disabled =
-            currentIndex === 0;
+        slides.forEach((slide, index) => {
+
+            slide.setAttribute(
+                "aria-hidden",
+                index !== currentIndex
+            );
+
+        });
+    }
 
 
-        nextButton.disabled =
-            currentIndex === slides.length - 1;
+    function moveNext() {
+
+        if (currentIndex < slides.length - 1) {
+
+            currentIndex++;
+
+        } else {
+
+            currentIndex = 0;
+
+        }
 
 
-        slides.forEach(
-            (slide, index) => {
+        updateCarousel();
+    }
 
-                slide.setAttribute(
-                    "aria-hidden",
-                    index !== currentIndex
-                );
 
-            }
-        );
+    function startAutoPlay() {
+
+        if (slides.length <= 1) {
+            return;
+        }
+
+
+        if (appState.dailyCarouselTimer) {
+
+            clearInterval(
+                appState.dailyCarouselTimer
+            );
+        }
+
+
+        appState.dailyCarouselTimer =
+            setInterval(
+                moveNext,
+                5000
+            );
+    }
+
+
+    function resetAutoPlay() {
+
+        startAutoPlay();
 
     }
 
@@ -3373,15 +3413,21 @@ function initDailyHomeCarousel() {
         "click",
         () => {
 
-            if (
-                currentIndex > 0
-            ) {
+            if (currentIndex > 0) {
 
                 currentIndex--;
 
-                updateCarousel();
+            } else {
+
+                currentIndex =
+                    slides.length - 1;
 
             }
+
+
+            updateCarousel();
+
+            resetAutoPlay();
 
         }
     );
@@ -3391,89 +3437,71 @@ function initDailyHomeCarousel() {
         "click",
         () => {
 
-            if (
-                currentIndex <
-                slides.length - 1
-            ) {
+            moveNext();
 
-                currentIndex++;
-
-                updateCarousel();
-
-            }
+            resetAutoPlay();
 
         }
     );
 
 
-    slides.forEach(
-        slide => {
+    slides.forEach(slide => {
 
-            const revealButton =
-                slide.querySelector(
-                    ".daily-reveal-button"
-                );
-
-
-            const hiddenMeaning =
-                slide.querySelector(
-                    ".daily-meaning-hidden"
-                );
-
-
-            const meaningText =
-                slide.querySelector(
-                    ".daily-meaning-text"
-                );
-
-
-            if (
-                !revealButton ||
-                !hiddenMeaning ||
-                !meaningText
-            ) {
-
-                return;
-
-            }
-
-
-            revealButton.addEventListener(
-                "click",
-                () => {
-
-                    hiddenMeaning.hidden =
-                        true;
-
-
-                    meaningText.hidden =
-                        false;
-
-
-                    revealButton.textContent =
-                        "Meaning Revealed";
-
-
-                    revealButton.classList.add(
-                        "revealed"
-                    );
-
-
-                    revealButton.disabled =
-                        true;
-
-                }
+        const revealButton =
+            slide.querySelector(
+                ".daily-reveal-button"
             );
 
+
+        const hiddenMeaning =
+            slide.querySelector(
+                ".daily-meaning-hidden"
+            );
+
+
+        const meaningText =
+            slide.querySelector(
+                ".daily-meaning-text"
+            );
+
+
+        if (
+            !revealButton ||
+            !hiddenMeaning ||
+            !meaningText
+        ) {
+            return;
         }
-    );
+
+
+        revealButton.addEventListener(
+            "click",
+            () => {
+
+                hiddenMeaning.hidden = true;
+
+                meaningText.hidden = false;
+
+                revealButton.textContent =
+                    "Meaning Revealed";
+
+                revealButton.classList.add(
+                    "revealed"
+                );
+
+                revealButton.disabled = true;
+
+            }
+        );
+
+    });
 
 
     updateCarousel();
 
+
+    startAutoPlay();
 }
-
-
 /* =========================================
    HOME DAILY 3 CAROUSEL
    TOUCH / SWIPE
