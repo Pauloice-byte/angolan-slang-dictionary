@@ -1,37 +1,110 @@
 const registerForm = document.getElementById("registerForm");
 const registerMessage = document.getElementById("registerMessage");
 
-const passwordInput =
-    document.getElementById("password");
+/* =========================================================
+   NORMAL REGISTRATION
+   ========================================================= */
 
-const confirmPasswordInput =
-    document.getElementById("confirmPassword");
+registerForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-const passwordToggle =
-    document.getElementById("passwordToggle");
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
 
-const confirmPasswordToggle =
-    document.getElementById("confirmPasswordToggle");
+    registerMessage.textContent = "";
+
+    if (password !== confirmPassword) {
+        registerMessage.textContent = "Passwords do not match.";
+        return;
+    }
+
+    try {
+        registerMessage.textContent = "Creating account...";
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: fullName
+                },
+                emailRedirectTo: "https://angolan-slang-dictionary.vercel.app/login.html"
+            }
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        if (data.user) {
+            registerMessage.textContent =
+                "Account created successfully. Please check your email to confirm your account.";
+
+            registerForm.reset();
+            return;
+        }
+
+    } catch (error) {
+        console.error(error);
+        registerMessage.textContent =
+            error.message || "Unable to create account.";
+    }
+});
 
 
-/* ============================================================
-   PASSWORD VISIBILITY TOGGLES
-============================================================ */
+/* =========================================================
+   PASSWORD RESET POPUP
+   ========================================================= */
+
+const passwordResetOverlay =
+    document.getElementById("passwordResetOverlay");
+
+const passwordResetForm =
+    document.getElementById("passwordResetForm");
+
+const resetPassword =
+    document.getElementById("resetPassword");
+
+const resetPasswordConfirm =
+    document.getElementById("resetPasswordConfirm");
+
+const passwordResetMessage =
+    document.getElementById("passwordResetMessage");
+
+
+function openPasswordResetPopup() {
+    if (!passwordResetOverlay) {
+        return;
+    }
+
+    passwordResetOverlay.classList.add("is-open");
+    passwordResetOverlay.setAttribute("aria-hidden", "false");
+
+    document.body.style.overflow = "hidden";
+
+    setTimeout(function () {
+        if (resetPassword) {
+            resetPassword.focus();
+        }
+    }, 250);
+}
+
 
 function setupPasswordToggle(input, button) {
 
+    if (!input || !button) {
+        return;
+    }
+
     button.addEventListener("click", function () {
 
-        const isVisible =
-            input.type === "text";
+        const isVisible = input.type === "text";
 
-        input.type =
-            isVisible ? "password" : "text";
+        input.type = isVisible ? "password" : "text";
 
-        button.classList.toggle(
-            "is-visible",
-            !isVisible
-        );
+        button.classList.toggle("is-visible", !isVisible);
 
         button.setAttribute(
             "aria-label",
@@ -44,97 +117,158 @@ function setupPasswordToggle(input, button) {
             "aria-pressed",
             String(!isVisible)
         );
-
     });
-
 }
 
 
 setupPasswordToggle(
-    passwordInput,
-    passwordToggle
+    resetPassword,
+    document.getElementById("resetPasswordToggle")
 );
 
 setupPasswordToggle(
-    confirmPasswordInput,
-    confirmPasswordToggle
+    resetPasswordConfirm,
+    document.getElementById("resetPasswordConfirmToggle")
 );
 
 
-/* ============================================================
-   REGISTRATION
-============================================================ */
+/* =========================================================
+   SHOW RESET POPUP AFTER SUPABASE RECOVERY LINK
+   ========================================================= */
 
-registerForm.addEventListener("submit", async function (event) {
+function showResetPopup() {
+
+    if (!passwordResetOverlay) {
+        return;
+    }
+
+    openPasswordResetPopup();
+}
+
+
+/*
+ * Supabase fires PASSWORD_RECOVERY when the user
+ * arrives through the password-reset email link.
+ *
+ * This is more reliable than checking the URL hash
+ * manually because Supabase processes the auth token.
+ */
+supabaseClient.auth.onAuthStateChange(function (event, session) {
+
+    console.log("Supabase auth event:", event);
+
+    if (event === "PASSWORD_RECOVERY" && session) {
+        showResetPopup();
+    }
+
+});
+
+
+/*
+ * Fallback check for recovery links.
+ * This handles cases where the recovery event has already
+ * been processed before this script starts listening.
+ */
+async function checkForPasswordRecovery() {
+
+    const hash = window.location.hash || "";
+    const search = window.location.search || "";
+
+    const isRecovery =
+        hash.includes("type=recovery") ||
+        search.includes("type=recovery");
+
+    if (!isRecovery) {
+        return;
+    }
+
+    const {
+        data: {
+            session
+        }
+    } = await supabaseClient.auth.getSession();
+
+    if (session) {
+        showResetPopup();
+    }
+}
+
+
+checkForPasswordRecovery();
+
+
+/* =========================================================
+   SAVE NEW PASSWORD
+   ========================================================= */
+
+passwordResetForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
-    const fullName =
-        document.getElementById("fullName").value.trim();
+    const password = resetPassword.value;
+    const confirmation = resetPasswordConfirm.value;
 
-    const email =
-        document.getElementById("email").value.trim();
+    passwordResetMessage.textContent = "";
 
-    const password =
-        document.getElementById("password").value;
+    if (password.length < 6) {
 
-    const confirmPassword =
-        document.getElementById("confirmPassword").value;
+        passwordResetMessage.textContent =
+            "A palavra-passe deve ter pelo menos 6 caracteres.";
 
-    registerMessage.textContent = "";
+        return;
+    }
 
-    if (password !== confirmPassword) {
+    if (password !== confirmation) {
 
-        registerMessage.textContent =
-            "Passwords do not match.";
+        passwordResetMessage.textContent =
+            "As palavras-passe não coincidem.";
 
         return;
     }
 
     try {
 
-        registerMessage.textContent =
-            "Creating account...";
+        passwordResetMessage.textContent =
+            "A atualizar a palavra-passe...";
 
-        const { data, error } =
-            await supabaseClient.auth.signUp({
-
-                email: email,
-
-                password: password,
-
-                options: {
-
-                    data: {
-                        full_name: fullName
-                    },
-
-                    emailRedirectTo:
-                        "https://angolan-slang-dictionary.vercel.app/login.html"
-                }
-            });
+        const {
+            error
+        } = await supabaseClient.auth.updateUser({
+            password: password
+        });
 
         if (error) {
             throw error;
         }
 
-        if (data.user) {
+        passwordResetMessage.textContent =
+            "Palavra-passe alterada com sucesso. A redirecionar...";
 
-            registerMessage.textContent =
-                "Account created successfully. Please check your email to confirm your account.";
+        passwordResetForm.reset();
 
-            registerForm.reset();
+        /*
+         * Give the user a moment to see the success message,
+         * then destroy the recovery session and send them
+         * to the normal login page.
+         */
+        setTimeout(async function () {
 
-            return;
-        }
+            try {
+                await supabaseClient.auth.signOut();
+            } catch (error) {
+                console.error("Sign out after password reset:", error);
+            }
+
+            window.location.href = "login.html";
+
+        }, 1800);
 
     } catch (error) {
 
         console.error(error);
 
-        registerMessage.textContent =
+        passwordResetMessage.textContent =
             error.message ||
-            "Unable to create account.";
+            "Não foi possível alterar a palavra-passe.";
     }
-
 });
