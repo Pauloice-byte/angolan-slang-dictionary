@@ -730,26 +730,20 @@ function getTodayDate() {
 
 async function loadDailyWords() {
 
-    appState.dailyWords = [];
-
-    appState.dailyLoaded = false;
-
-
     try {
 
+        /*
+           Daily 3 is admin-curated.
+
+           We read the published record for today's
+           date directly from the daily_three table.
+        */
+
         const today =
-            getTodayDate();
+            new Date().toLocaleDateString(
+                "en-CA"
+            );
 
-
-        console.log(
-            "Loading Daily 3 for:",
-            today
-        );
-
-
-        /* =====================================
-           GET TODAY'S ADMIN-CURATED RECORD
-        ===================================== */
 
         const {
             data: dailyRecord,
@@ -784,7 +778,16 @@ async function loadDailyWords() {
 
         if (dailyError) {
 
-            throw dailyError;
+            console.error(
+                "Daily 3 database error:",
+                dailyError
+            );
+
+            appState.dailyWords = [];
+
+            appState.dailyLoaded = false;
+
+            return;
 
         }
 
@@ -796,14 +799,19 @@ async function loadDailyWords() {
                 today
             );
 
+            appState.dailyWords = [];
+
+            appState.dailyLoaded = true;
+
             return;
 
         }
 
 
-        /* =====================================
-           PRESERVE ADMIN ORDER
-        ===================================== */
+        /*
+           Preserve the exact order selected
+           by the administrator.
+        */
 
         const wordIds = [
 
@@ -813,69 +821,39 @@ async function loadDailyWords() {
 
             dailyRecord.word_3_id
 
-        ].filter(
-            id =>
-                id !== null &&
-                id !== undefined
-        );
+        ];
 
 
-        if (!wordIds.length) {
-
-            console.warn(
-                "Today's Daily 3 has no word IDs."
-            );
-
-            return;
-
-        }
-
-
-        /* =====================================
-           MATCH AGAINST LOADED WORDS
-        ===================================== */
-
-        const dailyWords = [];
-
-
-        wordIds.forEach(
-            id => {
-
-                const word =
-                    appState.words.find(
-                        item =>
-                            String(item.id) ===
-                            String(id)
-                    );
-
-
-                if (word) {
-
-                    dailyWords.push(
-                        word
-                    );
-
-                }
-
-            }
-        );
-
+        /*
+           Convert the IDs into the complete word
+           objects already loaded into appState.words.
+        */
 
         appState.dailyWords =
-            dailyWords;
+            wordIds
+                .filter(
+                    id =>
+                        id !== null &&
+                        id !== undefined
+                )
+                .map(
+                    id =>
+                        appState.words.find(
+                            word =>
+                                Number(word.id) ===
+                                Number(id)
+                        )
+                )
+                .filter(Boolean);
 
 
-        appState.dailyLoaded =
-            true;
+        appState.dailyLoaded = true;
 
 
         console.log(
             "Daily 3 loaded:",
-            appState.dailyWords.map(
-                word => word.word
-            )
+            appState.dailyWords
         );
-
 
     }
 
@@ -888,8 +866,7 @@ async function loadDailyWords() {
 
         appState.dailyWords = [];
 
-        appState.dailyLoaded =
-            false;
+        appState.dailyLoaded = false;
 
     }
 
@@ -1121,10 +1098,9 @@ function renderHome() {
 
         <section class="home-page">
 
-
-            <!-- =================================
+            <!-- =========================
                  HERO
-            ================================= -->
+            ========================== -->
 
             <section class="hero">
 
@@ -1177,9 +1153,9 @@ function renderHome() {
             </section>
 
 
-            <!-- =================================
+            <!-- =========================
                  SEARCH
-            ================================= -->
+            ========================== -->
 
             <section class="home-search">
 
@@ -1205,9 +1181,9 @@ function renderHome() {
             </section>
 
 
-            <!-- =================================
+            <!-- =========================
                  DAILY 3
-            ================================= -->
+            ========================== -->
 
             <section class="daily-section">
 
@@ -1218,7 +1194,6 @@ function renderHome() {
                         <p class="eyebrow">
                             DISCOVER TODAY
                         </p>
-
 
                         <h2>
                             3 Words of the Day
@@ -1243,82 +1218,94 @@ function renderHome() {
 
                         ? `
 
-                            <div class="daily-slider">
-
-                                <div class="daily-slider-track">
-
-                                    ${dailyWords.map(
-                                        (item, index) => `
-
-                                        <article class="daily-slide">
-
-                                            <div class="daily-card">
-
-                                                <span class="daily-number">
-
-                                                    ${String(index + 1).padStart(2, "0")} / 03
-
-                                                </span>
-
-
-                                                <h3>
-
-                                                    ${escapeHtml(
-                                                        item.word
-                                                    )}
-
-                                                </h3>
-
-
-                                                <p>
-
-                                                    ${
-                                                        item.isPremium
-
-                                                            ? "Premium word — Coming Soon."
-
-                                                            : escapeHtml(
-                                                                item.shortMeaning ||
-                                                                item.firstMeaning ||
-                                                                "Discover today's word."
-                                                            )
-                                                    }
-
-                                                </p>
-
-
-                                                <button
-                                                    type="button"
-                                                    onclick="openWord(${item.id})"
-                                                >
-
-                                                    Discover →
-
-                                                </button>
-
-                                            </div>
-
-                                        </article>
-
-                                    `
-                                    ).join("")}
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="slider-dots">
+                            <div class="daily-home-grid">
 
                                 ${dailyWords.map(
-                                    (_, index) => `
+                                    (item, index) => `
 
-                                    <button
-                                        class="slider-dot ${index === 0 ? "active" : ""}"
-                                        type="button"
-                                        aria-label="Go to word ${index + 1}"
-                                        onclick="goToDailySlide(${index})"
-                                    ></button>
+                                    <article
+                                        class="daily-home-card"
+                                    >
+
+                                        <div
+                                            class="daily-home-card-top"
+                                        >
+
+                                            <span
+                                                class="daily-home-number"
+                                            >
+                                                0${index + 1}
+                                            </span>
+
+                                            <span
+                                                class="daily-home-label"
+                                            >
+                                                DAILY WORD
+                                            </span>
+
+                                        </div>
+
+
+                                        <div
+                                            class="daily-home-word"
+                                        >
+
+                                            ${escapeHtml(
+                                                item.word
+                                            )}
+
+                                        </div>
+
+
+                                        ${
+                                            item.pronunciation
+                                                ? `
+                                                    <div
+                                                        class="daily-home-pronunciation"
+                                                    >
+                                                        ${escapeHtml(
+                                                            item.pronunciation
+                                                        )}
+                                                    </div>
+                                                `
+                                                : ""
+                                        }
+
+
+                                        <p
+                                            class="daily-home-meaning"
+                                        >
+
+                                            ${
+                                                item.isPremium
+
+                                                    ? "Premium content — Coming Soon."
+
+                                                    : escapeHtml(
+                                                        item.shortMeaning ||
+                                                        item.firstMeaning ||
+                                                        "Discover today's word."
+                                                    )
+                                            }
+
+                                        </p>
+
+
+                                        <button
+                                            class="primary-button daily-home-button"
+                                            type="button"
+                                            onclick="openWord(${item.id})"
+                                        >
+
+                                            Open Word
+
+                                            <span>
+                                                →
+                                            </span>
+
+                                        </button>
+
+                                    </article>
 
                                 `
                                 ).join("")}
@@ -1329,34 +1316,33 @@ function renderHome() {
 
                         : `
 
-                            <div class="daily-card daily-empty-card">
+                            <div class="daily-empty-card">
 
-                                <span class="daily-number">
-                                    TODAY
-                                </span>
-
-
-                                <h3>
-                                    Your Daily 3
-                                </h3>
-
-
-                                <p>
-
-                                    Today's three words
-                                    are not available yet.
-
-                                </p>
-
-
-                                <button
-                                    type="button"
-                                    onclick="navigateTo('daily')"
+                                <div
+                                    class="daily-empty-icon"
                                 >
+                                    ☀
+                                </div>
 
-                                    Open Daily 3 →
 
-                                </button>
+                                <div>
+
+                                    <p class="eyebrow">
+                                        DAILY 3
+                                    </p>
+
+
+                                    <h3>
+                                        Today's words are coming.
+                                    </h3>
+
+
+                                    <p>
+                                        The Daily 3 has not been
+                                        published for today yet.
+                                    </p>
+
+                                </div>
 
                             </div>
 
@@ -1366,9 +1352,9 @@ function renderHome() {
             </section>
 
 
-            <!-- =================================
-                 MAKA GAME
-            ================================= -->
+            <!-- =========================
+                 MAKA
+            ========================== -->
 
             <section class="maka-home-section">
 
@@ -1379,101 +1365,63 @@ function renderHome() {
 
                     <div class="maka-home-content">
 
-                        <div class="maka-home-top">
-
-                            <div>
-
-                                <span class="maka-home-badge">
-                                    DAILY CHALLENGE
-                                </span>
-
-
-                                <p class="maka-home-eyebrow">
-                                    HOW WELL DO YOU KNOW ANGOLA?
-                                </p>
-
-                            </div>
-
-
-                            <div class="maka-game-icon">
-
-                                <span>
-                                    ✦
-                                </span>
-
-                            </div>
-
+                        <div class="maka-home-badge">
+                            ✦ DAILY CHALLENGE
                         </div>
 
 
+                        <p class="maka-home-eyebrow">
+                            TEST YOUR ANGOLAN SLANG
+                        </p>
+
+
                         <h2>
-                            Maka
+                            Think you know
+                            <span>Maka?</span>
                         </h2>
 
 
                         <p class="maka-home-description">
 
-                            Think you know your
-                            Angolan slang?
-
-                            <br>
-
                             Put your knowledge to the test.
+                            Guess meanings, understand expressions
+                            and see how much Angolan slang you really know.
 
                         </p>
 
 
                         <div class="maka-home-stats">
 
-                            <div>
-
+                            <span>
                                 <strong>
                                     ${appState.words.length || 45}+
                                 </strong>
+                                words
+                            </span>
 
-                                <span>
-                                    words
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
+                            <span>
                                 <strong>
                                     3
                                 </strong>
+                                question types
+                            </span>
 
-                                <span>
-                                    question types
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
+                            <span>
                                 <strong>
                                     ∞
                                 </strong>
-
-                                <span>
-                                    fun
-                                </span>
-
-                            </div>
+                                fun
+                            </span>
 
                         </div>
 
 
                         <a
                             href="maka.html"
-                            class="maka-home-button"
+                            class="primary-button maka-home-button"
                         >
 
-                            <span>
-                                Play Maka
-                            </span>
+                            Play Maka
 
                             <span>
                                 →
@@ -1484,122 +1432,25 @@ function renderHome() {
                     </div>
 
 
-                    <div
-                        class="maka-game-orbit"
-                        aria-hidden="true"
-                    >
+                    <div class="maka-home-symbol">
 
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <div class="maka-game-icon">
+                            ✦
+                        </div>
+
+                        <div class="maka-game-orbit"></div>
 
                     </div>
 
                 </div>
 
             </section>
-
-
-            <!-- =================================
-                 EXPLORE
-            ================================= -->
-
-            <section class="home-explore-section">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <p class="eyebrow">
-                            KEEP EXPLORING
-                        </p>
-
-
-                        <h2>
-                            The Dictionary
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div class="home-explore-grid">
-
-                    <button
-                        class="home-explore-card"
-                        type="button"
-                        onclick="navigateTo('dictionary')"
-                    >
-
-                        <span>
-                            ▤
-                        </span>
-
-                        <strong>
-                            Browse Words
-                        </strong>
-
-                        <small>
-                            Explore the full dictionary
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="home-explore-card"
-                        type="button"
-                        onclick="navigateTo('search')"
-                    >
-
-                        <span>
-                            ⌕
-                        </span>
-
-                        <strong>
-                            Search
-                        </strong>
-
-                        <small>
-                            Find a word or meaning
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="home-explore-card"
-                        type="button"
-                        onclick="navigateTo('saved')"
-                    >
-
-                        <span>
-                            ♡
-                        </span>
-
-                        <strong>
-                            Saved Words
-                        </strong>
-
-                        <small>
-                            Keep the words you love
-                        </small>
-
-                    </button>
-
-                </div>
-
-            </section>
-
 
         </section>
 
     `;
 
 }
-
-
 /* =========================================
    DICTIONARY PAGE
 ========================================= */
@@ -3187,8 +3038,8 @@ function renderDailyPage() {
 
             <p class="hero-description">
 
-                Three hand-picked words
-                to discover today.
+                Three words selected for today's
+                Angolan slang discovery.
 
             </p>
 
@@ -3199,38 +3050,61 @@ function renderDailyPage() {
                     ? `
 
                         <div
-                            class="daily-grid"
-                            style="
-                                margin-top: 30px;
-                            "
+                            class="daily-page-grid"
                         >
 
                             ${dailyWords.map(
                                 (item, index) => `
 
-                                <article class="daily-card">
+                                <article
+                                    class="daily-page-card"
+                                >
 
-                                    <span class="daily-number">
-
+                                    <div
+                                        class="daily-page-number"
+                                    >
                                         0${index + 1}
+                                    </div>
 
-                                    </span>
+
+                                    <p
+                                        class="eyebrow"
+                                    >
+                                        DAILY WORD
+                                    </p>
 
 
                                     <h3>
-
                                         ${escapeHtml(
                                             item.word
                                         )}
-
                                     </h3>
 
 
-                                    <p>
+                                    ${
+                                        item.pronunciation
+                                            ? `
+                                                <p
+                                                    class="daily-page-pronunciation"
+                                                >
+                                                    ${escapeHtml(
+                                                        item.pronunciation
+                                                    )}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
+
+
+                                    <p
+                                        class="daily-page-meaning"
+                                    >
 
                                         ${
                                             item.isPremium
+
                                                 ? "Premium content — Coming Soon."
+
                                                 : escapeHtml(
                                                     item.shortMeaning ||
                                                     item.firstMeaning ||
@@ -3242,11 +3116,16 @@ function renderDailyPage() {
 
 
                                     <button
+                                        class="primary-button"
                                         type="button"
                                         onclick="openWord(${item.id})"
                                     >
 
-                                        Discover →
+                                        Open Word
+
+                                        <span>
+                                            →
+                                        </span>
 
                                     </button>
 
@@ -3262,28 +3141,34 @@ function renderDailyPage() {
                     : `
 
                         <div
-                            class="hero"
-                            style="
-                                margin-top: 30px;
-                            "
+                            class="daily-empty-card daily-empty-page"
                         >
 
-                            <p class="eyebrow">
-                                DAILY 3
-                            </p>
+                            <div
+                                class="daily-empty-icon"
+                            >
+                                ☀
+                            </div>
 
 
-                            <h3>
-                                Nothing published yet.
-                            </h3>
+                            <div>
+
+                                <p class="eyebrow">
+                                    DAILY 3
+                                </p>
 
 
-                            <p class="hero-description">
+                                <h3>
+                                    No Daily 3 published yet.
+                                </h3>
 
-                                There is no published
-                                Daily 3 for today.
 
-                            </p>
+                                <p>
+                                    The administrator has not
+                                    published today's three words.
+                                </p>
+
+                            </div>
 
                         </div>
 
@@ -3295,8 +3180,6 @@ function renderDailyPage() {
     `;
 
 }
-
-
 /* =========================================
    AUDIO FROM SUPABASE STORAGE
 ========================================= */
