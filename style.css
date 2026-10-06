@@ -4752,28 +4752,45 @@ button {
 }
 
 /* =========================================
-   HOME DAILY 3
+   HOME DAILY 3 — CAROUSEL
 ========================================= */
 
-.daily-home-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 18px;
-
+.daily-home-carousel {
+    width: 100%;
     margin-top: 24px;
+}
 
+.daily-home-slider {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.daily-home-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.35s ease;
+}
+
+.daily-home-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    padding: 2px;
 }
 
 
-.daily-home-card {
+/* -----------------------------------------
+   DAILY HOME CARD
+----------------------------------------- */
 
+.daily-home-card {
     position: relative;
 
-    padding: 24px;
+    width: 100%;
+    min-width: 0;
+
+    padding: 28px;
 
     background:
         linear-gradient(
@@ -4794,12 +4811,9 @@ button {
     box-shadow:
         0 18px 40px
         rgba(0, 0, 0, 0.08);
-
 }
 
-
 .daily-home-card::before {
-
     content: "";
 
     position: absolute;
@@ -4808,7 +4822,6 @@ button {
     left: 0;
 
     width: 100%;
-
     height: 4px;
 
     background:
@@ -4818,33 +4831,32 @@ button {
             #D89B2B,
             #386A4B
         );
-
 }
 
 
-.daily-home-card-top {
+/* -----------------------------------------
+   CARD HEADER
+----------------------------------------- */
 
+.daily-home-card-top {
     display: flex;
 
     align-items: center;
-
     justify-content: space-between;
 
     gap: 12px;
-
 }
 
-
 .daily-home-number {
-
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
     width: 38px;
     height: 38px;
+
+    flex: 0 0 38px;
 
     border-radius: 50%;
 
@@ -4855,79 +4867,249 @@ button {
         var(--text-primary);
 
     font-size: 13px;
-
     font-weight: 800;
-
 }
 
-
 .daily-home-label {
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 1.4px;
-
     color:
         var(--text-light);
 
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
 }
 
 
-.daily-home-word {
+/* -----------------------------------------
+   WORD
+----------------------------------------- */
 
-    margin-top: 25px;
+.daily-home-word {
+    margin-top: 26px;
+
+    color:
+        var(--text-primary);
 
     font-size:
-        clamp(30px, 4vw, 42px);
+        clamp(32px, 6vw, 52px);
 
     line-height: 1;
 
     font-weight: 800;
 
-    letter-spacing: -1.5px;
+    letter-spacing: -1.8px;
 
-    color:
-        var(--text-primary);
-
+    overflow-wrap: anywhere;
 }
 
-
 .daily-home-pronunciation {
-
     margin-top: 10px;
 
     color:
         var(--text-secondary);
 
     font-size: 13px;
-
 }
 
 
+/* -----------------------------------------
+   HIDDEN MEANING
+----------------------------------------- */
+
 .daily-home-meaning {
+    display: flex;
+    align-items: center;
 
-    margin-top: 18px;
+    min-height: 62px;
 
-    min-height: 54px;
+    margin-top: 20px;
+    padding: 15px 16px;
+
+    border-radius: 13px;
+
+    background:
+        rgba(38, 61, 91, 0.05);
 
     color:
         var(--text-secondary);
 
     line-height: 1.65;
+}
 
+.daily-meaning-hidden {
+    color:
+        var(--muted);
+
+    font-size: 14px;
+    font-weight: 700;
 }
 
 
-.daily-home-button {
+/* -----------------------------------------
+   REVEAL BUTTON
+----------------------------------------- */
 
-    margin-top: 22px;
-
+.daily-reveal-button {
     width: 100%;
 
+    min-height: 46px;
+
+    margin-top: 12px;
+
+    padding: 11px 16px;
+
+    border:
+        1px solid
+        rgba(166, 61, 64, 0.25);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.65);
+
+    color:
+        var(--red);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.daily-reveal-button:hover {
+    background:
+        var(--red);
+
+    border-color:
+        var(--red);
+
+    color:
+        var(--white);
+
+    transform:
+        translateY(-1px);
+}
+
+.daily-reveal-button.revealed {
+    background:
+        rgba(56, 106, 75, 0.10);
+
+    border-color:
+        rgba(56, 106, 75, 0.22);
+
+    color:
+        var(--green-dark);
+
+    cursor: default;
+
+    transform: none;
+}
+
+
+/* -----------------------------------------
+   OPEN WORD
+----------------------------------------- */
+
+.daily-home-button {
+    width: 100%;
+
+    margin-top: 12px;
+
+    justify-content: center;
+}
+
+
+/* -----------------------------------------
+   CAROUSEL CONTROLS
+----------------------------------------- */
+
+.daily-home-controls {
+    display: flex;
+
+    align-items: center;
     justify-content: center;
 
+    gap: 18px;
+
+    margin-top: 16px;
+}
+
+.daily-carousel-button {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 50%;
+
+    background:
+        var(--white);
+
+    color:
+        var(--blue);
+
+    font-size: 18px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 18px
+        rgba(38, 61, 91, 0.08);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.daily-carousel-button:hover:not(:disabled) {
+    background:
+        var(--red);
+
+    color:
+        var(--white);
+
+    transform:
+        translateY(-2px);
+}
+
+.daily-carousel-button:disabled {
+    opacity: 0.35;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.daily-home-counter {
+    min-width: 55px;
+
+    color:
+        var(--muted);
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-align: center;
 }
 
 
@@ -4936,7 +5118,6 @@ button {
 ========================================= */
 
 .daily-empty-card {
-
     display: flex;
 
     align-items: center;
@@ -4956,14 +5137,10 @@ button {
 
     background:
         var(--surface-soft);
-
 }
 
-
 .daily-empty-icon {
-
-    flex:
-        0 0 auto;
+    flex: 0 0 auto;
 
     width: 54px;
     height: 54px;
@@ -4971,7 +5148,6 @@ button {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     border-radius: 18px;
@@ -4980,33 +5156,23 @@ button {
         var(--gold-light);
 
     font-size: 24px;
-
 }
-
 
 .daily-empty-card h3 {
-
     margin-top: 4px;
-
 }
 
-
 .daily-empty-card p:not(.eyebrow) {
-
     margin-top: 6px;
 
     color:
         var(--text-secondary);
 
     line-height: 1.6;
-
 }
 
-
 .daily-empty-page {
-
     margin-top: 30px;
-
 }
 
 
@@ -5015,7 +5181,6 @@ button {
 ========================================= */
 
 .daily-page-grid {
-
     display: grid;
 
     grid-template-columns:
@@ -5024,12 +5189,9 @@ button {
     gap: 20px;
 
     margin-top: 32px;
-
 }
 
-
 .daily-page-card {
-
     position: relative;
 
     padding: 28px;
@@ -5049,12 +5211,9 @@ button {
         rgba(0, 0, 0, 0.07);
 
     overflow: hidden;
-
 }
 
-
 .daily-page-card::before {
-
     content: "";
 
     position: absolute;
@@ -5063,7 +5222,6 @@ button {
     left: 0;
 
     width: 100%;
-
     height: 4px;
 
     background:
@@ -5073,19 +5231,15 @@ button {
             #D89B2B,
             #386A4B
         );
-
 }
 
-
 .daily-page-number {
-
     width: 42px;
     height: 42px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     margin-bottom: 24px;
@@ -5096,38 +5250,28 @@ button {
         var(--gold-light);
 
     font-size: 13px;
-
     font-weight: 800;
-
 }
 
-
 .daily-page-card h3 {
-
     margin-top: 8px;
 
     font-size:
         clamp(28px, 4vw, 40px);
 
     letter-spacing: -1px;
-
 }
 
-
 .daily-page-pronunciation {
-
     margin-top: 8px;
 
     color:
         var(--text-secondary);
 
     font-size: 13px;
-
 }
 
-
 .daily-page-meaning {
-
     margin-top: 18px;
 
     min-height: 60px;
@@ -5136,18 +5280,14 @@ button {
         var(--text-secondary);
 
     line-height: 1.7;
-
 }
 
-
 .daily-page-card .primary-button {
+    width: 100%;
 
     margin-top: 22px;
 
-    width: 100%;
-
     justify-content: center;
-
 }
 
 
@@ -5156,16 +5296,11 @@ button {
 ========================================= */
 
 .maka-home-button {
-
     text-decoration: none !important;
-
 }
 
-
 .maka-home-button:hover {
-
     text-decoration: none !important;
-
 }
 
 
@@ -5173,40 +5308,36 @@ button {
    RESPONSIVE DAILY 3
 ========================================= */
 
-@media (max-width: 850px) {
+@media (max-width: 700px) {
 
-    .daily-home-grid,
-    .daily-page-grid {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-}
-
-
-@media (max-width: 600px) {
-
-    .daily-home-card,
-    .daily-page-card {
-
+    .daily-home-card {
         padding: 22px;
-
     }
-
-
-    .daily-empty-card {
-
-        align-items: flex-start;
-
-    }
-
 
     .daily-home-word {
-
         font-size: 34px;
-
     }
 
+    .daily-home-controls {
+        gap: 14px;
+    }
+
+    .daily-carousel-button {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+    .daily-page-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .daily-page-card {
+        padding: 22px;
+    }
+
+    .daily-empty-card {
+        align-items: flex-start;
+    }
 }
