@@ -903,11 +903,6 @@ if (playAgainButton) {
 
     playAgainButton.addEventListener(
         "click",
-        resetGame
-    );
-
-    playAgainButton.addEventListener(
-        "click",
         startGame
     );
 
