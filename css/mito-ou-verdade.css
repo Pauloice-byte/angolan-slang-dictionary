@@ -659,3 +659,136 @@ h1 span {
         transition-duration: .01ms !important;
     }
 }
+
+/* =========================================================
+   MITO OU VERDADE — MATCH THE OUVE E DESCOBRE BACKGROUND
+   Design only: preserve existing game styles and behaviour.
+   ========================================================= */
+
+:root {
+    --mito-navy: #263D5B;
+    --mito-blue: #466B91;
+    --mito-cream: #F6F0E5;
+    --mito-gold: #D89B2B;
+    --mito-ink: #182A3D;
+    --mito-border: rgba(38, 61, 91, 0.12);
+}
+
+html {
+    min-height: 100%;
+    background: var(--mito-cream);
+}
+
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            ellipse at 8% 8%,
+            rgba(216, 155, 43, 0.12),
+            transparent 32%
+        ),
+        radial-gradient(
+            ellipse at 94% 84%,
+            rgba(70, 107, 145, 0.12),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            #F6F0E5 0%,
+            #FBF8F1 48%,
+            #F1EBDD 100%
+        );
+    color: var(--mito-ink);
+    position: relative;
+}
+
+/* Decorative background pattern */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.24;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(38, 61, 91, 0.18) 1px,
+            transparent 1.5px
+        );
+    background-size: 24px 24px;
+    mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent 78%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent 78%
+    );
+}
+
+/* Soft decorative corner shapes */
+body::after {
+    content: "";
+    position: fixed;
+    width: 320px;
+    height: 320px;
+    right: -150px;
+    top: 18%;
+    border: 1px solid rgba(38, 61, 91, 0.10);
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 28px rgba(38, 61, 91, 0.025),
+        0 0 0 56px rgba(216, 155, 43, 0.035);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Keep the actual game interface above the decoration */
+body > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Common game surfaces */
+.game-shell,
+.game-container,
+.game-wrapper,
+main {
+    position: relative;
+    z-index: 1;
+}
+
+/* Soft, premium card treatment */
+.game-card,
+.quiz-card,
+.question-card {
+    border-color: var(--mito-border);
+    box-shadow:
+        0 18px 50px rgba(24, 42, 61, 0.09),
+        0 3px 12px rgba(24, 42, 61, 0.035);
+}
+
+/* Gold details stay consistent with the dictionary palette */
+.paus-pill,
+.score-chip,
+.game-badge {
+    border-color: rgba(216, 155, 43, 0.28);
+}
+
+/* Mobile background decoration */
+@media (max-width: 600px) {
+    body::before {
+        background-size: 20px 20px;
+        opacity: 0.17;
+    }
+
+    body::after {
+        width: 220px;
+        height: 220px;
+        right: -130px;
+        top: 22%;
+    }
+}
