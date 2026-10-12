@@ -1,80 +1,114 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#263D5B">
+    <meta name="theme-color" content="#F6F0E5">
+    <meta name="description" content="Descobre mitos e verdades sobre o calão e as expressões populares de Angola.">
     <title>Mito ou Verdade? | Dicionário Angolano</title>
     <link rel="stylesheet" href="css/mito-ou-verdade.css">
     <script src="js/mito-ou-verdade.js" defer></script>
 </head>
 <body>
+    <div class="page-pattern page-pattern-top" aria-hidden="true"></div>
+    <div class="page-pattern page-pattern-bottom" aria-hidden="true"></div>
+
     <main class="game-shell">
         <header class="game-header">
-            <a class="back-link" href="app.html" aria-label="Voltar aos jogos">←</a>
+            <a class="back-button" href="app.html" aria-label="Voltar à página principal">
+                <span aria-hidden="true">←</span>
+            </a>
 
             <a class="brand" href="app.html">
-                <span class="brand-mark">DA</span>
-                <span>
+                <span class="brand-symbol">
+                    <img src="assets/angola-flag2.png" alt="Bandeira de Angola">
+                </span>
+                <span class="brand-copy">
                     <strong>Dicionário Angolano</strong>
-                    <small>Calão & Expressões Populares</small>
+                    <span>Calão &amp; Expressões Populares</span>
                 </span>
             </a>
 
-            <div class="paus-pill">🪙 <span id="paus-earned">0</span> Paus</div>
+            <div class="paus-pill" aria-label="Paus ganhos nesta sessão">
+                <span aria-hidden="true">✦</span>
+                <strong id="paus-earned">0</strong>
+                <small>PAUS</small>
+            </div>
         </header>
 
-        <section class="game-card">
+        <section class="game-intro">
+            <span class="eyebrow">MITOS E CURIOSIDADES</span>
+            <h1>Mito ou <span>Verdade?</span></h1>
+            <p>
+                Testa o que sabes sobre palavras, expressões e curiosidades
+                do português falado em Angola. Lê cada afirmação e decide:
+                mito ou verdade?
+            </p>
+        </section>
+
+        <section class="game-card" id="game-card">
+            <div class="card-pattern" aria-hidden="true"></div>
+
             <div class="game-topline">
-                <span class="eyebrow">MITOS E CURIOSIDADES</span>
+                <span class="card-kicker">DESAFIO DE CONHECIMENTO</span>
                 <span class="game-number">03</span>
             </div>
 
-            <div id="welcome-screen" class="screen welcome-screen">
-                <div class="game-icon" aria-hidden="true">🔎</div>
-                <p class="eyebrow">SERÁ MESMO ASSIM?</p>
+            <section id="welcome-screen" class="screen welcome-screen">
+                <div class="game-emblem" aria-hidden="true">
+                    <span class="emblem-ring emblem-ring-one"></span>
+                    <span class="emblem-ring emblem-ring-two"></span>
+                    <span class="emblem-symbol">?</span>
+                </div>
 
-                <h1>Mito ou <span>Verdade?</span></h1>
+                <span class="card-kicker">SERÁ MESMO ASSIM?</span>
+                <h2>Vamos pôr os teus conhecimentos à prova?</h2>
 
-                <p class="intro">
-                    Testa o que sabes sobre palavras, expressões e curiosidades
-                    do português falado em Angola. Lê cada afirmação e decide:
-                    mito ou verdade?
+                <p class="welcome-description">
+                    Responde a cinco afirmações sobre o calão, as expressões
+                    populares e a língua falada em Angola.
                 </p>
 
-                <div class="how-to-play">
-                    <div>
-                        <span>01</span>
-                        <p>Lê a afirmação apresentada.</p>
+                <div class="rules-grid">
+                    <div class="rule-item">
+                        <span class="rule-icon">01</span>
+                        <strong>Lê</strong>
+                        <small>Analisa a afirmação</small>
                     </div>
-                    <div>
-                        <span>02</span>
-                        <p>Escolhe entre mito e verdade.</p>
+                    <div class="rule-item">
+                        <span class="rule-icon">✓</span>
+                        <strong>Decide</strong>
+                        <small>Mito ou verdade</small>
                     </div>
-                    <div>
-                        <span>03</span>
-                        <p>Descobre a explicação e soma pontos.</p>
+                    <div class="rule-item">
+                        <span class="rule-icon">✦</span>
+                        <strong>Descobre</strong>
+                        <small>Aprende com a explicação</small>
                     </div>
                 </div>
 
                 <div class="game-meta">
-                    <span>🎯 <strong id="total-questions">5</strong> perguntas</span>
-                    <span>🪙 Até <strong id="possible-points">50</strong> Paus</span>
+                    <span><strong id="total-questions">5</strong> perguntas</span>
+                    <span>Até <strong id="possible-points">50</strong> Paus</span>
                 </div>
 
                 <button id="start-button" class="primary-button" type="button">
-                    Começar desafio <span>→</span>
+                    Começar desafio <span aria-hidden="true">→</span>
                 </button>
-            </div>
+            </section>
 
-            <div id="question-screen" class="screen question-screen" hidden>
-                <div class="progress-meta">
+            <section id="question-screen" class="screen question-screen" hidden>
+                <div class="question-topline">
                     <span id="question-counter">Pergunta 1 de 5</span>
-                    <span id="score-counter">0 pontos</span>
+                    <span class="score-chip">Pontos: <strong id="score-counter">0 pontos</strong></span>
                 </div>
 
-                <div class="progress-track">
-                    <div id="progress-bar" class="progress-bar"></div>
+                <div class="progress-track" role="progressbar"
+                     aria-label="Progresso do desafio"
+                     aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"
+                     id="progress-track">
+                    <div id="progress-bar" class="progress-fill"></div>
                 </div>
 
                 <div class="statement-card">
@@ -86,66 +120,85 @@
 
                 <div class="truth-options">
                     <button id="true-button" class="truth-option true-option" type="button">
-                        <span class="answer-symbol">✓</span>
-                        <span>
+                        <span class="answer-symbol" aria-hidden="true">✓</span>
+                        <span class="answer-copy">
                             <strong>Verdade</strong>
                             <small>A afirmação está correcta</small>
                         </span>
                     </button>
 
                     <button id="false-button" class="truth-option false-option" type="button">
-                        <span class="answer-symbol">×</span>
-                        <span>
+                        <span class="answer-symbol" aria-hidden="true">×</span>
+                        <span class="answer-copy">
                             <strong>Mito</strong>
                             <small>A afirmação não está correcta</small>
                         </span>
                     </button>
                 </div>
 
-                <div id="answer-feedback" class="answer-feedback" role="status"
-                     aria-live="polite" hidden>
+                <div id="answer-feedback" class="answer-feedback"
+                     role="status" aria-live="polite" hidden>
                     <strong id="feedback-title"></strong>
                     <p id="feedback-text"></p>
                 </div>
 
-                <button id="next-button" class="primary-button" type="button" hidden>
-                    Próxima pergunta <span>→</span>
+                <button id="next-button" class="primary-button next-button"
+                        type="button" hidden>
+                    Próxima pergunta <span aria-hidden="true">→</span>
                 </button>
-            </div>
+            </section>
 
-            <div id="results-screen" class="screen results-screen" hidden>
-                <div class="result-icon" id="result-icon">🎉</div>
-                <p class="eyebrow">DESAFIO CONCLUÍDO</p>
+            <section id="results-screen" class="screen results-screen" hidden>
+                <div class="result-emblem" aria-hidden="true">
+                    <span id="result-icon">✦</span>
+                </div>
 
+                <span class="card-kicker">DESAFIO CONCLUÍDO</span>
                 <h2 id="result-title">Muito bem!</h2>
                 <p id="result-description" class="result-description"></p>
 
-                <div class="result-stats">
-                    <div>
-                        <span class="stat-value" id="final-score">0/5</span>
-                        <span class="stat-label">Respostas certas</span>
+                <div class="result-score-panel">
+                    <span class="result-panel-label">RESPOSTAS CERTAS</span>
+                    <div class="result-score">
+                        <strong id="final-score">0/5</strong>
                     </div>
-                    <div>
-                        <span class="stat-value" id="final-points">0</span>
-                        <span class="stat-label">Pontos</span>
+                    <div class="result-progress-track">
+                        <div id="result-progress-fill" class="result-progress-fill"></div>
                     </div>
-                    <div>
-                        <span class="stat-value" id="final-paus">0</span>
-                        <span class="stat-label">Paus da sessão</span>
+                </div>
+
+                <div class="rewards-panel">
+                    <div class="reward-item">
+                        <span class="reward-icon" aria-hidden="true">✦</span>
+                        <span>
+                            <strong>Pontos ganhos</strong>
+                            <small>Respostas certas</small>
+                        </span>
+                        <strong class="reward-value" id="final-points">0</strong>
+                    </div>
+
+                    <div class="reward-item">
+                        <span class="reward-icon" aria-hidden="true">🪙</span>
+                        <span>
+                            <strong>Paus da sessão</strong>
+                            <small>Recompensa do desafio</small>
+                        </span>
+                        <strong class="reward-value" id="final-paus">0</strong>
                     </div>
                 </div>
 
                 <button id="play-again-button" class="primary-button" type="button">
-                    Jogar novamente <span>↻</span>
+                    Jogar novamente <span aria-hidden="true">↻</span>
                 </button>
 
-                <a class="secondary-link" href="app.html">Voltar aos jogos</a>
-            </div>
+                <a class="secondary-link" href="app.html">Voltar ao dicionário</a>
+            </section>
         </section>
 
         <footer class="game-footer">
-            <span>Questiona. Descobre. Aprende.</span>
-            <span>DA · Calão & Expressões Populares</span>
+            <span>FEITO COM ORGULHO EM ANGOLA</span>
+            <span class="footer-divider" aria-hidden="true">◆</span>
+            <span>AO · CALÃO &amp; EXPRESSÕES POPULARES</span>
         </footer>
     </main>
 </body>
