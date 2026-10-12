@@ -943,3 +943,286 @@ body {
         padding: 13px 16px;
     }
 }
+
+/* ============================================================
+   OUVE E DESCOBRE — PROFESSIONAL LAYOUT REFINEMENT
+   Append to the bottom of ouve-e-descobre.css
+============================================================ */
+
+/* Consistent sizing and typography */
+.game-shell {
+    width: min(100% - 32px, 760px);
+    margin-inline: auto;
+    padding: 22px 0 38px;
+}
+
+.game-shell,
+.game-shell * {
+    box-sizing: border-box;
+}
+
+.game-shell h1,
+.game-shell h2,
+.game-shell h3,
+.game-shell p {
+    overflow-wrap: break-word;
+}
+
+.game-shell h1,
+.game-shell h2,
+.game-shell h3 {
+    line-height: 1.2;
+}
+
+.game-shell p {
+    line-height: 1.6;
+}
+
+/* Compact header */
+.game-header {
+    min-height: 0;
+    padding: 13px 18px;
+    margin-bottom: 18px;
+    border-radius: 17px;
+}
+
+.game-header h1,
+.game-header h2 {
+    margin: 0 0 4px;
+    font-size: clamp(1.05rem, 3vw, 1.4rem);
+}
+
+.game-header p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* Keep the Angolan flag small and correctly proportioned */
+.game-shell img[src*="angola-flag"] {
+    display: block;
+    width: 30px !important;
+    height: 20px !important;
+    max-width: 30px;
+    max-height: 20px;
+    flex: 0 0 30px;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .14);
+}
+
+/* If the flag sits inside a header or title row, keep it compact */
+.game-header img[src*="angola-flag"] {
+    margin: 0;
+}
+
+/* Reduce the main card's visual weight */
+.game-card {
+    padding: clamp(22px, 4vw, 32px);
+    border-radius: 23px;
+    box-shadow: 0 12px 34px rgba(10, 40, 29, .09);
+}
+
+.game-card::after {
+    width: 100px;
+    height: 100px;
+    top: 22px;
+    right: -48px;
+}
+
+/* More balanced welcome area */
+.welcome-screen {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.welcome-screen h1,
+.welcome-screen h2 {
+    max-width: 100%;
+    margin: 8px auto 12px;
+    font-size: clamp(1.65rem, 4vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -.035em;
+}
+
+.welcome-screen p {
+    max-width: 460px;
+    margin: 0 auto 20px;
+    font-size: 14px;
+}
+
+/* Smaller game icon; no oversized visual block */
+.welcome-screen .game-icon,
+.welcome-screen .welcome-icon {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 15px;
+    border-radius: 19px;
+    font-size: 26px;
+}
+
+/* Comfortable, consistent spacing around audio */
+.audio-panel {
+    gap: 12px;
+    margin: 20px 0;
+    padding: 25px 18px;
+    border-radius: 19px;
+}
+
+.audio-panel button,
+#replay-audio-button,
+#play-audio-button {
+    min-width: 140px;
+    min-height: 50px;
+    padding: 12px 20px;
+    border-radius: 14px;
+}
+
+/* Align the question and options to one consistent grid */
+.answer-options {
+    width: 100%;
+    max-width: 620px;
+    margin: 18px auto;
+    gap: 10px;
+}
+
+.answer-option {
+    width: 100%;
+    min-width: 0;
+    min-height: 60px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    text-align: left;
+    line-height: 1.45;
+}
+
+.answer-option .option-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Align feedback with the answer area */
+.answer-feedback {
+    width: 100%;
+    max-width: 620px;
+    margin: 16px auto;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* Compact reward cards */
+.rewards-panel {
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.rewards-panel > div,
+.reward-card {
+    min-width: 0;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.rewards-panel h3,
+.reward-card h3 {
+    line-height: 1.4;
+}
+
+/* Keep buttons and controls aligned */
+#start-button,
+#next-button,
+#play-again-button,
+.game-shell .primary-button {
+    min-height: 48px;
+    padding: 12px 21px;
+    border-radius: 13px;
+    font-size: 14px;
+}
+
+/* Cleaner results screen */
+.results-screen {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+}
+
+.results-screen h1,
+.results-screen h2 {
+    margin: 8px 0 12px;
+    font-size: clamp(1.65rem, 4vw, 2.2rem);
+    line-height: 1.2;
+}
+
+.results-screen .result-score,
+.results-screen .score-number {
+    width: 104px;
+    height: 104px;
+    margin: 18px auto;
+    font-size: 28px;
+}
+
+.results-screen .result-summary,
+.results-screen .result-stats {
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.results-screen .result-summary > div,
+.results-screen .result-stats > div {
+    min-width: 0;
+    padding: 14px;
+    border-radius: 13px;
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+    .game-shell {
+        width: calc(100% - 24px);
+        padding: 12px 0 26px;
+    }
+
+    .game-header {
+        padding: 12px 14px;
+        margin-bottom: 13px;
+        border-radius: 15px;
+    }
+
+    .game-card {
+        padding: 23px 16px;
+        border-radius: 20px;
+    }
+
+    .answer-options {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .answer-option {
+        min-height: 56px;
+        padding: 11px 12px;
+    }
+
+    .rewards-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 380px) {
+    .game-shell {
+        width: calc(100% - 18px);
+    }
+
+    .game-card {
+        padding: 20px 13px;
+    }
+
+    .rewards-panel,
+    .results-screen .result-summary,
+    .results-screen .result-stats {
+        grid-template-columns: 1fr;
+    }
+}
