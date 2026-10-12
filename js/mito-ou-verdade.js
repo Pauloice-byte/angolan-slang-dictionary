@@ -1,131 +1,188 @@
-
 "use strict";
 
-const truthQuestions = [
+/*
+ * Frontend prototype.
+ * The questions below are sample content, not a verified dictionary database.
+ * Replace or expand them with reviewed entries before publishing the game.
+ */
+
+const questions = [
     {
-        statement: "«Bué» é uma palavra usada para expressar grande quantidade ou intensidade.",
-        correct: true,
-        explanation: "Verdade. «Bué» é uma expressão informal muito conhecida em Angola e noutros contextos lusófonos, usada com o sentido de «muito» ou «muita quantidade»."
+        statement: "A palavra «bué» pode ser usada para dizer «muito».",
+        answer: true,
+        explanation: "Verdade. «Bué» é uma expressão informal usada em Angola e noutros contextos de língua portuguesa para indicar uma grande quantidade ou intensidade."
     },
     {
-        statement: "O significado de uma expressão de calão nunca muda consoante o contexto.",
-        correct: false,
-        explanation: "Mito. O contexto, o tom e a relação entre as pessoas podem mudar a interpretação de uma expressão."
+        statement: "A expressão «kota» é usada exclusivamente para falar de crianças pequenas.",
+        answer: false,
+        explanation: "Mito. «Kota» é frequentemente usada para se referir a uma pessoa mais velha ou experiente. O sentido exacto pode variar conforme o contexto."
     },
     {
-        statement: "Duas pessoas podem usar a mesma expressão com intenções diferentes.",
-        correct: true,
-        explanation: "Verdade. Uma expressão pode transmitir humor, carinho, ironia ou crítica, dependendo de como e quando é usada."
+        statement: "O contexto pode mudar o sentido de uma expressão de calão.",
+        answer: true,
+        explanation: "Verdade. A mesma expressão pode transmitir humor, amizade, surpresa ou crítica, dependendo da situação, do tom e da relação entre as pessoas."
     },
     {
-        statement: "Todas as expressões de calão são apropriadas em qualquer situação formal.",
-        correct: false,
-        explanation: "Mito. O calão é informal. Numa entrevista de emprego, num documento oficial ou numa comunicação profissional, convém escolher a linguagem adequada."
+        statement: "Todas as expressões populares são usadas exactamente da mesma forma em todas as regiões de Angola.",
+        answer: false,
+        explanation: "Mito. O uso de palavras e expressões pode variar conforme a região, a comunidade, a idade e o contexto social."
     },
     {
-        statement: "O calão e as expressões populares fazem parte da forma como as comunidades criam e transmitem cultura.",
-        correct: true,
-        explanation: "Verdade. A linguagem popular reflete experiências, criatividade, identidade e hábitos de uma comunidade."
+        statement: "Uma expressão informal pode ser adequada entre amigos, mas pouco adequada numa comunicação formal.",
+        answer: true,
+        explanation: "Verdade. Saber quando e com quem usar uma expressão é uma parte importante da comunicação. O registo deve adequar-se à situação."
     }
 ];
 
-const $ = (id) => document.getElementById(id);
+const POINTS_PER_CORRECT = 10;
 
-let questionOrder = [];
+const elements = {
+    pausEarned: document.getElementById("paus-earned"),
+    welcome: document.getElementById("welcome-screen"),
+    question: document.getElementById("question-screen"),
+    results: document.getElementById("results-screen"),
+    start: document.getElementById("start-button"),
+    questionCounter: document.getElementById("question-counter"),
+    scoreCounter: document.getElementById("score-counter"),
+    progress: document.getElementById("progress-bar"),
+    statement: document.getElementById("statement-text"),
+    trueButton: document.getElementById("true-button"),
+    falseButton: document.getElementById("false-button"),
+    feedback: document.getElementById("answer-feedback"),
+    feedbackTitle: document.getElementById("feedback-title"),
+    feedbackText: document.getElementById("feedback-text"),
+    next: document.getElementById("next-button"),
+    resultIcon: document.getElementById("result-icon"),
+    resultTitle: document.getElementById("result-title"),
+    resultDescription: document.getElementById("result-description"),
+    finalScore: document.getElementById("final-score"),
+    finalPoints: document.getElementById("final-points"),
+    finalPaus: document.getElementById("final-paus"),
+    playAgain: document.getElementById("play-again-button")
+};
+
 let currentQuestion = 0;
 let score = 0;
 let answered = false;
-let sessionPaus = 0;
+let earnedPaus = 0;
+let sessionQuestions = [];
 
-function shuffle(array) {
-    const copy = [...array];
+document.getElementById("total-questions").textContent = questions.length;
+document.getElementById("possible-points").textContent =
+    questions.length * POINTS_PER_CORRECT;
+
+function shuffle(items) {
+    const copy = [...items];
+
     for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
     }
+
     return copy;
 }
 
+function showScreen(screenToShow) {
+    [elements.welcome, elements.question, elements.results].forEach(screen => {
+        screen.hidden = screen !== screenToShow;
+    });
+}
+
 function startGame() {
-    questionOrder = shuffle(truthQuestions);
     currentQuestion = 0;
     score = 0;
-    sessionPaus = 0;
+    answered = false;
+    sessionQuestions = shuffle(questions);
 
-    $("paus-earned").textContent = "0";
-    $("welcome-screen").hidden = true;
-    $("results-screen").hidden = true;
-    $("question-screen").hidden = false;
+    elements.scoreCounter.textContent = "0 pontos";
 
+    showScreen(elements.question);
     renderQuestion();
 }
 
 function renderQuestion() {
     answered = false;
-    const q = questionOrder[currentQuestion];
 
-    $("question-counter").textContent =
-        `Afirmação ${currentQuestion + 1} de ${questionOrder.length}`;
-    $("score-counter").textContent = `${score} pontos`;
-    $("progress-bar").style.width =
-        `${(currentQuestion / questionOrder.length) * 100}%`;
-    $("statement-text").textContent = q.statement;
-    $("answer-feedback").hidden = true;
-    $("answer-feedback").className = "answer-feedback";
-    $("next-button").hidden = true;
+    const question = sessionQuestions[currentQuestion];
+    const questionNumber = currentQuestion + 1;
 
-    $("next-button").innerHTML =
-        currentQuestion === questionOrder.length - 1
-            ? 'Ver resultados <span>→</span>'
-            : 'Próxima afirmação <span>→</span>';
+    elements.questionCounter.textContent =
+        `Pergunta ${questionNumber} de ${sessionQuestions.length}`;
 
-    ["true-button", "false-button"].forEach((id) => {
-        const button = $(id);
+    elements.scoreCounter.textContent = `${score} pontos`;
+    elements.progress.style.width =
+        `${(questionNumber / sessionQuestions.length) * 100}%`;
+
+    elements.statement.textContent = question.statement;
+
+    elements.feedback.hidden = true;
+    elements.feedback.classList.remove("incorrect-feedback");
+    elements.next.hidden = true;
+
+    [elements.trueButton, elements.falseButton].forEach(button => {
         button.disabled = false;
-        button.classList.remove("selected-correct", "selected-wrong");
+        button.classList.remove("correct", "incorrect");
     });
+
+    elements.trueButton.querySelector(".answer-symbol").textContent = "✓";
+    elements.falseButton.querySelector(".answer-symbol").textContent = "×";
 }
 
-function selectAnswer(selectedTruth) {
+function selectAnswer(selectedAnswer) {
     if (answered) return;
     answered = true;
 
-    const q = questionOrder[currentQuestion];
-    const correct = selectedTruth === q.correct;
-    const selectedButton = $(selectedTruth ? "true-button" : "false-button");
-    const correctButton = $(q.correct ? "true-button" : "false-button");
+    const question = sessionQuestions[currentQuestion];
+    const isCorrect = selectedAnswer === question.answer;
 
-    $("true-button").disabled = true;
-    $("false-button").disabled = true;
+    const selectedButton = selectedAnswer
+        ? elements.trueButton
+        : elements.falseButton;
 
-    correctButton.classList.add("selected-correct");
-    if (!correct) selectedButton.classList.add("selected-wrong");
+    const correctButton = question.answer
+        ? elements.trueButton
+        : elements.falseButton;
 
-    const feedback = $("answer-feedback");
-    feedback.hidden = false;
+    elements.trueButton.disabled = true;
+    elements.falseButton.disabled = true;
 
-    if (correct) {
-        score += 10;
-        sessionPaus += 10;
-        $("paus-earned").textContent = String(sessionPaus);
-        feedback.classList.add("good");
-        feedback.textContent = `✓ Acertaste! +10 pontos e +10 Paus. ${q.explanation}`;
-    } else {
-        feedback.classList.add("bad");
-        feedback.textContent = `Não foi desta vez. ${q.explanation}`;
+    correctButton.classList.add("correct");
+    correctButton.querySelector(".answer-symbol").textContent = "✓";
+
+    if (!isCorrect) {
+        selectedButton.classList.add("incorrect");
+        selectedButton.querySelector(".answer-symbol").textContent = "×";
     }
 
-    $("score-counter").textContent = `${score} pontos`;
-    $("progress-bar").style.width =
-        `${((currentQuestion + 1) / questionOrder.length) * 100}%`;
-    $("next-button").hidden = false;
+    if (isCorrect) {
+        score += POINTS_PER_CORRECT;
+        elements.feedbackTitle.textContent = "Correcto! +10 pontos";
+        elements.feedback.classList.remove("incorrect-feedback");
+    } else {
+        elements.feedbackTitle.textContent =
+            `Não foi desta vez. A resposta certa é ${question.answer ? "Verdade" : "Mito"}.`;
+
+        elements.feedback.classList.add("incorrect-feedback");
+    }
+
+    elements.scoreCounter.textContent = `${score} pontos`;
+    elements.feedbackText.textContent = question.explanation;
+    elements.feedback.hidden = false;
+
+    elements.next.textContent =
+        currentQuestion === sessionQuestions.length - 1
+            ? "Ver resultados →"
+            : "Próxima pergunta →";
+
+    elements.next.hidden = false;
 }
 
 function nextQuestion() {
     if (!answered) return;
 
-    currentQuestion++;
-    if (currentQuestion < questionOrder.length) {
+    currentQuestion += 1;
+
+    if (currentQuestion < sessionQuestions.length) {
         renderQuestion();
     } else {
         finishGame();
@@ -133,31 +190,39 @@ function nextQuestion() {
 }
 
 function finishGame() {
-    $("question-screen").hidden = true;
-    $("results-screen").hidden = false;
+    earnedPaus = score;
 
-    const total = questionOrder.length;
-    const correctCount = score / 10;
-    const percentage = Math.round((correctCount / total) * 100);
+    elements.pausEarned.textContent = earnedPaus;
+    elements.finalScore.textContent =
+        `${score / POINTS_PER_CORRECT}/${sessionQuestions.length}`;
+    elements.finalPoints.textContent = score;
+    elements.finalPaus.textContent = earnedPaus;
 
-    $("final-score").textContent = `${correctCount}/${total}`;
-    $("final-points").textContent = String(score);
-    $("final-paus").textContent = `${sessionPaus} ✦`;
-    $("result-icon").textContent =
-        percentage === 100 ? "🏆" : percentage >= 60 ? "🎉" : "🧠";
-    $("result-title").textContent =
-        percentage === 100 ? "Conheces bem o tema!" :
-        percentage >= 60 ? "Bom trabalho!" : "Há mais para descobrir!";
-    $("result-description").textContent =
-        percentage === 100
-            ? "Acertaste em todas as afirmações. Excelente conhecimento!"
-            : percentage >= 60
-                ? "Estás no caminho certo. Continua a explorar o significado das expressões."
-                : "Aprendeste algo novo em cada pergunta. Volta a jogar para consolidar o conhecimento.";
+    const correctAnswers = score / POINTS_PER_CORRECT;
+    const percentage = correctAnswers / sessionQuestions.length;
+
+    if (percentage === 1) {
+        elements.resultIcon.textContent = "🏆";
+        elements.resultTitle.textContent = "Impecável!";
+        elements.resultDescription.textContent =
+            "Acertaste em todas as perguntas. Tens um excelente domínio destas curiosidades.";
+    } else if (percentage >= 0.6) {
+        elements.resultIcon.textContent = "🎉";
+        elements.resultTitle.textContent = "Boa prestação!";
+        elements.resultDescription.textContent =
+            "Acertaste na maioria. Lê as explicações e continua a descobrir mais sobre as expressões angolanas.";
+    } else {
+        elements.resultIcon.textContent = "🔎";
+        elements.resultTitle.textContent = "Há mais para descobrir!";
+        elements.resultDescription.textContent =
+            "Volta a jogar e aprende com cada explicação. O importante é questionar e descobrir.";
+    }
+
+    showScreen(elements.results);
 }
 
-$("start-button").addEventListener("click", startGame);
-$("true-button").addEventListener("click", () => selectAnswer(true));
-$("false-button").addEventListener("click", () => selectAnswer(false));
-$("next-button").addEventListener("click", nextQuestion);
-$("play-again-button").addEventListener("click", startGame);
+elements.start.addEventListener("click", startGame);
+elements.trueButton.addEventListener("click", () => selectAnswer(true));
+elements.falseButton.addEventListener("click", () => selectAnswer(false));
+elements.next.addEventListener("click", nextQuestion);
+elements.playAgain.addEventListener("click", startGame);
