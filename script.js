@@ -1,6 +1,6 @@
 /* =========================================
    ANGOLAN SLANG DICTIONARY
-   MAIN APPLICATION
+   MAIN APPLICATION 
 ========================================= */
 
 
