@@ -1347,99 +1347,157 @@ function renderHome() {
 
             </section>
 
+        
             <!-- =========================
-                 MAKA
+                 GAMES CAROUSEL
             ========================== -->
 
-            <section class="maka-home-section">
+            <section class="games-section" aria-labelledby="games-heading">
 
-                <div class="maka-home-card">
-
-                    <div class="maka-home-glow"></div>
-
-
-                    <div class="maka-home-content">
-
-                        <div class="maka-home-badge">
-                            ✦ DAILY CHALLENGE
-                        </div>
-
-
-                        <p class="maka-home-eyebrow">
-                            TEST YOUR ANGOLAN SLANG
+                <div class="games-section-heading">
+                    <div>
+                        <p class="eyebrow">LEARN THROUGH PLAY</p>
+                        <h2 id="games-heading">Choose your game.</h2>
+                        <p class="games-section-description">
+                            Play, discover expressions and earn Paus.
                         </p>
-
-
-                        <h2>
-                            Think you know
-                            <span>Maka?</span>
-                        </h2>
-
-
-                        <p class="maka-home-description">
-
-                            Put your knowledge to the test.
-                            Guess meanings, understand expressions
-                            and see how much Angolan slang you really know.
-
-                        </p>
-
-
-                        <div class="maka-home-stats">
-
-                            <span>
-                                <strong>
-                                    ${appState.words.length || 45}+
-                                </strong>
-                                words
-                            </span>
-
-                            <span>
-                                <strong>
-                                    3
-                                </strong>
-                                question types
-                            </span>
-
-                            <span>
-                                <strong>
-                                    ∞
-                                </strong>
-                                fun
-                            </span>
-
-                        </div>
-
-
-                        <a
-                            href="maka.html"
-                            class="primary-button maka-home-button"
-                        >
-
-                            Play Maka
-
-                            <span>
-                                →
-                            </span>
-
-                        </a>
-
                     </div>
 
+                    <div class="games-carousel-controls">
+                        <button
+                            type="button"
+                            class="games-carousel-arrow"
+                            onclick="scrollGamesCarousel(-1)"
+                            aria-label="Previous games"
+                        >←</button>
 
-                    <div class="maka-home-symbol">
+                        <button
+                            type="button"
+                            class="games-carousel-arrow"
+                            onclick="scrollGamesCarousel(1)"
+                            aria-label="Next games"
+                        >→</button>
+                    </div>
+                </div>
 
-                        <div class="maka-game-icon">
-                            ✦
+                <div
+                    class="games-carousel"
+                    id="gamesCarousel"
+                    aria-label="Available games"
+                    tabindex="0"
+                >
+
+                    <!-- GAME 1: MAKA -->
+
+                    <article class="game-card game-card-maka">
+                        <div class="game-card-art">
+                            <span class="game-card-number">01</span>
+                            <div class="game-art-symbol" aria-hidden="true">✦</div>
+                            <span class="game-art-caption">SABER É PODER</span>
                         </div>
 
-                        <div class="maka-game-orbit"></div>
+                        <div class="game-card-content">
+                            <span class="game-card-tag">TRIVIA</span>
+                            <h3>Maka</h3>
+                            <p>
+                                Test your knowledge of Angolan slang,
+                                meanings and expressions.
+                            </p>
+                            <a href="maka.html" class="game-play-button">
+                                Play Maka <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </article>
 
-                    </div>
+                    <!-- GAME 2: AUDIO -->
+
+                    <article class="game-card game-card-audio">
+                        <div class="game-card-art">
+                            <span class="game-card-number">02</span>
+                            <div class="game-art-symbol" aria-hidden="true">♫</div>
+                            <div class="audio-wave" aria-hidden="true">
+                                <i></i><i></i><i></i><i></i><i></i>
+                                <i></i><i></i><i></i><i></i><i></i>
+                                <i></i><i></i><i></i>
+                            </div>
+                            <span class="game-art-caption">OUVE COM ATENÇÃO</span>
+                        </div>
+
+                        <div class="game-card-content">
+                            <span class="game-card-tag">AUDIO</span>
+                            <h3>Ouve e Descobre</h3>
+                            <p>
+                                Listen to Angolan expressions and
+                                discover what they mean.
+                            </p>
+                            <a href="ouve-e-descobre.html" class="game-play-button">
+                                Play Now <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- GAME 3: EVERYDAY SITUATIONS -->
+
+                    <article class="game-card game-card-scenarios">
+                        <div class="game-card-art">
+                            <span class="game-card-number">03</span>
+                            <div class="game-art-symbol" aria-hidden="true">“ ”</div>
+                            <div class="scenario-bubbles" aria-hidden="true">
+                                <span>Olá!</span>
+                                <span>Então?</span>
+                            </div>
+                            <span class="game-art-caption">A VIDA REAL</span>
+                        </div>
+
+                        <div class="game-card-content">
+                            <span class="game-card-tag">SITUAÇÕES</span>
+                            <h3>Como É Que Respondes?</h3>
+                            <p>
+                                Choose the right expression for
+                                everyday Angolan situations.
+                            </p>
+                            <a href="como-respondes.html" class="game-play-button">
+                                Play Now <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- GAME 4: TRUE OR FALSE -->
+
+                    <article class="game-card game-card-myth">
+                        <div class="game-card-art">
+                            <span class="game-card-number">04</span>
+                            <div class="myth-symbols" aria-hidden="true">
+                                <span>V</span>
+                                <span>?</span>
+                                <span>F</span>
+                            </div>
+                            <span class="game-art-caption">FACTO OU MITO?</span>
+                        </div>
+
+                        <div class="game-card-content">
+                            <span class="game-card-tag">VERDADEIRO OU FALSO</span>
+                            <h3>Mito ou Verdade?</h3>
+                            <p>
+                                Challenge what you know about
+                                Angolan words and their meanings.
+                            </p>
+                            <a href="mito-ou-verdade.html" class="game-play-button">
+                                Play Now <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </article>
 
                 </div>
 
+                <p class="games-carousel-hint">
+                    <span aria-hidden="true">←</span>
+                    Swipe to explore all games
+                    <span aria-hidden="true">→</span>
+                </p>
+
             </section>
+
 
         </section>
 
