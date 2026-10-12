@@ -1,9 +1,8 @@
-
 :root {
-    --game-primary: #D89B2B;
-    --game-dark: #8D5A0A;
-    --game-soft: #FFF2D5;
-    --game-glow: rgba(216, 155, 43, .18);
+    --game-primary: #386A4B;
+    --game-dark: #244A33;
+    --game-soft: #E8F2EA;
+    --game-glow: rgba(56,106,75,.16);
     --ink: #182A3D;
     --muted: #697386;
     --paper: #FFFCF5;
@@ -11,6 +10,7 @@
     --green: #278052;
     --red: #B83D42;
 }
+
 
 * { box-sizing: border-box; }
 
