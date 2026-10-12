@@ -1,109 +1,152 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#8B5CF6">
+    <meta name="theme-color" content="#263D5B">
     <title>Mito ou Verdade? | Dicionário Angolano</title>
     <link rel="stylesheet" href="css/mito-ou-verdade.css">
+    <script src="js/mito-ou-verdade.js" defer></script>
 </head>
-<body class="truth-game">
+<body>
     <main class="game-shell">
         <header class="game-header">
-            <a class="back-link" href="app.html" aria-label="Voltar ao centro de jogos">←</a>
-            <div class="brand">
-                <img src="assets/angola-flag2.png" alt="Bandeira de Angola">
-                <div>
-                    <span class="eyebrow">DICIONÁRIO ANGOLANO</span>
-                    <span class="header-title">Centro de Jogos</span>
-                </div>
-            </div>
-            <div class="paus-pill"><span>✦</span> <strong id="paus-earned">0</strong> Paus</div>
+            <a class="back-link" href="app.html" aria-label="Voltar aos jogos">←</a>
+
+            <a class="brand" href="app.html">
+                <span class="brand-mark">DA</span>
+                <span>
+                    <strong>Dicionário Angolano</strong>
+                    <small>Calão & Expressões Populares</small>
+                </span>
+            </a>
+
+            <div class="paus-pill">🪙 <span id="paus-earned">0</span> Paus</div>
         </header>
 
         <section class="game-card">
             <div class="game-topline">
-                <span class="game-label">DESAFIO DE CONHECIMENTO</span>
-                <span class="round-label">5 afirmações</span>
+                <span class="eyebrow">MITOS E CURIOSIDADES</span>
+                <span class="game-number">03</span>
             </div>
 
-            <div id="welcome-screen" class="welcome-screen">
-                <div class="game-icon">🔮</div>
-                <span class="eyebrow">SERÁ QUE SABES?</span>
-                <h1>Mito ou<br>Verdade?</h1>
-                <p>Testa os teus conhecimentos sobre o calão, as expressões e a cultura linguística angolana.</p>
+            <div id="welcome-screen" class="screen welcome-screen">
+                <div class="game-icon" aria-hidden="true">🔎</div>
+                <p class="eyebrow">SERÁ MESMO ASSIM?</p>
 
-                <div class="feature-row">
-                    <div><span>⚡</span><strong>5 afirmações</strong></div>
-                    <div><span>✦</span><strong>Até 50 Paus</strong></div>
+                <h1>Mito ou <span>Verdade?</span></h1>
+
+                <p class="intro">
+                    Testa o que sabes sobre palavras, expressões e curiosidades
+                    do português falado em Angola. Lê cada afirmação e decide:
+                    mito ou verdade?
+                </p>
+
+                <div class="how-to-play">
+                    <div>
+                        <span>01</span>
+                        <p>Lê a afirmação apresentada.</p>
+                    </div>
+                    <div>
+                        <span>02</span>
+                        <p>Escolhe entre mito e verdade.</p>
+                    </div>
+                    <div>
+                        <span>03</span>
+                        <p>Descobre a explicação e soma pontos.</p>
+                    </div>
                 </div>
 
-                <div class="rule-card">
-                    <span class="rule-icon">i</span>
-                    <p>Lê cada afirmação com atenção. Tens de decidir se é verdadeira ou falsa antes de veres a explicação.</p>
+                <div class="game-meta">
+                    <span>🎯 <strong id="total-questions">5</strong> perguntas</span>
+                    <span>🪙 Até <strong id="possible-points">50</strong> Paus</span>
                 </div>
 
-                <button id="start-button" class="primary-button">Aceitar o desafio <span>→</span></button>
-                <a class="secondary-link" href="app.html">Voltar ao Centro de Jogos</a>
+                <button id="start-button" class="primary-button" type="button">
+                    Começar desafio <span>→</span>
+                </button>
             </div>
 
-            <div id="question-screen" class="question-screen" hidden>
+            <div id="question-screen" class="screen question-screen" hidden>
                 <div class="progress-meta">
-                    <span id="question-counter">Afirmação 1 de 5</span>
+                    <span id="question-counter">Pergunta 1 de 5</span>
                     <span id="score-counter">0 pontos</span>
                 </div>
-                <div class="progress-track"><div id="progress-bar"></div></div>
 
-                <div class="statement-card">
-                    <span class="statement-mark">“</span>
-                    <span class="statement-label">AFIRMAÇÃO</span>
-                    <h2 id="statement-text"></h2>
+                <div class="progress-track">
+                    <div id="progress-bar" class="progress-bar"></div>
                 </div>
 
-                <p class="decision-prompt">O que achas?</p>
+                <div class="statement-card">
+                    <div class="statement-mark" aria-hidden="true">“</div>
+                    <p id="statement-text"></p>
+                </div>
+
+                <p class="answer-prompt">Qual é a tua resposta?</p>
 
                 <div class="truth-options">
                     <button id="true-button" class="truth-option true-option" type="button">
-                        <span class="truth-symbol">✓</span>
-                        <span><strong>Verdade</strong><small>É uma afirmação correta</small></span>
+                        <span class="answer-symbol">✓</span>
+                        <span>
+                            <strong>Verdade</strong>
+                            <small>A afirmação está correcta</small>
+                        </span>
                     </button>
+
                     <button id="false-button" class="truth-option false-option" type="button">
-                        <span class="truth-symbol">✕</span>
-                        <span><strong>Mito</strong><small>A afirmação é falsa</small></span>
+                        <span class="answer-symbol">×</span>
+                        <span>
+                            <strong>Mito</strong>
+                            <small>A afirmação não está correcta</small>
+                        </span>
                     </button>
                 </div>
 
-                <div id="answer-feedback" class="answer-feedback" aria-live="polite" hidden></div>
-                <button id="next-button" class="primary-button" hidden>Próxima afirmação <span>→</span></button>
+                <div id="answer-feedback" class="answer-feedback" role="status"
+                     aria-live="polite" hidden>
+                    <strong id="feedback-title"></strong>
+                    <p id="feedback-text"></p>
+                </div>
+
+                <button id="next-button" class="primary-button" type="button" hidden>
+                    Próxima pergunta <span>→</span>
+                </button>
             </div>
 
-            <div id="results-screen" class="results-screen" hidden>
-                <div class="result-icon" id="result-icon">🏆</div>
-                <span class="eyebrow">DESAFIO CONCLUÍDO</span>
-                <h2 id="result-title">Bom trabalho!</h2>
-                <p id="result-description"></p>
+            <div id="results-screen" class="screen results-screen" hidden>
+                <div class="result-icon" id="result-icon">🎉</div>
+                <p class="eyebrow">DESAFIO CONCLUÍDO</p>
 
-                <div class="score-circle">
-                    <strong id="final-score">0/5</strong>
-                    <span>respostas certas</span>
-                </div>
+                <h2 id="result-title">Muito bem!</h2>
+                <p id="result-description" class="result-description"></p>
 
                 <div class="result-stats">
-                    <div><span>Pontos</span><strong id="final-points">0</strong></div>
-                    <div><span>Paus ganhos</span><strong id="final-paus">0 ✦</strong></div>
+                    <div>
+                        <span class="stat-value" id="final-score">0/5</span>
+                        <span class="stat-label">Respostas certas</span>
+                    </div>
+                    <div>
+                        <span class="stat-value" id="final-points">0</span>
+                        <span class="stat-label">Pontos</span>
+                    </div>
+                    <div>
+                        <span class="stat-value" id="final-paus">0</span>
+                        <span class="stat-label">Paus da sessão</span>
+                    </div>
                 </div>
 
-                <button id="play-again-button" class="primary-button">Jogar novamente <span>↻</span></button>
-                <a class="secondary-link" href="app.html">Voltar ao Centro de Jogos</a>
+                <button id="play-again-button" class="primary-button" type="button">
+                    Jogar novamente <span>↻</span>
+                </button>
+
+                <a class="secondary-link" href="app.html">Voltar aos jogos</a>
             </div>
         </section>
 
         <footer class="game-footer">
-            <span>Calão e cultura de Angola 🇦🇴</span>
-            <span>Descobre o que é verdade.</span>
+            <span>Questiona. Descobre. Aprende.</span>
+            <span>DA · Calão & Expressões Populares</span>
         </footer>
     </main>
-    <script src="js/mito-ou-verdade.js"></script>
 </body>
 </html>
