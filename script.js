@@ -1456,7 +1456,7 @@ function renderHome() {
                                 Choose the right expression for
                                 everyday Angolan situations.
                             </p>
-                            <a href="como-respondes.html" class="game-play-button">
+                            <a href="como-e-que-respondes.html" class="game-play-button">
                                 Play Now <span aria-hidden="true">→</span>
                             </a>
                         </div>
