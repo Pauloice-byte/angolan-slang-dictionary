@@ -1,16 +1,18 @@
 
+
 :root {
-    --game-primary: #8B5CF6;
-    --game-dark: #6334B2;
-    --game-soft: #F0E8FF;
-    --game-glow: rgba(139,92,246,.17);
+    --game-primary: #D89B2B;
+    --game-dark: #8D5A0A;
+    --game-soft: #FFF2D5;
+    --game-glow: rgba(216,155,43,.18);
     --ink: #182A3D;
     --muted: #697386;
-    --paper: #FFFCFF;
-    --line: #E9E1F2;
+    --paper: #FFFCF5;
+    --line: #EDE5D5;
     --green: #278052;
     --red: #B83D42;
 }
+
 
 * { box-sizing: border-box; }
 
@@ -127,7 +129,7 @@ button { cursor: pointer; }
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, #8B5CF6, #D946EF);
+    background: linear-gradient(90deg, #D89B2B, #F2C96B);
 }
 
 .game-topline {
@@ -251,7 +253,7 @@ button { cursor: pointer; }
     min-height: 51px;
     padding: 13px 18px;
     color: #fff;
-    background: linear-gradient(135deg, #8B5CF6, #7438CB);
+    background: linear-gradient(135deg, #D89B2B, #BE7F16);
     border: 0;
     border-radius: 14px;
     box-shadow: 0 7px 17px var(--game-glow);
