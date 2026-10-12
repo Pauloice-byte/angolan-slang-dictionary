@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F6F0E5">
+    <meta name="description" content="Ouve, descobre palavras angolanas e ganha Paus.">
+    <title>Ouve e Descobre | Dicionário Angolano</title>
+
+    <link rel="stylesheet" href="css/ouve-e-descobre.css">
+</head>
+
+<body>
+    <div class="page-pattern page-pattern-top"></div>
+    <div class="page-pattern page-pattern-bottom"></div>
+
+    <main class="game-shell">
+        <header class="game-header">
+            <a class="back-button" href="app.html" aria-label="Voltar à página principal">
+                <span aria-hidden="true">←</span>
+            </a>
+
+            <a class="brand" href="app.html">
+                <span class="brand-symbol">
+                    <img src="assets/angola-flag2.png" alt="Bandeira de Angola">
+                </span>
+                <span class="brand-copy">
+                    <strong>Dicionário Angolano</strong>
+                    <span>Calão & Expressões Populares</span>
+                </span>
+            </a>
+
+            <div class="paus-pill" aria-label="Saldo de Paus">
+                <span aria-hidden="true">✦</span>
+                <strong id="paus-balance">—</strong>
+                <small>PAUS</small>
+            </div>
+        </header>
+
+        <section class="game-intro">
+            <span class="eyebrow">JOGO DE ÁUDIO</span>
+            <h1>Ouve e <span>Descobre.</span></h1>
+            <p>Ouve a palavra, reconhece o calão e mostra que conheces a nossa língua.</p>
+        </section>
+
+        <section class="game-card" id="game-card">
+            <div class="card-pattern" aria-hidden="true"></div>
+
+            <section id="welcome-screen" class="screen welcome-screen">
+                <div class="game-emblem" aria-hidden="true">
+                    <span class="sound-ring sound-ring-one"></span>
+                    <span class="sound-ring sound-ring-two"></span>
+                    <span class="sound-symbol">♫</span>
+                </div>
+
+                <span class="card-kicker">ESTÁS PRONTO?</span>
+                <h2>Reconheces a palavra?</h2>
+                <p class="welcome-description">
+                    Vais ouvir até 10 palavras angolanas. Escolhe a palavra
+                    correspondente entre quatro opções.
+                </p>
+
+                <div class="rules-grid">
+                    <div class="rule-item">
+                        <span class="rule-icon">♫</span>
+                        <strong>Ouve</strong>
+                        <small>Carrega para ouvir</small>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-icon">A–D</span>
+                        <strong>Escolhe</strong>
+                        <small>Uma de quatro opções</small>
+                    </div>
+                    <div class="rule-item">
+                        <span class="rule-icon">✦</span>
+                        <strong>Ganha</strong>
+                        <small>10 Paus por acerto</small>
+                    </div>
+                </div>
+
+                <button class="primary-button" id="start-button" type="button">
+                    Começar jogo <span aria-hidden="true">→</span>
+                </button>
+
+                <p class="screen-message" id="welcome-message" role="status"></p>
+            </section>
+
+            <section id="playing-screen" class="screen playing-screen" hidden>
+                <div class="question-topline">
+                    <span id="question-counter">PERGUNTA 1 DE 10</span>
+                    <span class="score-chip">Pontos: <strong id="current-score">0</strong></span>
+                </div>
+
+                <div class="progress-track" role="progressbar"
+                     aria-label="Progresso do jogo"
+                     aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"
+                     id="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+
+                <div class="audio-panel">
+                    <div class="audio-art" aria-hidden="true">
+                        <span class="audio-wave wave-one"></span>
+                        <span class="audio-wave wave-two"></span>
+                        <span class="audio-wave wave-three"></span>
+                        <span class="audio-wave wave-four"></span>
+                        <span class="audio-wave wave-five"></span>
+                        <span class="audio-wave wave-six"></span>
+                        <span class="audio-wave wave-seven"></span>
+                    </div>
+
+                    <p class="audio-instruction" id="audio-instruction">
+                        Ouve com atenção e escolhe a palavra.
+                    </p>
+
+                    <button class="play-button" id="play-audio-button" type="button">
+                        <span class="play-icon" id="play-icon" aria-hidden="true">▶</span>
+                        <span id="play-button-label">Ouvir palavra</span>
+                    </button>
+
+                    <audio id="word-audio" preload="none"></audio>
+                </div>
+
+                <h2 class="options-heading">Qual é a palavra?</h2>
+
+                <div class="answer-options" id="answer-options">
+                    <button class="answer-option" type="button" data-option-index="0">
+                        <span class="option-letter">A</span>
+                        <span class="option-label"></span>
+                    </button>
+                    <button class="answer-option" type="button" data-option-index="1">
+                        <span class="option-letter">B</span>
+                        <span class="option-label"></span>
+                    </button>
+                    <button class="answer-option" type="button" data-option-index="2">
+                        <span class="option-letter">C</span>
+                        <span class="option-label"></span>
+                    </button>
+                    <button class="answer-option" type="button" data-option-index="3">
+                        <span class="option-letter">D</span>
+                        <span class="option-label"></span>
+                    </button>
+                </div>
+
+                <div class="answer-feedback" id="answer-feedback" role="status" aria-live="polite" hidden>
+                    <strong id="feedback-title"></strong>
+                    <p id="feedback-description"></p>
+                </div>
+
+                <button class="primary-button next-button" id="next-button" type="button" hidden>
+                    Próxima pergunta <span aria-hidden="true">→</span>
+                </button>
+
+                <p class="screen-message" id="playing-message" role="status"></p>
+            </section>
+
+            <section id="results-screen" class="screen results-screen" hidden>
+                <div class="result-emblem" aria-hidden="true">✦</div>
+                <span class="card-kicker">JOGO CONCLUÍDO</span>
+                <h2 id="result-heading">Muito bem!</h2>
+                <p class="result-description" id="result-description">
+                    Terminaste a tua ronda.
+                </p>
+
+                <div class="result-score-panel">
+                    <span>PONTUAÇÃO FINAL</span>
+                    <div class="result-score">
+                        <strong id="final-score">0</strong>
+                        <span>/ <span id="final-total">10</span></span>
+                    </div>
+                    <div class="result-progress-track">
+                        <div class="result-progress-fill" id="result-progress-fill"></div>
+                    </div>
+                    <p id="accuracy-label">0% de respostas certas</p>
+                </div>
+
+                <div class="rewards-panel">
+                    <div>
+                        <span class="reward-icon">✦</span>
+                        <span>
+                            <strong>Paus ganhos</strong>
+                            <small>Respostas certas</small>
+                        </span>
+                    </div>
+                    <strong id="answer-rewards">+0</strong>
+
+                    <div id="bonus-row" class="bonus-row">
+                        <span class="reward-icon">★</span>
+                        <span>
+                            <strong>Bónus de conclusão</strong>
+                            <small>Por completar uma ronda elegível</small>
+                        </span>
+                    </div>
+                    <strong id="completion-bonus">+0</strong>
+                </div>
+
+                <button class="primary-button" id="play-again-button" type="button">
+                    Jogar novamente <span aria-hidden="true">↻</span>
+                </button>
+
+                <a class="secondary-link" href="app.html">Voltar ao dicionário</a>
+                <p class="screen-message" id="results-message" role="status"></p>
+            </section>
+        </section>
+
+        <footer class="game-footer">
+            <span>FEITO COM ORGULHO EM ANGOLA</span>
+            <span class="footer-divider">◆</span>
+            <span>AO</span>
+        </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/ouve-e-descobre.js"></script>
+</body>
+</html>
