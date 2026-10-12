@@ -1,86 +1,119 @@
-
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#D89B2B">
+    <meta name="theme-color" content="#F3D9A5">
     <title>Como É Que Respondes? | Dicionário Angolano</title>
     <link rel="stylesheet" href="css/como-e-que-respondes.css">
+    <script src="js/como-e-que-respondes.js" defer></script>
 </head>
-<body class="response-game">
+<body>
     <main class="game-shell">
         <header class="game-header">
-            <a class="back-link" href="app.html" aria-label="Voltar ao centro de jogos">←</a>
-            <div class="brand">
-                <img src="assets/angola-flag2.png" alt="Bandeira de Angola">
-                <div>
-                    <span class="eyebrow">DICIONÁRIO ANGOLANO</span>
-                    <span class="header-title">Centro de Jogos</span>
-                </div>
-            </div>
-            <div class="paus-pill"><span>✦</span> <strong id="paus-earned">0</strong> Paus</div>
+            <a class="back-link" href="app.html" aria-label="Voltar aos jogos">←</a>
+            <a class="brand" href="app.html">
+                <span class="brand-mark">DA</span>
+                <span>
+                    <strong>Dicionário Angolano</strong>
+                    <small>Calão & Expressões Populares</small>
+                </span>
+            </a>
+            <div class="paus-pill">🪙 <span id="paus-earned">0</span> Paus</div>
         </header>
 
         <section class="game-card">
             <div class="game-topline">
-                <span class="game-label">JOGO DE CONTEXTO</span>
-                <span class="round-label" id="round-label">5 perguntas</span>
+                <span class="eyebrow">JOGO DE SITUAÇÕES</span>
+                <span class="game-number">02</span>
             </div>
 
-            <div id="welcome-screen" class="welcome-screen">
-                <div class="game-icon">💬</div>
-                <span class="eyebrow">SABE O QUE DIZER?</span>
-                <h1>Como É Que<br>Respondes?</h1>
-                <p>Entra em situações do dia a dia e escolhe a resposta que faz mais sentido no contexto angolano.</p>
+            <div id="welcome-screen" class="screen welcome-screen">
+                <div class="game-icon" aria-hidden="true">💬</div>
+                <p class="eyebrow">FALA À ANGOLANA</p>
+                <h1>Como É Que <span>Respondes?</span></h1>
+                <p class="intro">
+                    Situações do dia a dia, expressões populares e respostas à tua maneira.
+                    Escolhe a resposta que melhor encaixa em cada situação.
+                </p>
 
-                <div class="feature-row">
-                    <div><span>🎯</span><strong>5 situações</strong></div>
-                    <div><span>✦</span><strong>Até 50 Paus</strong></div>
+                <div class="how-to-play">
+                    <div><span>01</span><p>Lê a situação com atenção.</p></div>
+                    <div><span>02</span><p>Escolhe a resposta mais adequada.</p></div>
+                    <div><span>03</span><p>Aprende com a explicação e acumula pontos.</p></div>
                 </div>
 
-                <button id="start-button" class="primary-button">Começar o jogo <span>→</span></button>
-                <a class="secondary-link" href="app.html">Voltar ao Centro de Jogos</a>
+                <div class="game-meta">
+                    <span>🎯 <strong id="total-questions">5</strong> situações</span>
+                    <span>🪙 Até <strong id="possible-points">50</strong> Paus</span>
+                </div>
+
+                <button id="start-button" class="primary-button" type="button">
+                    Começar jogo <span>→</span>
+                </button>
             </div>
 
-            <div id="question-screen" class="question-screen" hidden>
+            <div id="question-screen" class="screen question-screen" hidden>
                 <div class="progress-meta">
-                    <span id="question-counter">Pergunta 1 de 5</span>
+                    <span id="question-counter">Situação 1 de 5</span>
                     <span id="score-counter">0 pontos</span>
                 </div>
-                <div class="progress-track"><div id="progress-bar"></div></div>
+                <div class="progress-track">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
 
-                <div class="situation-tag">📍 SITUAÇÃO DO DIA A DIA</div>
-                <h2 id="question-title">O que responderias?</h2>
-                <p id="question-context" class="question-context"></p>
+                <div class="scenario-label">A SITUAÇÃO</div>
+                <div class="scenario-card">
+                    <div class="scenario-emoji" id="scenario-emoji">🗣️</div>
+                    <h2 id="scenario-title">O que aconteceu?</h2>
+                    <p id="scenario-text"></p>
+                </div>
+
+                <p class="answer-prompt">Como responderias?</p>
                 <div id="answer-options" class="answer-options"></div>
-                <div id="answer-feedback" class="answer-feedback" aria-live="polite" hidden></div>
-                <button id="next-button" class="primary-button" hidden>Próxima pergunta <span>→</span></button>
+
+                <div id="answer-feedback" class="answer-feedback" role="status" aria-live="polite" hidden>
+                    <strong id="feedback-title"></strong>
+                    <p id="feedback-text"></p>
+                </div>
+
+                <button id="next-button" class="primary-button" type="button" hidden>
+                    Próxima situação <span>→</span>
+                </button>
             </div>
 
-            <div id="results-screen" class="results-screen" hidden>
-                <div class="result-icon" id="result-icon">🏆</div>
-                <span class="eyebrow">FIM DO DESAFIO</span>
-                <h2 id="result-title">Muito bem!</h2>
+            <div id="results-screen" class="screen results-screen" hidden>
+                <div class="result-icon" id="result-icon">🎉</div>
+                <p class="eyebrow">FIM DO JOGO</p>
+                <h2 id="result-title">Boa, kota!</h2>
                 <p id="result-description"></p>
-                <div class="score-circle">
-                    <strong id="final-score">0/5</strong>
-                    <span>respostas certas</span>
-                </div>
+
                 <div class="result-stats">
-                    <div><span>Pontos</span><strong id="final-points">0</strong></div>
-                    <div><span>Paus ganhos</span><strong id="final-paus">0 ✦</strong></div>
+                    <div>
+                        <span class="stat-value" id="final-score">0/5</span>
+                        <span class="stat-label">Respostas certas</span>
+                    </div>
+                    <div>
+                        <span class="stat-value" id="final-points">0</span>
+                        <span class="stat-label">Pontos</span>
+                    </div>
+                    <div>
+                        <span class="stat-value" id="final-paus">0</span>
+                        <span class="stat-label">Paus da sessão</span>
+                    </div>
                 </div>
-                <button id="play-again-button" class="primary-button">Jogar novamente <span>↻</span></button>
-                <a class="secondary-link" href="app.html">Voltar ao Centro de Jogos</a>
+
+                <button id="play-again-button" class="primary-button" type="button">
+                    Jogar novamente <span>↻</span>
+                </button>
+                <a class="secondary-link" href="app.html">Voltar aos jogos</a>
             </div>
         </section>
 
         <footer class="game-footer">
-            <span>Expressões de Angola 🇦🇴</span>
-            <span>Aprende. Joga. Partilha.</span>
+            <span>Aprende. Joga. Fala à angolana.</span>
+            <span>DA · Calão & Expressões Populares</span>
         </footer>
     </main>
-    <script src="js/como-e-que-respondes.js"></script>
 </body>
 </html>
