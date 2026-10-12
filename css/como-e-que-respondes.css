@@ -127,7 +127,7 @@ button { cursor: pointer; }
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, var(--game-primary), #F2C96B);
+    background: linear-gradient(90deg, #386A4B, #7DAA82);
 }
 
 .game-topline {
@@ -219,7 +219,7 @@ button { cursor: pointer; }
     min-height: 51px;
     padding: 13px 18px;
     color: #fff;
-    background: linear-gradient(135deg, var(--game-primary), #BE7F16);
+   background: linear-gradient(135deg, #386A4B, #244A33);
     border: 0;
     border-radius: 14px;
     box-shadow: 0 7px 17px var(--game-glow);
