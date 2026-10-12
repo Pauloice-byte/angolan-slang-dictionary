@@ -3705,6 +3705,32 @@ function initDailyHomeSwipe() {
     );
 
 }
+
+/* =========================================
+   GAMES CAROUSEL NAVIGATION
+========================================= */
+
+function scrollGamesCarousel(direction) {
+    const carousel = document.getElementById("gamesCarousel");
+
+    if (!carousel) {
+        return;
+    }
+
+    const firstCard = carousel.querySelector(".game-card");
+    const cardWidth = firstCard
+        ? firstCard.getBoundingClientRect().width
+        : 280;
+
+    const styles = window.getComputedStyle(carousel);
+    const gap = parseFloat(styles.columnGap) || 18;
+
+    carousel.scrollBy({
+        left: direction * (cardWidth + gap),
+        behavior: "smooth"
+    });
+}
+
 /* =========================================
    BACK
 ========================================= */
